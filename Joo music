@@ -1,0 +1,193 @@
+-- 🔥 JOO MUSIC + RAINBOW NAME TAG 🔥
+
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local TS = game:GetService("TweenService")
+
+-- ========== تغيير Name Tag ثابت ==========
+local function setRPName(name, bio)
+    pcall(function()
+        local RE = ReplicatedStorage:WaitForChild("RE", 5)
+        if RE then
+            local nameEvent = RE:FindFirstChild("1RPNam1eTex1t")
+            if nameEvent then
+                nameEvent:FireServer("RolePlayName", name)
+                task.wait(0.3)
+                nameEvent:FireServer("RolePlayBio", bio)
+            end
+        end
+    end)
+end
+
+-- ========== تشغيل الألوان المتغيرة (VIP) ==========
+local rainbowActive = true
+local function startRainbowName()
+    pcall(function()
+        local RE = ReplicatedStorage:WaitForChild("RE", 5)
+        if not RE then return end
+        local colorRemote = RE:FindFirstChild("1RPNam1eColo1r")
+        if not colorRemote then return end
+        
+        local hue = 0
+        task.spawn(function()
+            while rainbowActive do
+                hue = hue + 0.02
+                local color = Color3.fromHSV(hue % 1, 1, 1)
+                colorRemote:FireServer("PickingRPNameColor", color)
+                colorRemote:FireServer("PickingRPBioColor", color)
+                task.wait(0.1)
+            end
+        end)
+    end)
+end
+
+-- تطبيق الاسم الثابت + تشغيل الألوان
+setRPName("JÓÖ MÛẞÎÇ", "thx for use a script")
+task.wait(0.5)
+startRainbowName()
+
+-- ========== واجهة Rayfield ==========
+local Window = Rayfield:CreateWindow({
+    Name = "JÓÖ MÛẞÎÇ",
+    LoadingTitle = "تحميل...",
+    LoadingSubtitle = "thx for use a script",
+    ConfigurationSaving = {Enabled = false}
+})
+
+local MusicTab = Window:CreateTab("الاغاني 🎵", 4483362458)
+
+-- تشغيل الأغاني
+local function playMusic(id, type)
+    pcall(function()
+        local remote = ReplicatedStorage:WaitForChild("RE",3):FindFirstChild("1NoMoto1rVehicle1s")
+        if remote then
+            remote:FireServer(type or "SkateBoard")
+            task.wait(0.3)
+            remote:FireServer("PickingScooterMusicText", tostring(id))
+        end
+    end)
+end
+
+-- =========================
+-- 🔥 فونك
+-- =========================
+MusicTab:CreateSection("اغاني عشوائية")
+for name,id in pairs({
+    ["افخم فونك"]="17647322226",
+    ["فونك غضب"]="115859025716354",
+    ["فونك عالمي"]="76578817848504",
+    ["فونك ممتاز"]="102402883551679",
+    ["فونك ازعاج"]="85682109892034"
+}) do
+    MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
+end
+
+-- =========================
+-- 🇮🇶 عراقي
+-- =========================
+MusicTab:CreateSection("اغاني عراقيه")
+for name,id in pairs({
+    ["راب عراقي 🧩"]="116272643488592",
+    ["اخذت بدنيا تعناط ودروس"]="112254940188047",
+    ["شراره 🎻"]="81023003196738",
+    ["عراقي 🔥"]="116815742960163",
+    ["عراقي حب ❤"]="105956659839019",
+    ["ميت انا من فراقك"]="98313375960954",
+    ["دم حزني"]="99123490695024",
+    ["الحجني يا شرطي"]="120675895107276",
+    ["ريمكس عراقي"]="136909019669593",
+    ["شعر عراقي"]="83309655997452",
+    ["ازعاج عراقي"]="127840997774724",
+    ["عراقي حزين"]="106271890575602",
+    ["عود عراقي"]="94546035218751",
+    ["قول الصواري"]="135009652401688",
+    ["قررنا رحيلك"]="87510423075068",
+    ["تراني سكران 😂"]="111811908070601"
+}) do
+    MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
+end
+
+-- =========================
+-- ⚠️ سب
+-- =========================
+MusicTab:CreateSection("اغاني سب")
+for name,id in pairs({
+    ["سب 1"]="91611648163631",
+    ["كشلي امك"]="71491005545506",
+    ["سب 2"]="131794008455004",
+    ["سب 3"]="88304661583351",
+    ["سب 4"]="94943308357738",
+    ["يابن القحبه"]="5849978429"
+}) do
+    MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
+end
+
+-- =========================
+-- 🌍 اجنبي
+-- =========================
+MusicTab:CreateSection("اغاني اجنبيه")
+for name,id in pairs({
+    ["اجنبي حزين"]="72320758533508",
+    ["my money"]="1846687233",
+    ["ريمكس"]="120871403922972",
+    ["فونك GTA"]="109337680029292",
+    ["فونك قوي"]="138361625716987",
+    ["كرسمس"]="135528953872601"
+}) do
+    MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
+end
+
+-- =========================
+-- 🇪🇬 مصري
+-- =========================
+MusicTab:CreateSection("الاغاني العربيه | المصريه")
+for name,id in pairs({
+    ["دمرتي حياتي"]="124482316940059",
+    ["تصدق كرهتك"]="113478978326245",
+    ["اه يا حلو"]="93620598835551",
+    ["اكبر غلطه"]="127085435747898",
+    ["ليه جي"]="92304349905750",
+    ["هات الدكتور"]="8776769631",
+    ["علي كيفك"]="123487073954032"
+}) do
+    MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
+end
+
+-- =========================
+-- 🔊 ازعاج
+-- =========================
+MusicTab:CreateSection("اغاني ازعاج")
+for name,id in pairs({
+    ["get out"]="99796748877356",
+    ["علي البي"]="105438850576001",
+    ["ازعاج فونك"]="120576436665675"
+}) do
+    MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
+end
+
+-- =========================
+-- 🎧 يدوي
+-- =========================
+MusicTab:CreateSection("ادخل كود خاص")
+
+local currentID = ""
+
+MusicTab:CreateInput({
+    Name = "كود يدوي",
+    PlaceholderText = "ID هنا",
+    Callback = function(v)
+        currentID = v
+    end
+})
+
+MusicTab:CreateButton({
+    Name = "▶️ تشغيل",
+    Callback = function()
+        if currentID ~= "" then
+            playMusic(currentID)
+        end
+    end
+})
+
+print("JOO MUSIC + RAINBOW NAME TAG loaded | Name: JÓÖ MÛẞÎÇ (colored)")
