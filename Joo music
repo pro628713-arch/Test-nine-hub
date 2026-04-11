@@ -266,7 +266,7 @@ ScriptsTab:CreateButton({
 })
 
 ScriptsTab:CreateButton({
-    Name = "👔 نسخ سكنات (IllusionDev_DUELS_v3)",
+    Name = "👔 نسخ سكنات (فيه اخطاء لنه تحت تجربه لا تجي برأسك الي قد برميل تقول فيه اخطاء)",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/pro628713-arch/Test-nine-hub/main/IllusionDev_DUELS_v3.json"))()
     end
