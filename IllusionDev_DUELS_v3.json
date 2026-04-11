@@ -1,1 +1,330 @@
-{"Optimizer":false,"FOLLOW_DISTANCE":6,"GalaxySkyBright":false,"HOP_COOLDOWN":0.08,"KEY_BATLOCK":"X","AutoSteal":false,"ScriptUserESP":true,"SpinBot":false,"KEY_AUTORIGHT":"C","AutoWalkEnabled":false,"SpeedBoost":false,"BatLock":false,"HOP_POWER":35,"InfiniteJump":true,"GalaxyGravityPercent":70,"AntiRagdoll":true,"KEY_GALAXY":"M","StealingSpeedValue":30,"SpinSpeed":30,"AutoGrabPC":false,"STEAL_RADIUS":20,"AutoRightEnabled":false,"DEFAULT_GRAVITY":196.2,"AUTO_GRAB_MAX_DIST":15,"STEAL_DURATION":1.3,"KEY_SPIN":"N","SpeedWhileStealing":false,"KEY_SPEED":"V","DodgeVertical":false,"Galaxy":false,"FOV":70,"BoostSpeed":16,"BoostSpeedSteal":65,"KEY_AUTOLEFT":"Z","DodgeAutoOffTime":1.5,"TakeTheL":false,"Unwalk":false}
+-- سكربت نسخ سكنات مستقل (يعمل بدون Rayfield)
+
+local Players = game:GetService("Players")
+local lp = Players.LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterGui = game:GetService("StarterGui")
+
+local Remotes = ReplicatedStorage:FindFirstChild("Remotes")
+if not Remotes then
+    StarterGui:SetCore("SendNotification", {Title = "خطأ", Text = "Remotes not found! اللعبة غير مدعومة", Duration = 5})
+    return
+end
+
+-- دوال النسخ (نفس السابقة)
+local function copyFullAvatar(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then
+        StarterGui:SetCore("SendNotification", {Title = "خطأ", Text = "اللاعب غير موجود!", Duration = 3})
+        return
+    end
+    local targetHumanoid = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
+    local localHumanoid = lp.Character and lp.Character:FindFirstChildOfClass("Humanoid")
+    if not targetHumanoid or not localHumanoid then return end
+
+    StarterGui:SetCore("SendNotification", {Title = "نسخ سكنات", Text = "جاري النسخ الكامل...", Duration = 3})
+    task.spawn(function()
+        pcall(function()
+            local currentDesc = localHumanoid:GetAppliedDescription()
+            for _, acc in ipairs(currentDesc:GetAccessories(true)) do
+                Remotes.Wear:InvokeServer(tonumber(acc.AssetId))
+                task.wait(0.2)
+            end
+            Remotes.Wear:InvokeServer(0)
+            task.wait(0.5)
+
+            local targetDesc = targetHumanoid:GetAppliedDescription()
+            Remotes.ChangeCharacterBody:InvokeServer(unpack({
+                [1] = {
+                    [1] = targetDesc.Torso,
+                    [2] = targetDesc.RightArm,
+                    [3] = targetDesc.LeftArm,
+                    [4] = targetDesc.RightLeg,
+                    [5] = targetDesc.LeftLeg,
+                    [6] = targetDesc.Head
+                }
+            }))
+            task.wait(0.4)
+
+            local bodyColors = targetPlayer.Character:FindFirstChild("Body Colors")
+            if bodyColors then
+                Remotes.ChangeBodyColor:FireServer(tostring(bodyColors.HeadColor))
+            end
+            task.wait(0.3)
+
+            if targetDesc.Shirt and targetDesc.Shirt ~= 0 then
+                Remotes.Wear:InvokeServer(tonumber(targetDesc.Shirt))
+                task.wait(0.3)
+            end
+            if targetDesc.Pants and targetDesc.Pants ~= 0 then
+                Remotes.Wear:InvokeServer(tonumber(targetDesc.Pants))
+                task.wait(0.3)
+            end
+            if targetDesc.Face and targetDesc.Face ~= 0 then
+                Remotes.Wear:InvokeServer(tonumber(targetDesc.Face))
+                task.wait(0.3)
+            end
+            for _, v in ipairs(targetDesc:GetAccessories(true)) do
+                if v.AssetId and v.AssetId ~= 0 then
+                    Remotes.Wear:InvokeServer(tonumber(v.AssetId))
+                    task.wait(0.25)
+                end
+            end
+
+            StarterGui:SetCore("SendNotification", {Title = "نجاح", Text = "تم نسخ سكن " .. targetPlayer.DisplayName .. " بنجاح!", Duration = 4})
+        end)
+    end)
+end
+
+local function copyBodyOnly(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then return end
+    local targetHumanoid = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
+    if not targetHumanoid then return end
+    pcall(function()
+        local targetDesc = targetHumanoid:GetAppliedDescription()
+        Remotes.ChangeCharacterBody:InvokeServer(unpack({
+            [1] = {
+                [1] = targetDesc.Torso,
+                [2] = targetDesc.RightArm,
+                [3] = targetDesc.LeftArm,
+                [4] = targetDesc.RightLeg,
+                [5] = targetDesc.LeftLeg,
+                [6] = targetDesc.Head
+            }
+        }))
+        task.wait(0.4)
+        local bodyColors = targetPlayer.Character:FindFirstChild("Body Colors")
+        if bodyColors then
+            Remotes.ChangeBodyColor:FireServer(tostring(bodyColors.HeadColor))
+        end
+        StarterGui:SetCore("SendNotification", {Title = "نجاح", Text = "تم نسخ الجسم بنجاح!", Duration = 3})
+    end)
+end
+
+local function copyClothesOnly(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then return end
+    local targetHumanoid = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
+    if not targetHumanoid then return end
+    pcall(function()
+        local targetDesc = targetHumanoid:GetAppliedDescription()
+        if targetDesc.Shirt and targetDesc.Shirt ~= 0 then
+            Remotes.Wear:InvokeServer(tonumber(targetDesc.Shirt))
+            task.wait(0.3)
+        end
+        if targetDesc.Pants and targetDesc.Pants ~= 0 then
+            Remotes.Wear:InvokeServer(tonumber(targetDesc.Pants))
+            task.wait(0.3)
+        end
+        if targetDesc.Face and targetDesc.Face ~= 0 then
+            Remotes.Wear:InvokeServer(tonumber(targetDesc.Face))
+            task.wait(0.3)
+        end
+        for _, v in ipairs(targetDesc:GetAccessories(true)) do
+            if v.AssetId and v.AssetId ~= 0 then
+                Remotes.Wear:InvokeServer(tonumber(v.AssetId))
+                task.wait(0.25)
+            end
+        end
+        StarterGui:SetCore("SendNotification", {Title = "نجاح", Text = "تم نسخ الملابس بنجاح!", Duration = 3})
+    end)
+end
+
+-- واجهة بسيطة (GUI)
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "CopyAvatarGUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = lp:WaitForChild("PlayerGui")
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 320, 0, 450)
+mainFrame.Position = UDim2.new(0.5, -160, 0.5, -225)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20,20,35)
+mainFrame.BackgroundTransparency = 0.1
+mainFrame.BorderSizePixel = 0
+mainFrame.ClipsDescendants = true
+mainFrame.Parent = screenGui
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 16)
+mainCorner.Parent = mainFrame
+
+local titleBar = Instance.new("Frame")
+titleBar.Size = UDim2.new(1,0,0,40)
+titleBar.BackgroundColor3 = Color3.fromRGB(30,30,50)
+titleBar.BackgroundTransparency = 0.2
+titleBar.Parent = mainFrame
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0, 16)
+titleCorner.Parent = titleBar
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -80, 1, 0)
+titleLabel.Position = UDim2.new(0, 15, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "نسخ سكنات"
+titleLabel.TextColor3 = Color3.fromRGB(255,100,150)
+titleLabel.TextSize = 16
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.Parent = titleBar
+
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 30, 0, 30)
+closeBtn.Position = UDim2.new(1, -40, 0, 5)
+closeBtn.BackgroundColor3 = Color3.fromRGB(255,70,100)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.fromRGB(255,255,255)
+closeBtn.TextSize = 18
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.Parent = titleBar
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 8)
+closeCorner.Parent = closeBtn
+closeBtn.MouseButton1Click:Connect(function() screenGui:Destroy() end)
+
+local playerListFrame = Instance.new("ScrollingFrame")
+playerListFrame.Size = UDim2.new(1, -20, 0.5, -10)
+playerListFrame.Position = UDim2.new(0, 10, 0, 50)
+playerListFrame.BackgroundColor3 = Color3.fromRGB(35,35,50)
+playerListFrame.BackgroundTransparency = 0.3
+playerListFrame.BorderSizePixel = 0
+playerListFrame.ScrollBarThickness = 4
+playerListFrame.Parent = mainFrame
+local plCorner = Instance.new("UICorner")
+plCorner.CornerRadius = UDim.new(0, 12)
+plCorner.Parent = playerListFrame
+
+local plTitle = Instance.new("TextLabel")
+plTitle.Size = UDim2.new(1, 0, 0, 30)
+plTitle.Position = UDim2.new(0, 0, 0, 0)
+plTitle.BackgroundTransparency = 1
+plTitle.Text = "🎮 اختر اللاعب"
+plTitle.TextColor3 = Color3.fromRGB(255, 150, 150)
+plTitle.TextSize = 14
+plTitle.Font = Enum.Font.GothamBold
+plTitle.Parent = playerListFrame
+
+local plScroll = Instance.new("ScrollingFrame")
+plScroll.Size = UDim2.new(1, -10, 1, -40)
+plScroll.Position = UDim2.new(0, 5, 0, 35)
+plScroll.BackgroundTransparency = 1
+plScroll.ScrollBarThickness = 3
+plScroll.Parent = playerListFrame
+
+local plLayout = Instance.new("UIListLayout")
+plLayout.Padding = UDim.new(0, 4)
+plLayout.SortOrder = Enum.SortOrder.LayoutOrder
+plLayout.Parent = plScroll
+
+local selectedPlayer = nil
+local selectedLabel = Instance.new("TextLabel")
+selectedLabel.Size = UDim2.new(1, -20, 0, 30)
+selectedLabel.Position = UDim2.new(0, 10, 0, playerListFrame.Size.Y.Offset + 55)
+selectedLabel.BackgroundTransparency = 1
+selectedLabel.Text = "❌ لم يتم الاختيار"
+selectedLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+selectedLabel.TextSize = 12
+selectedLabel.Font = Enum.Font.Gotham
+selectedLabel.Parent = mainFrame
+
+local function refreshPlayerList()
+    for _, child in pairs(plScroll:GetChildren()) do
+        if child:IsA("TextButton") then child:Destroy() end
+    end
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= lp then
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(1, 0, 0, 35)
+            btn.BackgroundColor3 = Color3.fromRGB(45, 45, 65)
+            btn.BackgroundTransparency = 0.2
+            btn.Text = p.Name
+            btn.TextColor3 = Color3.fromRGB(220, 220, 220)
+            btn.TextSize = 13
+            btn.Font = Enum.Font.Gotham
+            btn.Parent = plScroll
+            local btnCorner = Instance.new("UICorner")
+            btnCorner.CornerRadius = UDim.new(0, 6)
+            btnCorner.Parent = btn
+            btn.MouseButton1Click:Connect(function()
+                selectedPlayer = p
+                selectedLabel.Text = "✅ " .. p.Name
+                for _, child in pairs(plScroll:GetChildren()) do
+                    if child:IsA("TextButton") then
+                        child.BackgroundColor3 = Color3.fromRGB(45, 45, 65)
+                    end
+                end
+                btn.BackgroundColor3 = Color3.fromRGB(100, 70, 150)
+            end)
+        end
+    end
+    plScroll.CanvasSize = UDim2.new(0, 0, 0, plLayout.AbsoluteContentSize.Y)
+end
+
+refreshPlayerList()
+Players.PlayerAdded:Connect(refreshPlayerList)
+Players.PlayerRemoving:Connect(refreshPlayerList)
+
+playerListFrame:GetPropertyChangedSignal("Size"):Connect(function()
+    selectedLabel.Position = UDim2.new(0, 10, 0, playerListFrame.Size.Y.Offset + 55)
+end)
+
+local btnFull = Instance.new("TextButton")
+btnFull.Size = UDim2.new(0.9, 0, 0, 45)
+btnFull.Position = UDim2.new(0.05, 0, 0.65, 0)
+btnFull.BackgroundColor3 = Color3.fromRGB(100, 150, 200)
+btnFull.Text = "📸 نسخ كامل (جسم + ملابس)"
+btnFull.TextColor3 = Color3.fromRGB(255, 255, 255)
+btnFull.Font = Enum.Font.GothamBold
+btnFull.TextSize = 14
+btnFull.Parent = mainFrame
+local btnCorner = Instance.new("UICorner")
+btnCorner.CornerRadius = UDim.new(0, 10)
+btnCorner.Parent = btnFull
+
+local btnBody = Instance.new("TextButton")
+btnBody.Size = UDim2.new(0.9, 0, 0, 45)
+btnBody.Position = UDim2.new(0.05, 0, 0.75, 0)
+btnBody.BackgroundColor3 = Color3.fromRGB(150, 100, 200)
+btnBody.Text = "👤 نسخ الجسم فقط"
+btnBody.TextColor3 = Color3.fromRGB(255, 255, 255)
+btnBody.Font = Enum.Font.GothamBold
+btnBody.TextSize = 14
+btnBody.Parent = mainFrame
+local btnBodyCorner = Instance.new("UICorner")
+btnBodyCorner.CornerRadius = UDim.new(0, 10)
+btnBodyCorner.Parent = btnBody
+
+local btnClothes = Instance.new("TextButton")
+btnClothes.Size = UDim2.new(0.9, 0, 0, 45)
+btnClothes.Position = UDim2.new(0.05, 0, 0.85, 0)
+btnClothes.BackgroundColor3 = Color3.fromRGB(200, 100, 100)
+btnClothes.Text = "👕 نسخ الملابس فقط"
+btnClothes.TextColor3 = Color3.fromRGB(255, 255, 255)
+btnClothes.Font = Enum.Font.GothamBold
+btnClothes.TextSize = 14
+btnClothes.Parent = mainFrame
+local btnClothesCorner = Instance.new("UICorner")
+btnClothesCorner.CornerRadius = UDim.new(0, 10)
+btnClothesCorner.Parent = btnClothes
+
+btnFull.MouseButton1Click:Connect(function()
+    if selectedPlayer then
+        copyFullAvatar(selectedPlayer)
+    else
+        StarterGui:SetCore("SendNotification", {Title = "خطأ", Text = "اختر لاعب أولاً من القائمة!", Duration = 2})
+    end
+end)
+
+btnBody.MouseButton1Click:Connect(function()
+    if selectedPlayer then
+        copyBodyOnly(selectedPlayer)
+    else
+        StarterGui:SetCore("SendNotification", {Title = "خطأ", Text = "اختر لاعب أولاً من القائمة!", Duration = 2})
+    end
+end)
+
+btnClothes.MouseButton1Click:Connect(function()
+    if selectedPlayer then
+        copyClothesOnly(selectedPlayer)
+    else
+        StarterGui:SetCore("SendNotification", {Title = "خطأ", Text = "اختر لاعب أولاً من القائمة!", Duration = 2})
+    end
+end)
