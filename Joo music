@@ -1,5 +1,5 @@
 -- 🔥 JOO MUSIC + RAINBOW NAME TAG + TOOLS + EXTERNAL SCRIPTS 🔥
--- تم إزالة تبويب نسخ السكنات بالكامل
+-- تم إضافة أغنيتين جديدتين في قسم "اغاني عشوائية"
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -72,6 +72,7 @@ local function playMusic(id, type)
 end
 
 MusicTab:CreateSection("اغاني عشوائية")
+-- الأغاني الموجودة مسبقاً
 for name,id in pairs({
     ["افخم فونك"]="17647322226",
     ["فونك غضب"]="115859025716354",
@@ -81,6 +82,9 @@ for name,id in pairs({
 }) do
     MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
 end
+-- الأغاني الجديدة المضافة
+MusicTab:CreateButton({Name = "افشخ اغنيه", Callback = function() playMusic("121755260609793") end})
+MusicTab:CreateButton({Name = "اغنيه حلوه موت", Callback = function() playMusic("82696338249251") end})
 
 MusicTab:CreateSection("اغاني عراقيه")
 for name,id in pairs({
@@ -266,10 +270,10 @@ ScriptsTab:CreateButton({
 })
 
 ScriptsTab:CreateButton({
-    Name = "👔 نسخ سكنات (فيه اخطاء لنه تحت تجربه لا تجي برأسك الي قد برميل تقول فيه اخطاء)",
+    Name = "👔 نسخ سكنات (IllusionDev_DUELS_v3)",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/pro628713-arch/Test-nine-hub/main/IllusionDev_DUELS_v3.json"))()
     end
 })
 
-print("JOO MUSIC + TOOLS + EXTERNAL SCRIPTS loaded (copy avatar removed)")
+print("JOO MUSIC + TOOLS + EXTERNAL SCRIPTS + new songs loaded")
