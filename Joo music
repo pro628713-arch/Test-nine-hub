@@ -1,5 +1,5 @@
 -- 🔥 JOO MUSIC + RAINBOW NAME TAG + TOOLS + EXTERNAL SCRIPTS 🔥
--- تم إضافة أغنيتين جديدتين في قسم "اغاني عشوائية"
+-- تم إضافة جميع الأغاني المطلوبة (Jumpstyle وغيرها) وإزالة أداة Grab Player
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -72,19 +72,35 @@ local function playMusic(id, type)
 end
 
 MusicTab:CreateSection("اغاني عشوائية")
--- الأغاني الموجودة مسبقاً
-for name,id in pairs({
-    ["افخم فونك"]="17647322226",
-    ["فونك غضب"]="115859025716354",
-    ["فونك عالمي"]="76578817848504",
-    ["فونك ممتاز"]="102402883551679",
-    ["فونك ازعاج"]="85682109892034"
-}) do
-    MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
+
+-- جميع الأغاني المطلوبة (من الصور والإضافات السابقة)
+local randomSongs = {
+    -- الأغاني القديمة
+    {"افخم فونك", "17647322226"},
+    {"فونك غضب", "115859025716354"},
+    {"فونك عالمي", "76578817848504"},
+    {"فونك ممتاز", "102402883551679"},
+    {"فونك ازعاج", "85682109892034"},
+    -- الأغاني الجديدة من الصور
+    {"BATTLE OF EGYPT JumpSTYLE", "98965852907043"},
+    {"LAZERSTYLERZ MIX", "72205284895340"},
+    {"JUMPSTYLE 2003 (SLOWED)", "133557915783857"},
+    {"MAYHEM EXEC", "76333126810079"},
+    {"LOST", "106586241621814"},
+    {"CRYPTDUST.MID", "138397903891342"},
+    {"JumpStyling 10.06.08", "99352274208551"},
+    {"JUMPSTYLE LORD (SPED UP)", "94533013083491"},
+    {"HOLLOW DISTORTION", "106489098327460"},
+    {"2004ASHEN BOOTLeG.WEBP", "135881205397136"},
+    {"AVENGER", "135881205397136"}, -- نفس الكود حسب الصورة
+    -- الأغنيتان الإضافيتان
+    {"افشخ اغنيه", "121755260609793"},
+    {"اغنيه حلوه موت", "82696338249251"}
+}
+
+for _, song in ipairs(randomSongs) do
+    MusicTab:CreateButton({Name = song[1], Callback = function() playMusic(song[2]) end})
 end
--- الأغاني الجديدة المضافة
-MusicTab:CreateButton({Name = "افشخ اغنيه", Callback = function() playMusic("121755260609793") end})
-MusicTab:CreateButton({Name = "اغنيه حلوه موت", Callback = function() playMusic("82696338249251") end})
 
 MusicTab:CreateSection("اغاني عراقيه")
 for name,id in pairs({
@@ -166,7 +182,7 @@ MusicTab:CreateButton({
     Callback = function() if currentID ~= "" then playMusic(currentID) end end
 })
 
--- ========== تبويب الأدوات 🛠️ ==========
+-- ========== تبويب الأدوات 🛠️ (بدون Grab Player) ==========
 local ToolsTab = Window:CreateTab("الأدوات 🛠️", 4483362458)
 
 local clickTeleportActive = false
@@ -193,72 +209,6 @@ local function stopClickTeleport() if clickConn then clickConn:Disconnect(); cli
 
 ToolsTab:CreateToggle({Name = "Click Teleport 🔮", CurrentValue = false, Callback = function(s) clickTeleportActive = s; if s then startClickTeleport() else stopClickTeleport() end end})
 
-local grabActive = false
-local grabbedPlayer = nil
-local grabConn = nil
-local grabBodyVelocity = nil
-local function stopGrab()
-    if grabBodyVelocity then grabBodyVelocity:Destroy(); grabBodyVelocity = nil end
-    grabbedPlayer = nil
-end
-local function startGrab(targetPlayer)
-    if not targetPlayer or not targetPlayer.Character then return end
-    local targetHRP = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-    local myHRP = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
-    if not targetHRP or not myHRP then return end
-    grabBodyVelocity = Instance.new("BodyVelocity")
-    grabBodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-    grabBodyVelocity.Velocity = Vector3.zero
-    grabBodyVelocity.Parent = targetHRP
-    grabConn = RunService.Heartbeat:Connect(function()
-        if not grabActive or not grabbedPlayer or not grabbedPlayer.Character then
-            stopGrab()
-            return
-        end
-        local tHRP = grabbedPlayer.Character:FindFirstChild("HumanoidRootPart")
-        local mHRP = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
-        if tHRP and mHRP then
-            tHRP.CFrame = mHRP.CFrame + mHRP.CFrame.LookVector * 3
-            tHRP.AssemblyLinearVelocity = Vector3.zero
-        end
-    end)
-end
-local function toggleGrab()
-    if grabActive then
-        grabActive = false
-        stopGrab()
-        if grabConn then grabConn:Disconnect(); grabConn = nil end
-        StarterGui:SetCore("SendNotification", {Title = "Grab Tool", Text = "تم إيقاف المسك", Duration = 2})
-    else
-        local nearest = nil
-        local nearestDist = math.huge
-        local myPos = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
-        if myPos then
-            for _, p in pairs(Players:GetPlayers()) do
-                if p ~= lp and p.Character then
-                    local hrp = p.Character:FindFirstChild("HumanoidRootPart")
-                    if hrp then
-                        local dist = (hrp.Position - myPos.Position).Magnitude
-                        if dist < nearestDist and dist < 10 then
-                            nearestDist = dist
-                            nearest = p
-                        end
-                    end
-                end
-            end
-        end
-        if nearest then
-            grabbedPlayer = nearest
-            grabActive = true
-            startGrab(grabbedPlayer)
-            StarterGui:SetCore("SendNotification", {Title = "Grab Tool", Text = "تم مسك " .. nearest.Name, Duration = 2})
-        else
-            StarterGui:SetCore("SendNotification", {Title = "Grab Tool", Text = "لا يوجد لاعب قريب!", Duration = 2})
-        end
-    end
-end
-ToolsTab:CreateButton({Name = "Grab Player 🫴 (امسك لاعب)", Callback = toggleGrab})
-
 -- ========== تبويب سكربتات خارجية 🔥 ==========
 local ScriptsTab = Window:CreateTab("سكربتات 🔥", 4483362458)
 
@@ -276,4 +226,4 @@ ScriptsTab:CreateButton({
     end
 })
 
-print("JOO MUSIC + TOOLS + EXTERNAL SCRIPTS + new songs loaded")
+print("JOO MUSIC + TOOLS (Click Teleport only) + EXTERNAL SCRIPTS + All songs loaded")
