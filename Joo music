@@ -1,17 +1,27 @@
--- 🔥 JOO MUSIC + RAINBOW NAME TAG + TOOLS + EXTERNAL SCRIPTS 🔥
--- تم إضافة جميع الأغاني المطلوبة (Jumpstyle وغيرها) وإزالة أداة Grab Player
+-- =====================================================
+-- JOO MUSIC + KEY SYSTEM (Rayfield) + سرقة اغاني (Sound ID)
+-- =====================================================
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local lp = Players.LocalPlayer
-local UIS = game:GetService("UserInputService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
-local Workspace = game:GetService("Workspace")
+local TS = game:GetService("TweenService")
 local Mouse = lp:GetMouse()
 
--- ========== Name Tag ==========
+-- ========== دوال الأغاني والاسم المتلون ==========
+local function playMusic(id, type)
+    pcall(function()
+        local remote = ReplicatedStorage:WaitForChild("RE",3):FindFirstChild("1NoMoto1rVehicle1s")
+        if remote then
+            remote:FireServer(type or "SkateBoard")
+            task.wait(0.3)
+            remote:FireServer("PickingScooterMusicText", tostring(id))
+        end
+    end)
+end
+
 local function setRPName(name, bio)
     pcall(function()
         local RE = ReplicatedStorage:WaitForChild("RE", 5)
@@ -50,180 +60,364 @@ setRPName("JÓÖ MÛẞÎÇ", "thx for use a script")
 task.wait(0.5)
 startRainbowName()
 
-local Window = Rayfield:CreateWindow({
-    Name = "JÓÖ MÛẞÎÇ",
-    LoadingTitle = "تحميل...",
-    LoadingSubtitle = "thx for use a script",
-    ConfigurationSaving = {Enabled = false}
-})
+-- ========== Key System GUI ==========
+local correctKey = "JOO2025"
+local keyPassed = false
+local normalMode = false
 
--- ========== تبويب الأغاني 🎵 ==========
-local MusicTab = Window:CreateTab("الاغاني 🎵", 4483362458)
+local keyGui = Instance.new("ScreenGui")
+keyGui.Name = "JOOKeySystem"
+keyGui.ResetOnSpawn = false
+keyGui.Parent = lp:WaitForChild("PlayerGui")
 
-local function playMusic(id, type)
-    pcall(function()
-        local remote = ReplicatedStorage:WaitForChild("RE",3):FindFirstChild("1NoMoto1rVehicle1s")
-        if remote then
-            remote:FireServer(type or "SkateBoard")
-            task.wait(0.3)
-            remote:FireServer("PickingScooterMusicText", tostring(id))
+local blurBg = Instance.new("Frame")
+blurBg.Size = UDim2.fromScale(1, 1)
+blurBg.BackgroundColor3 = Color3.fromRGB(0,0,0)
+blurBg.BackgroundTransparency = 0.6
+blurBg.Parent = keyGui
+
+local keyFrame = Instance.new("Frame")
+keyFrame.Size = UDim2.new(0, 350, 0, 200)
+keyFrame.Position = UDim2.new(0.5, -175, 0.5, -100)
+keyFrame.BackgroundColor3 = Color3.fromRGB(20,20,35)
+keyFrame.BackgroundTransparency = 0.1
+keyFrame.BorderSizePixel = 0
+keyFrame.ClipsDescendants = true
+keyFrame.Parent = keyGui
+local keyCorner = Instance.new("UICorner")
+keyCorner.CornerRadius = UDim.new(0, 12)
+keyCorner.Parent = keyFrame
+
+local keyTitle = Instance.new("TextLabel")
+keyTitle.Size = UDim2.new(1,0,0,45)
+keyTitle.BackgroundTransparency = 1
+keyTitle.Text = "JOO MUSIC - KEY SYSTEM"
+keyTitle.TextColor3 = Color3.fromRGB(255,100,150)
+keyTitle.Font = Enum.Font.GothamBold
+keyTitle.TextSize = 18
+keyTitle.Parent = keyFrame
+
+local keyInput = Instance.new("TextBox")
+keyInput.Size = UDim2.new(0.8,0,0,40)
+keyInput.Position = UDim2.new(0.1,0,0.3,0)
+keyInput.BackgroundColor3 = Color3.fromRGB(40,40,55)
+keyInput.Text = ""
+keyInput.PlaceholderText = "Enter Key..."
+keyInput.TextColor3 = Color3.fromRGB(255,255,255)
+keyInput.Font = Enum.Font.Gotham
+keyInput.TextSize = 14
+keyInput.Parent = keyFrame
+local keyInputCorner = Instance.new("UICorner")
+keyInputCorner.CornerRadius = UDim.new(0, 8)
+keyInputCorner.Parent = keyInput
+
+local submitBtn = Instance.new("TextButton")
+submitBtn.Size = UDim2.new(0.4,0,0,35)
+submitBtn.Position = UDim2.new(0.05,0,0.7,0)
+submitBtn.BackgroundColor3 = Color3.fromRGB(255,70,120)
+submitBtn.Text = "FULL MODE"
+submitBtn.TextColor3 = Color3.fromRGB(255,255,255)
+submitBtn.Font = Enum.Font.GothamBold
+submitBtn.TextSize = 14
+submitBtn.Parent = keyFrame
+local submitCorner = Instance.new("UICorner")
+submitCorner.CornerRadius = UDim.new(0, 8)
+submitCorner.Parent = submitBtn
+
+local normalBtn = Instance.new("TextButton")
+normalBtn.Size = UDim2.new(0.4,0,0,35)
+normalBtn.Position = UDim2.new(0.55,0,0.7,0)
+normalBtn.BackgroundColor3 = Color3.fromRGB(80,80,100)
+normalBtn.Text = "NORMAL MODE"
+normalBtn.TextColor3 = Color3.fromRGB(255,255,255)
+normalBtn.Font = Enum.Font.GothamBold
+normalBtn.TextSize = 14
+normalBtn.Parent = keyFrame
+local normalCorner = Instance.new("UICorner")
+normalCorner.CornerRadius = UDim.new(0, 8)
+normalCorner.Parent = normalBtn
+
+submitBtn.MouseButton1Click:Connect(function()
+    if keyInput.Text == correctKey then
+        keyPassed = true
+        normalMode = false
+        TS:Create(keyFrame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+        TS:Create(blurBg, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+        task.wait(0.3)
+        keyGui:Destroy()
+        loadMainUI()
+    else
+        StarterGui:SetCore("SendNotification", {Title = "Error", Text = "Invalid Key! Use NORMAL MODE or correct key.", Duration = 3})
+        keyInput.Text = ""
+    end
+end)
+
+normalBtn.MouseButton1Click:Connect(function()
+    keyPassed = false
+    normalMode = true
+    TS:Create(keyFrame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+    TS:Create(blurBg, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+    task.wait(0.3)
+    keyGui:Destroy()
+    loadMainUI()
+end)
+
+-- ========== الوظيفة الرئيسية (Rayfield) ==========
+function loadMainUI()
+    local Window = Rayfield:CreateWindow({
+        Name = "JÓÖ MÛẞÎÇ",
+        LoadingTitle = "تحميل...",
+        LoadingSubtitle = normalMode and "Normal Mode (No Insult Songs)" or "Full Mode (All Songs)",
+        ConfigurationSaving = {Enabled = false}
+    })
+
+    -- تبويب الأغاني
+    local MusicTab = Window:CreateTab("الاغاني 🎵", 4483362458)
+
+    MusicTab:CreateSection("اغاني عشوائية")
+    local randomSongs = {
+        {"افخم فونك", "17647322226"},
+        {"فونك غضب", "115859025716354"},
+        {"فونك عالمي", "76578817848504"},
+        {"فونك ممتاز", "102402883551679"},
+        {"فونك ازعاج", "85682109892034"},
+        {"BATTLE OF EGYPT JumpSTYLE", "98965852907043"},
+        {"LAZERSTYLERZ MIX", "72205284895340"},
+        {"JUMPSTYLE 2003 (SLOWED)", "133557915783857"},
+        {"MAYHEM EXEC", "76333126810079"},
+        {"LOST", "106586241621814"},
+        {"CRYPTDUST.MID", "138397903891342"},
+        {"JumpStyling 10.06.08", "99352274208551"},
+        {"JUMPSTYLE LORD (SPED UP)", "94533013083491"},
+        {"HOLLOW DISTORTION", "106489098327460"},
+        {"2004ASHEN BOOTLeG.WEBP", "135881205397136"},
+        {"AVENGER", "135881205397136"},
+        {"افشخ اغنيه", "121755260609793"},
+        {"اغنيه حلوه موت", "82696338249251"}
+    }
+    for _, song in ipairs(randomSongs) do
+        MusicTab:CreateButton({Name = song[1], Callback = function() playMusic(song[2]) end})
+    end
+
+    MusicTab:CreateSection("اغاني عراقيه")
+    for name,id in pairs({
+        ["راب عراقي 🧩"]="116272643488592",
+        ["اخذت بدنيا تعناط ودروس"]="112254940188047",
+        ["شراره 🎻"]="81023003196738",
+        ["عراقي 🔥"]="116815742960163",
+        ["عراقي حب ❤"]="105956659839019",
+        ["ميت انا من فراقك"]="98313375960954",
+        ["دم حزني"]="99123490695024",
+        ["الحجني يا شرطي"]="120675895107276",
+        ["ريمكس عراقي"]="136909019669593",
+        ["شعر عراقي"]="83309655997452",
+        ["ازعاج عراقي"]="127840997774724",
+        ["عراقي حزين"]="106271890575602",
+        ["عود عراقي"]="94546035218751",
+        ["قول الصواري"]="135009652401688",
+        ["قررنا رحيلك"]="87510423075068",
+        ["تراني سكران 😂"]="111811908070601"
+    }) do
+        MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
+    end
+
+    -- تبويب "اغاني سب" يظهر فقط في الوضع الكامل
+    if keyPassed and not normalMode then
+        MusicTab:CreateSection("اغاني سب")
+        for name,id in pairs({
+            ["سب 1"]="91611648163631",
+            ["كشلي امك"]="71491005545506",
+            ["سب 2"]="131794008455004",
+            ["سب 3"]="88304661583351",
+            ["سب 4"]="94943308357738",
+            ["يابن القحبه"]="5849978429"
+        }) do
+            MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
         end
-    end)
-end
+    end
 
-MusicTab:CreateSection("اغاني عشوائية")
+    MusicTab:CreateSection("اغاني اجنبيه")
+    for name,id in pairs({
+        ["اجنبي حزين"]="72320758533508",
+        ["my money"]="1846687233",
+        ["ريمكس"]="120871403922972",
+        ["فونك GTA"]="109337680029292",
+        ["فونك قوي"]="138361625716987",
+        ["كرسمس"]="135528953872601"
+    }) do
+        MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
+    end
 
--- جميع الأغاني المطلوبة (من الصور والإضافات السابقة)
-local randomSongs = {
-    -- الأغاني القديمة
-    {"افخم فونك", "17647322226"},
-    {"فونك غضب", "115859025716354"},
-    {"فونك عالمي", "76578817848504"},
-    {"فونك ممتاز", "102402883551679"},
-    {"فونك ازعاج", "85682109892034"},
-    -- الأغاني الجديدة من الصور
-    {"BATTLE OF EGYPT JumpSTYLE", "98965852907043"},
-    {"LAZERSTYLERZ MIX", "72205284895340"},
-    {"JUMPSTYLE 2003 (SLOWED)", "133557915783857"},
-    {"MAYHEM EXEC", "76333126810079"},
-    {"LOST", "106586241621814"},
-    {"CRYPTDUST.MID", "138397903891342"},
-    {"JumpStyling 10.06.08", "99352274208551"},
-    {"JUMPSTYLE LORD (SPED UP)", "94533013083491"},
-    {"HOLLOW DISTORTION", "106489098327460"},
-    {"2004ASHEN BOOTLeG.WEBP", "135881205397136"},
-    {"AVENGER", "135881205397136"}, -- نفس الكود حسب الصورة
-    -- الأغنيتان الإضافيتان
-    {"افشخ اغنيه", "121755260609793"},
-    {"اغنيه حلوه موت", "82696338249251"}
-}
+    MusicTab:CreateSection("الاغاني العربيه | المصريه")
+    for name,id in pairs({
+        ["دمرتي حياتي"]="124482316940059",
+        ["تصدق كرهتك"]="113478978326245",
+        ["اه يا حلو"]="93620598835551",
+        ["اكبر غلطه"]="127085435747898",
+        ["ليه جي"]="92304349905750",
+        ["هات الدكتور"]="8776769631",
+        ["علي كيفك"]="123487073954032"
+    }) do
+        MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
+    end
 
-for _, song in ipairs(randomSongs) do
-    MusicTab:CreateButton({Name = song[1], Callback = function() playMusic(song[2]) end})
-end
+    MusicTab:CreateSection("اغاني ازعاج")
+    for name,id in pairs({
+        ["get out"]="99796748877356",
+        ["علي البي"]="105438850576001",
+        ["ازعاج فونك"]="120576436665675"
+    }) do
+        MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
+    end
 
-MusicTab:CreateSection("اغاني عراقيه")
-for name,id in pairs({
-    ["راب عراقي 🧩"]="116272643488592",
-    ["اخذت بدنيا تعناط ودروس"]="112254940188047",
-    ["شراره 🎻"]="81023003196738",
-    ["عراقي 🔥"]="116815742960163",
-    ["عراقي حب ❤"]="105956659839019",
-    ["ميت انا من فراقك"]="98313375960954",
-    ["دم حزني"]="99123490695024",
-    ["الحجني يا شرطي"]="120675895107276",
-    ["ريمكس عراقي"]="136909019669593",
-    ["شعر عراقي"]="83309655997452",
-    ["ازعاج عراقي"]="127840997774724",
-    ["عراقي حزين"]="106271890575602",
-    ["عود عراقي"]="94546035218751",
-    ["قول الصواري"]="135009652401688",
-    ["قررنا رحيلك"]="87510423075068",
-    ["تراني سكران 😂"]="111811908070601"
-}) do
-    MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
-end
+    MusicTab:CreateSection("ادخل كود خاص")
+    local currentID = ""
+    MusicTab:CreateInput({
+        Name = "كود يدوي",
+        PlaceholderText = "ID هنا",
+        Callback = function(v) currentID = v end
+    })
+    MusicTab:CreateButton({
+        Name = "▶️ تشغيل",
+        Callback = function() if currentID ~= "" then playMusic(currentID) end end
+    })
 
-MusicTab:CreateSection("اغاني سب")
-for name,id in pairs({
-    ["سب 1"]="91611648163631",
-    ["كشلي امك"]="71491005545506",
-    ["سب 2"]="131794008455004",
-    ["سب 3"]="88304661583351",
-    ["سب 4"]="94943308357738",
-    ["يابن القحبه"]="5849978429"
-}) do
-    MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
-end
+    -- تبويب الأدوات
+    local ToolsTab = Window:CreateTab("الأدوات 🛠️", 4483362458)
 
-MusicTab:CreateSection("اغاني اجنبيه")
-for name,id in pairs({
-    ["اجنبي حزين"]="72320758533508",
-    ["my money"]="1846687233",
-    ["ريمكس"]="120871403922972",
-    ["فونك GTA"]="109337680029292",
-    ["فونك قوي"]="138361625716987",
-    ["كرسمس"]="135528953872601"
-}) do
-    MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
-end
-
-MusicTab:CreateSection("الاغاني العربيه | المصريه")
-for name,id in pairs({
-    ["دمرتي حياتي"]="124482316940059",
-    ["تصدق كرهتك"]="113478978326245",
-    ["اه يا حلو"]="93620598835551",
-    ["اكبر غلطه"]="127085435747898",
-    ["ليه جي"]="92304349905750",
-    ["هات الدكتور"]="8776769631",
-    ["علي كيفك"]="123487073954032"
-}) do
-    MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
-end
-
-MusicTab:CreateSection("اغاني ازعاج")
-for name,id in pairs({
-    ["get out"]="99796748877356",
-    ["علي البي"]="105438850576001",
-    ["ازعاج فونك"]="120576436665675"
-}) do
-    MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
-end
-
-MusicTab:CreateSection("ادخل كود خاص")
-local currentID = ""
-MusicTab:CreateInput({
-    Name = "كود يدوي",
-    PlaceholderText = "ID هنا",
-    Callback = function(v) currentID = v end
-})
-MusicTab:CreateButton({
-    Name = "▶️ تشغيل",
-    Callback = function() if currentID ~= "" then playMusic(currentID) end end
-})
-
--- ========== تبويب الأدوات 🛠️ (بدون Grab Player) ==========
-local ToolsTab = Window:CreateTab("الأدوات 🛠️", 4483362458)
-
-local clickTeleportActive = false
-local clickConn = nil
-local function startClickTeleport()
-    if clickConn then clickConn:Disconnect() end
-    clickConn = Mouse.Button1Down:Connect(function()
-        if not clickTeleportActive then return end
-        local target = Mouse.Target
-        if target then
-            local pos = target.Position
-            local char = lp.Character
-            if char then
-                local hrp = char:FindFirstChild("HumanoidRootPart")
-                if hrp then
-                    hrp.CFrame = CFrame.new(pos.X, pos.Y + 3, pos.Z)
-                    hrp.AssemblyLinearVelocity = Vector3.zero
+    local clickTeleportActive = false
+    local clickConn = nil
+    local function startClickTeleport()
+        if clickConn then clickConn:Disconnect() end
+        clickConn = Mouse.Button1Down:Connect(function()
+            if not clickTeleportActive then return end
+            local target = Mouse.Target
+            if target then
+                local pos = target.Position
+                local char = lp.Character
+                if char then
+                    local hrp = char:FindFirstChild("HumanoidRootPart")
+                    if hrp then
+                        hrp.CFrame = CFrame.new(pos.X, pos.Y + 3, pos.Z)
+                        hrp.AssemblyLinearVelocity = Vector3.zero
+                    end
                 end
             end
+        end)
+    end
+    local function stopClickTeleport() if clickConn then clickConn:Disconnect(); clickConn = nil end end
+
+    ToolsTab:CreateToggle({Name = "Click Teleport 🔮", CurrentValue = false, Callback = function(s) clickTeleportActive = s; if s then startClickTeleport() else stopClickTeleport() end end})
+
+    -- تبويب سكربتات خارجية
+    local ScriptsTab = Window:CreateTab("سكربتات 🔥", 4483362458)
+
+    ScriptsTab:CreateButton({
+        Name = "🔥 أقوا سكربت صملات 🔥",
+        Callback = function()
+            loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Zenix-points-AFK-194181"))()
         end
-    end)
+    })
+
+    ScriptsTab:CreateButton({
+        Name = "👔 نسخ سكنات (IllusionDev_DUELS_v3)",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/pro628713-arch/Test-nine-hub/main/IllusionDev_DUELS_v3.json"))()
+        end
+    })
+
+    -- ========== تبويب سرقة الأغاني (يظهر فقط في Full Mode) ==========
+    if keyPassed and not normalMode then
+        local StealTab = Window:CreateTab("🎧 سرقة اغاني", 4483362458)
+
+        local stealScroll = nil
+        local stealLayout = nil
+
+        -- دالة نسخ آمنة
+        local function copyText(text)
+            local success = false
+            if setclipboard then success = pcall(setclipboard, text)
+            elseif toclipboard then success = pcall(toclipboard, text)
+            elseif syn and syn.copyToClipboard then success = pcall(syn.copyToClipboard, text)
+            else success = false end
+            return success
+        end
+
+        StealTab:CreateButton({
+            Name = "🔍 البحث عن الأغاني المشغّلة",
+            Callback = function()
+                pcall(function()
+                    if stealScroll then stealScroll:Destroy() end
+
+                    stealScroll = Instance.new("ScrollingFrame")
+                    stealScroll.Size = UDim2.new(1, -20, 0.75, -10)
+                    stealScroll.Position = UDim2.new(0, 10, 0, 50)
+                    stealScroll.BackgroundTransparency = 1
+                    stealScroll.ScrollBarThickness = 6
+                    stealScroll.CanvasSize = UDim2.new(0,0,0,0)
+                    stealScroll.Parent = StealTab
+
+                    stealLayout = Instance.new("UIListLayout")
+                    stealLayout.Padding = UDim.new(0, 6)
+                    stealLayout.SortOrder = Enum.SortOrder.LayoutOrder
+                    stealLayout.Parent = stealScroll
+
+                    local found = false
+                    local allSounds = {}
+
+                    -- البحث عن جميع كائنات Sound في اللعبة
+                    for _, obj in pairs(game:GetDescendants()) do
+                        if obj:IsA("Sound") and obj.IsPlaying then
+                            local soundId = obj.SoundId
+                            if soundId and soundId ~= "" then
+                                local id = soundId:match("(%d+)")
+                                if id and not allSounds[id] then
+                                    allSounds[id] = true
+                                    local btn = Instance.new("TextButton")
+                                    btn.Size = UDim2.new(1,0,0,35)
+                                    btn.BackgroundColor3 = Color3.fromRGB(45,45,65)
+                                    btn.BackgroundTransparency = 0.2
+                                    btn.Text = "ID: " .. id
+                                    btn.TextColor3 = Color3.fromRGB(255,255,255)
+                                    btn.TextSize = 13
+                                    btn.Font = Enum.Font.GothamBold
+                                    btn.Parent = stealScroll
+                                    local btnCorner = Instance.new("UICorner")
+                                    btnCorner.CornerRadius = UDim.new(0,8)
+                                    btnCorner.Parent = btn
+
+                                    btn.MouseButton1Click:Connect(function()
+                                        if copyText(id) then
+                                            StarterGui:SetCore("SendNotification", {Title = "تم النسخ!", Text = id, Duration = 2})
+                                        else
+                                            StarterGui:SetCore("SendNotification", {Title = "خطأ", Text = "لا يمكن النسخ", Duration = 2})
+                                        end
+                                    end)
+                                    found = true
+                                end
+                            end
+                        end
+                    end
+
+                    if not found then
+                        local noLabel = Instance.new("TextLabel")
+                        noLabel.Size = UDim2.new(1,0,0,30)
+                        noLabel.BackgroundTransparency = 1
+                        noLabel.Text = "⚠️ لا توجد أغاني مشغّلة حالياً."
+                        noLabel.TextColor3 = Color3.fromRGB(255,100,100)
+                        noLabel.TextSize = 14
+                        noLabel.Font = Enum.Font.GothamBold
+                        noLabel.TextXAlignment = Enum.TextXAlignment.Center
+                        noLabel.Parent = stealScroll
+                    else
+                        stealLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                            stealScroll.CanvasSize = UDim2.new(0,0,0, stealLayout.AbsoluteContentSize.Y + 20)
+                        end)
+                    end
+                end)
+            end
+        })
+    end
+
+    print("JOO MUSIC loaded - Mode: " .. (normalMode and "NORMAL" or "FULL"))
 end
-local function stopClickTeleport() if clickConn then clickConn:Disconnect(); clickConn = nil end end
-
-ToolsTab:CreateToggle({Name = "Click Teleport 🔮", CurrentValue = false, Callback = function(s) clickTeleportActive = s; if s then startClickTeleport() else stopClickTeleport() end end})
-
--- ========== تبويب سكربتات خارجية 🔥 ==========
-local ScriptsTab = Window:CreateTab("سكربتات 🔥", 4483362458)
-
-ScriptsTab:CreateButton({
-    Name = "🔥 أقوا سكربت صملات 🔥",
-    Callback = function()
-        loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Zenix-points-AFK-194181"))()
-    end
-})
-
-ScriptsTab:CreateButton({
-    Name = "👔 نسخ سكنات (IllusionDev_DUELS_v3)",
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/pro628713-arch/Test-nine-hub/main/IllusionDev_DUELS_v3.json"))()
-    end
-})
-
-print("JOO MUSIC + TOOLS (Click Teleport only) + EXTERNAL SCRIPTS + All songs loaded")
