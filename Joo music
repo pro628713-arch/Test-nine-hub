@@ -1,5 +1,6 @@
 -- =====================================================
--- JOO MUSIC + KEY SYSTEM (Rayfield) + سرقة اغاني (Sound ID)
+-- JOO MUSIC + KEY SYSTEM (Rayfield) + سرقة اغاني (تنصت على الـ Remote)
+-- النسخة الكاملة النهائية
 -- =====================================================
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -326,97 +327,88 @@ function loadMainUI()
         end
     })
 
-    -- ========== تبويب سرقة الأغاني (يظهر فقط في Full Mode) ==========
+    -- ========== تبويب سرقة الأغاني (يظهر فقط في Full Mode) - نسخة التنصت ==========
     if keyPassed and not normalMode then
         local StealTab = Window:CreateTab("🎧 سرقة اغاني", 4483362458)
 
         local stealScroll = nil
         local stealLayout = nil
+        local stolenSongs = {}
 
-        -- دالة نسخ آمنة
         local function copyText(text)
-            local success = false
-            if setclipboard then success = pcall(setclipboard, text)
-            elseif toclipboard then success = pcall(toclipboard, text)
-            elseif syn and syn.copyToClipboard then success = pcall(syn.copyToClipboard, text)
-            else success = false end
-            return success
+            if setclipboard then pcall(setclipboard, text)
+            elseif toclipboard then pcall(toclipboard, text)
+            elseif syn and syn.copyToClipboard then pcall(syn.copyToClipboard, text)
+            end
         end
 
-        StealTab:CreateButton({
-            Name = "🔍 البحث عن الأغاني المشغّلة",
-            Callback = function()
-                pcall(function()
-                    if stealScroll then stealScroll:Destroy() end
+        local function addSongToList(songId, playerName)
+            if stolenSongs[songId] then return end
+            stolenSongs[songId] = true
+            if not stealScroll then return end
 
-                    stealScroll = Instance.new("ScrollingFrame")
-                    stealScroll.Size = UDim2.new(1, -20, 0.75, -10)
-                    stealScroll.Position = UDim2.new(0, 10, 0, 50)
-                    stealScroll.BackgroundTransparency = 1
-                    stealScroll.ScrollBarThickness = 6
-                    stealScroll.CanvasSize = UDim2.new(0,0,0,0)
-                    stealScroll.Parent = StealTab
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(1,0,0,35)
+            btn.BackgroundColor3 = Color3.fromRGB(45,45,65)
+            btn.BackgroundTransparency = 0.2
+            btn.Text = "🎵 " .. songId .. "  (from " .. playerName .. ")"
+            btn.TextColor3 = Color3.fromRGB(255,255,255)
+            btn.TextSize = 13
+            btn.Font = Enum.Font.GothamBold
+            btn.Parent = stealScroll
+            local btnCorner = Instance.new("UICorner")
+            btnCorner.CornerRadius = UDim.new(0,8)
+            btnCorner.Parent = btn
 
-                    stealLayout = Instance.new("UIListLayout")
-                    stealLayout.Padding = UDim.new(0, 6)
-                    stealLayout.SortOrder = Enum.SortOrder.LayoutOrder
-                    stealLayout.Parent = stealScroll
+            btn.MouseButton1Click:Connect(function()
+                copyText(songId)
+                StarterGui:SetCore("SendNotification", {Title = "تم النسخ!", Text = songId, Duration = 2})
+            end)
 
-                    local found = false
-                    local allSounds = {}
-
-                    -- البحث عن جميع كائنات Sound في اللعبة
-                    for _, obj in pairs(game:GetDescendants()) do
-                        if obj:IsA("Sound") and obj.IsPlaying then
-                            local soundId = obj.SoundId
-                            if soundId and soundId ~= "" then
-                                local id = soundId:match("(%d+)")
-                                if id and not allSounds[id] then
-                                    allSounds[id] = true
-                                    local btn = Instance.new("TextButton")
-                                    btn.Size = UDim2.new(1,0,0,35)
-                                    btn.BackgroundColor3 = Color3.fromRGB(45,45,65)
-                                    btn.BackgroundTransparency = 0.2
-                                    btn.Text = "ID: " .. id
-                                    btn.TextColor3 = Color3.fromRGB(255,255,255)
-                                    btn.TextSize = 13
-                                    btn.Font = Enum.Font.GothamBold
-                                    btn.Parent = stealScroll
-                                    local btnCorner = Instance.new("UICorner")
-                                    btnCorner.CornerRadius = UDim.new(0,8)
-                                    btnCorner.Parent = btn
-
-                                    btn.MouseButton1Click:Connect(function()
-                                        if copyText(id) then
-                                            StarterGui:SetCore("SendNotification", {Title = "تم النسخ!", Text = id, Duration = 2})
-                                        else
-                                            StarterGui:SetCore("SendNotification", {Title = "خطأ", Text = "لا يمكن النسخ", Duration = 2})
-                                        end
-                                    end)
-                                    found = true
-                                end
-                            end
-                        end
-                    end
-
-                    if not found then
-                        local noLabel = Instance.new("TextLabel")
-                        noLabel.Size = UDim2.new(1,0,0,30)
-                        noLabel.BackgroundTransparency = 1
-                        noLabel.Text = "⚠️ لا توجد أغاني مشغّلة حالياً."
-                        noLabel.TextColor3 = Color3.fromRGB(255,100,100)
-                        noLabel.TextSize = 14
-                        noLabel.Font = Enum.Font.GothamBold
-                        noLabel.TextXAlignment = Enum.TextXAlignment.Center
-                        noLabel.Parent = stealScroll
-                    else
-                        stealLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                            stealScroll.CanvasSize = UDim2.new(0,0,0, stealLayout.AbsoluteContentSize.Y + 20)
-                        end)
+            if stealLayout then
+                stealLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                    if stealScroll then
+                        stealScroll.CanvasSize = UDim2.new(0,0,0, stealLayout.AbsoluteContentSize.Y + 20)
                     end
                 end)
             end
+        end
+
+        local function createStealList()
+            if stealScroll then stealScroll:Destroy() end
+            stealScroll = Instance.new("ScrollingFrame")
+            stealScroll.Size = UDim2.new(1, -20, 0.75, -10)
+            stealScroll.Position = UDim2.new(0, 10, 0, 50)
+            stealScroll.BackgroundTransparency = 1
+            stealScroll.ScrollBarThickness = 6
+            stealScroll.CanvasSize = UDim2.new(0,0,0,0)
+            stealScroll.Parent = StealTab
+
+            stealLayout = Instance.new("UIListLayout")
+            stealLayout.Padding = UDim.new(0, 6)
+            stealLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            stealLayout.Parent = stealScroll
+        end
+
+        StealTab:CreateButton({
+            Name = "🎧 بدء الاستماع للأغاني (لعب السيرفر)",
+            Callback = function()
+                createStealList()
+                StarterGui:SetCore("SendNotification", {Title = "استماع", Text = "جاري الاستماع لأغاني اللاعبين...", Duration = 3})
+            end
         })
+
+        local remote = ReplicatedStorage:WaitForChild("RE", 5):FindFirstChild("PickingScooterMusicText")
+        if remote then
+            remote.OnClientEvent:Connect(function(songId)
+                if songId and songId ~= "" then
+                    local playerName = "Someone"
+                    addSongToList(tostring(songId), playerName)
+                end
+            end)
+        else
+            StealTab:CreateLabel("⚠️ لم يتم العثور على Remote الموسيقى.")
+        end
     end
 
     print("JOO MUSIC loaded - Mode: " .. (normalMode and "NORMAL" or "FULL"))
