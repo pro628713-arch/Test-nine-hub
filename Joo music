@@ -1,6 +1,7 @@
 -- =====================================================
 -- JOO MUSIC + KEY SYSTEM (Rayfield) - النسخة النهائية
 -- مع تحكم كامل في الصوت (Speed, Bass, Volume)
+-- تمت إضافة الأغاني الجديدة (MONTAGEM, PASSINHO, إلخ)
 -- =====================================================
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -29,7 +30,6 @@ local function playMusic(id, type)
     end)
 end
 
--- دالة لتشغيل الصوت المحلي (للتأثيرات)
 local function playLocalSound(id)
     if currentSound then currentSound:Destroy() end
     currentSound = Instance.new("Sound")
@@ -41,12 +41,10 @@ local function playLocalSound(id)
     currentSound.Ended:Connect(function() currentSound:Destroy() end)
 end
 
--- دالة تحديث إعدادات الصوت الحالي
 local function updateSoundSettings()
     if currentSound then
         currentSound.Volume = currentVolume
         currentSound.PlaybackSpeed = currentSpeed
-        -- Bass Boost: نضيف تأثير EQ بسيط (تغيير في الصوت)
         if currentBass > 1 then
             currentSound.EQEnabled = true
             currentSound:SetEQ(Enum.EQType.BassBoost, currentBass)
@@ -229,10 +227,16 @@ function loadMainUI()
         {"AVENGER", "135881205397136"},
         {"افشخ اغنيه", "121755260609793"},
         {"اغنيه حلوه موت", "82696338249251"},
-        -- الأغاني الجديدة
         {"HEAVENLY JUMPSTYLE (SLOWED + REVERBED)", "124956832051872"},
         {"MONTAGEM TENTA (Slowed)", "95799488312338"},
         {"MONTAGEM E", "73211638025913"},
+        -- الأغاني الجديدة من الصور
+        {"MONTAGEM DO KARMA (SLOWED)", "79148752172118"},
+        {"DJ MONTAGEM FUNK! (8D)", "80640214873696"},
+        {"MONTAGEM TSUNAMI GIGANTE", "107424491541808"},
+        {"MONTAGEM MARIO", "122192366231455"},
+        {"PASSINHO BEM SOLTO", "106185171358009"},
+        {"MONTAGEM YOSHO HAI", "126971857595847"},
     }
     for _, song in ipairs(randomSongs) do
         if song[2] ~= "" then
@@ -243,7 +247,6 @@ function loadMainUI()
     -- ========== تبويب تحكم الصوت 🎛️ ==========
     local SoundControlTab = Window:CreateTab("تحكم الصوت 🎛️", 4483362458)
 
-    -- مستوى الصوت (Volume)
     SoundControlTab:CreateSlider({
         Name = "🔊 مستوى الصوت (0 - 2)",
         Range = {0, 2},
@@ -256,7 +259,6 @@ function loadMainUI()
         end
     })
 
-    -- سرعة التشغيل (Speed)
     SoundControlTab:CreateSlider({
         Name = "⚡ سرعة التشغيل (0.5 - 2)",
         Range = {0.5, 2},
@@ -269,7 +271,6 @@ function loadMainUI()
         end
     })
 
-    -- Bass Boost
     SoundControlTab:CreateSlider({
         Name = "🎸 Bass Boost (1 - 5)",
         Range = {1, 5},
@@ -282,7 +283,6 @@ function loadMainUI()
         end
     })
 
-    -- زر إعادة ضبط الإعدادات
     SoundControlTab:CreateButton({
         Name = "🔄 إعادة ضبط الإعدادات",
         Callback = function()
@@ -317,7 +317,6 @@ function loadMainUI()
         MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
     end
 
-    -- تبويب "اغاني سب" يظهر فقط في الوضع الكامل
     if keyPassed and not normalMode then
         MusicTab:CreateSection("اغاني سب")
         for name,id in pairs({
@@ -422,7 +421,6 @@ function loadMainUI()
         end
     })
 
-    -- زر Mickey Music Stealer (يظهر فقط في Full Mode)
     if keyPassed and not normalMode then
         ScriptsTab:CreateButton({
             Name = "🐭 Mickey Music Stealer",
