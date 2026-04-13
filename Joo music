@@ -1,5 +1,6 @@
 -- =====================================================
--- JOO MUSIC + KEY SYSTEM (Rayfield) - النسخة النهائية مع الأغاني الجديدة
+-- JOO MUSIC + KEY SYSTEM (Rayfield) - النسخة النهائية
+-- مع تحكم كامل في الصوت (Speed, Bass, Volume)
 -- =====================================================
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -9,6 +10,12 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 local TS = game:GetService("TweenService")
 local Mouse = lp:GetMouse()
+
+-- ========== متغيرات الصوت ==========
+local currentSound = nil
+local currentVolume = 1
+local currentSpeed = 1
+local currentBass = 1
 
 -- ========== دوال الأغاني والاسم المتلون ==========
 local function playMusic(id, type)
@@ -20,6 +27,33 @@ local function playMusic(id, type)
             remote:FireServer("PickingScooterMusicText", tostring(id))
         end
     end)
+end
+
+-- دالة لتشغيل الصوت المحلي (للتأثيرات)
+local function playLocalSound(id)
+    if currentSound then currentSound:Destroy() end
+    currentSound = Instance.new("Sound")
+    currentSound.SoundId = "rbxassetid://" .. id
+    currentSound.Volume = currentVolume
+    currentSound.PlaybackSpeed = currentSpeed
+    currentSound.Parent = game:GetService("Workspace")
+    currentSound:Play()
+    currentSound.Ended:Connect(function() currentSound:Destroy() end)
+end
+
+-- دالة تحديث إعدادات الصوت الحالي
+local function updateSoundSettings()
+    if currentSound then
+        currentSound.Volume = currentVolume
+        currentSound.PlaybackSpeed = currentSpeed
+        -- Bass Boost: نضيف تأثير EQ بسيط (تغيير في الصوت)
+        if currentBass > 1 then
+            currentSound.EQEnabled = true
+            currentSound:SetEQ(Enum.EQType.BassBoost, currentBass)
+        else
+            currentSound.EQEnabled = false
+        end
+    end
 end
 
 local function setRPName(name, bio)
@@ -195,22 +229,70 @@ function loadMainUI()
         {"AVENGER", "135881205397136"},
         {"افشخ اغنيه", "121755260609793"},
         {"اغنيه حلوه موت", "82696338249251"},
-        
-        -- الأغاني الجديدة المطلوبة
+        -- الأغاني الجديدة
         {"HEAVENLY JUMPSTYLE (SLOWED + REVERBED)", "124956832051872"},
-        {"MONTAGEM TENTA (Slowed)", "119535587645912"},
+        {"MONTAGEM TENTA (Slowed)", "95799488312338"},
         {"MONTAGEM E", "73211638025913"},
-        {"JOGADA (Preview) (Slowed)", ""}, -- بدون ID، لن يظهر
-        {"MONTAGEM UNNAMED (Slowed)", ""},
-        {"MONTAGEM ALQUIMIA (SLOWED)", ""}
     }
     for _, song in ipairs(randomSongs) do
         if song[2] ~= "" then
             MusicTab:CreateButton({Name = song[1], Callback = function() playMusic(song[2]) end})
-        else
-            MusicTab:CreateLabel("⚠️ " .. song[1] .. " (ID غير متوفر)")
         end
     end
+
+    -- ========== تبويب تحكم الصوت 🎛️ ==========
+    local SoundControlTab = Window:CreateTab("تحكم الصوت 🎛️", 4483362458)
+
+    -- مستوى الصوت (Volume)
+    SoundControlTab:CreateSlider({
+        Name = "🔊 مستوى الصوت (0 - 2)",
+        Range = {0, 2},
+        Increment = 0.05,
+        CurrentValue = 1,
+        Callback = function(v)
+            currentVolume = v
+            updateSoundSettings()
+            StarterGui:SetCore("SendNotification", {Title = "Volume", Text = "🔊 " .. string.format("%.2f", v), Duration = 1})
+        end
+    })
+
+    -- سرعة التشغيل (Speed)
+    SoundControlTab:CreateSlider({
+        Name = "⚡ سرعة التشغيل (0.5 - 2)",
+        Range = {0.5, 2},
+        Increment = 0.05,
+        CurrentValue = 1,
+        Callback = function(v)
+            currentSpeed = v
+            updateSoundSettings()
+            StarterGui:SetCore("SendNotification", {Title = "Speed", Text = "⚡ " .. string.format("%.2f", v), Duration = 1})
+        end
+    })
+
+    -- Bass Boost
+    SoundControlTab:CreateSlider({
+        Name = "🎸 Bass Boost (1 - 5)",
+        Range = {1, 5},
+        Increment = 0.2,
+        CurrentValue = 1,
+        Callback = function(v)
+            currentBass = v
+            updateSoundSettings()
+            StarterGui:SetCore("SendNotification", {Title = "Bass", Text = "🎸 " .. string.format("%.2f", v), Duration = 1})
+        end
+    })
+
+    -- زر إعادة ضبط الإعدادات
+    SoundControlTab:CreateButton({
+        Name = "🔄 إعادة ضبط الإعدادات",
+        Callback = function()
+            currentVolume = 1
+            currentSpeed = 1
+            currentBass = 1
+            updateSoundSettings()
+            StarterGui:SetCore("SendNotification", {Title = "Reset", Text = "تم إعادة ضبط الصوت", Duration = 2})
+        end
+    })
 
     -- باقي الأقسام (نفسها بدون تغيير)
     MusicTab:CreateSection("اغاني عراقيه")
