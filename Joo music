@@ -1,6 +1,6 @@
 -- =====================================================
 -- JOO MUSIC + KEY SYSTEM (Rayfield) - النسخة النهائية
--- بدون تحكم في الصوت، تمت إضافة أغاني مصرية جديدة
+-- تم إضافة جميع الأكواد الجديدة من الصور إلى قسم اغاني عشوائية
 -- =====================================================
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -103,7 +103,7 @@ keyInput.Size = UDim2.new(0.8,0,0,40)
 keyInput.Position = UDim2.new(0.1,0,0.3,0)
 keyInput.BackgroundColor3 = Color3.fromRGB(40,40,55)
 keyInput.Text = ""
-keyInput.PlaceholderText = "Enter Key..."
+keyInput.PlaceholderText = "حط كود هنا لو معكش دوس نسخه نورمل"
 keyInput.TextColor3 = Color3.fromRGB(255,255,255)
 keyInput.Font = Enum.Font.Gotham
 keyInput.TextSize = 14
@@ -116,7 +116,7 @@ local submitBtn = Instance.new("TextButton")
 submitBtn.Size = UDim2.new(0.4,0,0,35)
 submitBtn.Position = UDim2.new(0.05,0,0.7,0)
 submitBtn.BackgroundColor3 = Color3.fromRGB(255,70,120)
-submitBtn.Text = "FULL MODE"
+submitBtn.Text = "نسخه مطورين"
 submitBtn.TextColor3 = Color3.fromRGB(255,255,255)
 submitBtn.Font = Enum.Font.GothamBold
 submitBtn.TextSize = 14
@@ -129,7 +129,7 @@ local normalBtn = Instance.new("TextButton")
 normalBtn.Size = UDim2.new(0.4,0,0,35)
 normalBtn.Position = UDim2.new(0.55,0,0.7,0)
 normalBtn.BackgroundColor3 = Color3.fromRGB(80,80,100)
-normalBtn.Text = "NORMAL MODE"
+normalBtn.Text = "نسخه عاديه"
 normalBtn.TextColor3 = Color3.fromRGB(255,255,255)
 normalBtn.Font = Enum.Font.GothamBold
 normalBtn.TextSize = 14
@@ -175,7 +175,7 @@ function loadMainUI()
     -- تبويب الأغاني
     local MusicTab = Window:CreateTab("الاغاني 🎵", 4483362458)
 
-    -- ========== قائمة الأغاني العشوائية ==========
+    -- ========== قائمة الأغاني العشوائية (بكل الأكواد الجديدة) ==========
     MusicTab:CreateSection("اغاني عشوائية")
 
     local randomSongs = {
@@ -208,9 +208,10 @@ function loadMainUI()
         {"PASSINHO BEM SOLTO", "106185171358009"},
         {"MONTAGEM YOSHO HAI", "126971857595847"},
         {"Midnight Winter", "115590187881251"},
-        {"Unknown ID 1", "98468932764512"},
-        {"Unknown ID 2", "134763052215450"},
-        {"GRAVEYARD (HARDTEKK)", "83032125898517"},
+        -- الأكواد الجديدة من الصور (hard track v2, COOOK PARDON, وغيرها)
+        {"hard track v2", "118088133904805"},        -- COOOK PARDON - Lvbel C5 & AKDO
+        {"Unknown ID (98468932764512)", "98468932764512"},
+        {"الآء 20.7", "134763052215450"},
         {"Robot Phonkstep", "105300007125743"},
         {"PPFKT 3345", "119372546759640"},
         {"BASS DA DA DA", "138410854139543"},
@@ -222,13 +223,10 @@ function loadMainUI()
         end
     end
 
-    -- ========== الأغاني المصرية (قسم منفصل) ==========
-    MusicTab:CreateSection("اغاني مصريه")
+    -- ========== الأغاني العربية والمصرية ==========
+    MusicTab:CreateSection("الاغاني العربيه | المصريه")
 
-    local egyptianSongs = {
-        -- الأغاني المصرية المضافة (من الصورة وغيرها)
-        {"بخطار بس قني بروك (اكوام اغاني روبلوكس مسرية جباية)", "125693571824719"},
-        {"Não há dois deles na galáxia", "107424491541808"},
+    local arabicSongs = {
         {"دمرتي حياتي", "124482316940059"},
         {"تصدق كرهتك", "113478978326245"},
         {"اه يا حلو", "93620598835551"},
@@ -236,9 +234,10 @@ function loadMainUI()
         {"ليه جي", "92304349905750"},
         {"هات الدكتور", "8776769631"},
         {"علي كيفك", "123487073954032"},
+        {"بخطار بس قني بروك", "125693571824719"},
     }
 
-    for _, song in ipairs(egyptianSongs) do
+    for _, song in ipairs(arabicSongs) do
         if song[2] and song[2] ~= "" then
             MusicTab:CreateButton({Name = song[1], Callback = function() playMusic(song[2]) end})
         end
@@ -289,19 +288,6 @@ function loadMainUI()
         ["فونك GTA"]="109337680029292",
         ["فونك قوي"]="138361625716987",
         ["كرسمس"]="135528953872601"
-    }) do
-        MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
-    end
-
-    MusicTab:CreateSection("الاغاني العربيه | المصريه (قديم)")
-    for name,id in pairs({
-        ["دمرتي حياتي"]="124482316940059",
-        ["تصدق كرهتك"]="113478978326245",
-        ["اه يا حلو"]="93620598835551",
-        ["اكبر غلطه"]="127085435747898",
-        ["ليه جي"]="92304349905750",
-        ["هات الدكتور"]="8776769631",
-        ["علي كيفك"]="123487073954032"
     }) do
         MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
     end
@@ -365,7 +351,7 @@ function loadMainUI()
     })
 
     ScriptsTab:CreateButton({
-        Name = "👔 نسخ سكنات (IllusionDev_DUELS_v3)",
+        Name = "👔 نسخ سكنات (معرفش شو اكتب)",
         Callback = function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/pro628713-arch/Test-nine-hub/main/IllusionDev_DUELS_v3.json"))()
         end
