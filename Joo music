@@ -1,6 +1,5 @@
 -- =====================================================
 -- JOO MUSIC + KEY SYSTEM (Rayfield) - النسخة النهائية
--- تم إضافة جميع الأكواد الجديدة من الصور إلى قسم اغاني عشوائية
 -- =====================================================
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -67,7 +66,7 @@ local keyPassed = false
 local normalMode = false
 
 local keyGui = Instance.new("ScreenGui")
-keyGui.Name = "JOOKeySystem"
+keyGui.Name = "مكان كود"
 keyGui.ResetOnSpawn = false
 keyGui.Parent = lp:WaitForChild("PlayerGui")
 
@@ -103,7 +102,7 @@ keyInput.Size = UDim2.new(0.8,0,0,40)
 keyInput.Position = UDim2.new(0.1,0,0.3,0)
 keyInput.BackgroundColor3 = Color3.fromRGB(40,40,55)
 keyInput.Text = ""
-keyInput.PlaceholderText = "حط كود هنا لو معكش دوس نسخه نورمل"
+keyInput.PlaceholderText = "حط كود إذا معك لو ما معك دوس نسخه عاديه"
 keyInput.TextColor3 = Color3.fromRGB(255,255,255)
 keyInput.Font = Enum.Font.Gotham
 keyInput.TextSize = 14
@@ -116,7 +115,7 @@ local submitBtn = Instance.new("TextButton")
 submitBtn.Size = UDim2.new(0.4,0,0,35)
 submitBtn.Position = UDim2.new(0.05,0,0.7,0)
 submitBtn.BackgroundColor3 = Color3.fromRGB(255,70,120)
-submitBtn.Text = "نسخه مطورين"
+submitBtn.Text = "نسخه مطورين(يتطلب كود)"
 submitBtn.TextColor3 = Color3.fromRGB(255,255,255)
 submitBtn.Font = Enum.Font.GothamBold
 submitBtn.TextSize = 14
@@ -175,11 +174,8 @@ function loadMainUI()
     -- تبويب الأغاني
     local MusicTab = Window:CreateTab("الاغاني 🎵", 4483362458)
 
-    -- ========== قائمة الأغاني العشوائية (بكل الأكواد الجديدة) ==========
     MusicTab:CreateSection("اغاني عشوائية")
-
     local randomSongs = {
-        -- الأغاني القديمة
         {"افخم فونك", "17647322226"},
         {"فونك غضب", "115859025716354"},
         {"فونك عالمي", "76578817848504"},
@@ -207,25 +203,19 @@ function loadMainUI()
         {"MONTAGEM MARIO", "122192366231455"},
         {"PASSINHO BEM SOLTO", "106185171358009"},
         {"MONTAGEM YOSHO HAI", "126971857595847"},
-        {"Midnight Winter", "115590187881251"},
-        -- الأكواد الجديدة من الصور (hard track v2, COOOK PARDON, وغيرها)
-        {"hard track v2", "118088133904805"},        -- COOOK PARDON - Lvbel C5 & AKDO
         {"Unknown ID (98468932764512)", "98468932764512"},
         {"الآء 20.7", "134763052215450"},
         {"Robot Phonkstep", "105300007125743"},
         {"PPFKT 3345", "119372546759640"},
         {"BASS DA DA DA", "138410854139543"},
     }
-
     for _, song in ipairs(randomSongs) do
         if song[2] and song[2] ~= "" then
             MusicTab:CreateButton({Name = song[1], Callback = function() playMusic(song[2]) end})
         end
     end
 
-    -- ========== الأغاني العربية والمصرية ==========
     MusicTab:CreateSection("الاغاني العربيه | المصريه")
-
     local arabicSongs = {
         {"دمرتي حياتي", "124482316940059"},
         {"تصدق كرهتك", "113478978326245"},
@@ -235,15 +225,15 @@ function loadMainUI()
         {"هات الدكتور", "8776769631"},
         {"علي كيفك", "123487073954032"},
         {"بخطار بس قني بروك", "125693571824719"},
+        {"أغنية جديدة 1", "138648345036748"},
+        {"أغنية جديدة 2", "113052183515304"},
     }
-
     for _, song in ipairs(arabicSongs) do
         if song[2] and song[2] ~= "" then
             MusicTab:CreateButton({Name = song[1], Callback = function() playMusic(song[2]) end})
         end
     end
 
-    -- ========== باقي الأقسام ==========
     MusicTab:CreateSection("اغاني عراقيه")
     for name,id in pairs({
         ["راب عراقي 🧩"]="116272643488592",
@@ -351,7 +341,7 @@ function loadMainUI()
     })
 
     ScriptsTab:CreateButton({
-        Name = "👔 نسخ سكنات (معرفش شو اكتب)",
+        Name = "👔 نسخ سكنات (IllusionDev_DUELS_v3)",
         Callback = function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/pro628713-arch/Test-nine-hub/main/IllusionDev_DUELS_v3.json"))()
         end
