@@ -56,7 +56,7 @@ local function startRainbowName()
     end)
 end
 
-setRPName("ⓙⓞⓞ ⓜⓤⓢⓘⓒ ⓗⓤⓑ ⓢⓒⓡⓘⓟⓣ", "This script was developed by Youssef & Amrke")
+setRPName("ⓙⓞⓞ ⓜⓤⓢⓘⓒ ⓗⓤⓑ ⓢⓒⓡⓘⓟⓣ", "a script was developed by joo & Amrke")
 task.wait(0.5)
 startRainbowName()
 
@@ -166,7 +166,7 @@ end)
 function loadMainUI()
     local Window = Rayfield:CreateWindow({
         Name = "JÓÖ MÛẞÎÇ",
-        LoadingTitle = "تحميل...",
+        LoadingTitle = "نورت/ي سكربت يا عسل",
         LoadingSubtitle = normalMode and "Normal Mode (No Insult Songs)" or "Full Mode (All Songs)",
         ConfigurationSaving = {Enabled = false}
     })
