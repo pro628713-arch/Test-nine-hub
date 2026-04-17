@@ -56,7 +56,7 @@ local function startRainbowName()
     end)
 end
 
-setRPName("JÓÖ MÛẞÎÇ", "thx for use a script")
+setRPName("ⓙⓞⓞ ⓜⓤⓢⓘⓒ ⓗⓤⓑ ⓢⓒⓡⓘⓟⓣ", "Jōōتطوير من قبال مطور")
 task.wait(0.5)
 startRainbowName()
 
