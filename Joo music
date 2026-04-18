@@ -1,5 +1,6 @@
 -- =====================================================
 -- JOO MUSIC + KEY SYSTEM (Rayfield) - النسخة النهائية
+-- تم إضافة الأكواد الجديدة من الصور
 -- =====================================================
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -66,7 +67,7 @@ local keyPassed = false
 local normalMode = false
 
 local keyGui = Instance.new("ScreenGui")
-keyGui.Name = "مكان كود"
+keyGui.Name = "JOOKeySystem"
 keyGui.ResetOnSpawn = false
 keyGui.Parent = lp:WaitForChild("PlayerGui")
 
@@ -102,7 +103,7 @@ keyInput.Size = UDim2.new(0.8,0,0,40)
 keyInput.Position = UDim2.new(0.1,0,0.3,0)
 keyInput.BackgroundColor3 = Color3.fromRGB(40,40,55)
 keyInput.Text = ""
-keyInput.PlaceholderText = "حط كود إذا معك لو ما معك دوس نسخه عاديه"
+keyInput.PlaceholderText = "Enter Key..."
 keyInput.TextColor3 = Color3.fromRGB(255,255,255)
 keyInput.Font = Enum.Font.Gotham
 keyInput.TextSize = 14
@@ -115,7 +116,7 @@ local submitBtn = Instance.new("TextButton")
 submitBtn.Size = UDim2.new(0.4,0,0,35)
 submitBtn.Position = UDim2.new(0.05,0,0.7,0)
 submitBtn.BackgroundColor3 = Color3.fromRGB(255,70,120)
-submitBtn.Text = "نسخه مطورين(يتطلب كود)"
+submitBtn.Text = "FULL MODE"
 submitBtn.TextColor3 = Color3.fromRGB(255,255,255)
 submitBtn.Font = Enum.Font.GothamBold
 submitBtn.TextSize = 14
@@ -128,7 +129,7 @@ local normalBtn = Instance.new("TextButton")
 normalBtn.Size = UDim2.new(0.4,0,0,35)
 normalBtn.Position = UDim2.new(0.55,0,0.7,0)
 normalBtn.BackgroundColor3 = Color3.fromRGB(80,80,100)
-normalBtn.Text = "نسخه عاديه"
+normalBtn.Text = "NORMAL MODE"
 normalBtn.TextColor3 = Color3.fromRGB(255,255,255)
 normalBtn.Font = Enum.Font.GothamBold
 normalBtn.TextSize = 14
@@ -166,16 +167,18 @@ end)
 function loadMainUI()
     local Window = Rayfield:CreateWindow({
         Name = "JÓÖ MÛẞÎÇ",
-        LoadingTitle = "نورت/ي سكربت يا عسل",
+        LoadingTitle = "تحميل...",
         LoadingSubtitle = normalMode and "Normal Mode (No Insult Songs)" or "Full Mode (All Songs)",
         ConfigurationSaving = {Enabled = false}
     })
 
-    -- تبويب الأغاني
     local MusicTab = Window:CreateTab("الاغاني 🎵", 4483362458)
 
+    -- ========== اغاني عشوائية (بالإضافة الجديدة) ==========
     MusicTab:CreateSection("اغاني عشوائية")
+
     local randomSongs = {
+        -- الأغاني القديمة
         {"افخم فونك", "17647322226"},
         {"فونك غضب", "115859025716354"},
         {"فونك عالمي", "76578817848504"},
@@ -203,18 +206,26 @@ function loadMainUI()
         {"MONTAGEM MARIO", "122192366231455"},
         {"PASSINHO BEM SOLTO", "106185171358009"},
         {"MONTAGEM YOSHO HAI", "126971857595847"},
+        {"Midnight Winter", "115590187881251"},
         {"Unknown ID (98468932764512)", "98468932764512"},
         {"الآء 20.7", "134763052215450"},
         {"Robot Phonkstep", "105300007125743"},
         {"PPFKT 3345", "119372546759640"},
         {"BASS DA DA DA", "138410854139543"},
+        -- الأكواد الجديدة من الصور
+        {"Better off alone x Slaughter House mix", "112439283898361"},
+        {"Hztk 8021", "104704891783894"},
+        {"OWTR 7322", "135047699123451"},
+        {"ID 128934903242385", "128934903242385"},
     }
+
     for _, song in ipairs(randomSongs) do
         if song[2] and song[2] ~= "" then
             MusicTab:CreateButton({Name = song[1], Callback = function() playMusic(song[2]) end})
         end
     end
 
+    -- ========== باقي الأقسام كما هي (بدون تغيير) ==========
     MusicTab:CreateSection("الاغاني العربيه | المصريه")
     local arabicSongs = {
         {"دمرتي حياتي", "124482316940059"},
