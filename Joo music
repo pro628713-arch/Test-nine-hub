@@ -1,6 +1,5 @@
 -- =====================================================
 -- JOO MUSIC + KEY SYSTEM (Rayfield) - النسخة النهائية
--- تم إضافة الأكواد الجديدة من الصور
 -- =====================================================
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -57,7 +56,7 @@ local function startRainbowName()
     end)
 end
 
-setRPName("ⓙⓞⓞ ⓜⓤⓢⓘⓒ ⓗⓤⓑ ⓢⓒⓡⓘⓟⓣ", "a script was developed by joo & Amrke")
+setRPName("ⓙⓞⓞ ⓜⓤⓢⓘⓒ ⓗⓤⓑ ⓢⓒⓡⓘⓟⓣ", " a script was developed by joo & Amrke")
 task.wait(0.5)
 startRainbowName()
 
@@ -174,11 +173,8 @@ function loadMainUI()
 
     local MusicTab = Window:CreateTab("الاغاني 🎵", 4483362458)
 
-    -- ========== اغاني عشوائية (بالإضافة الجديدة) ==========
     MusicTab:CreateSection("اغاني عشوائية")
-
     local randomSongs = {
-        -- الأغاني القديمة
         {"افخم فونك", "17647322226"},
         {"فونك غضب", "115859025716354"},
         {"فونك عالمي", "76578817848504"},
@@ -207,25 +203,19 @@ function loadMainUI()
         {"PASSINHO BEM SOLTO", "106185171358009"},
         {"MONTAGEM YOSHO HAI", "126971857595847"},
         {"Midnight Winter", "115590187881251"},
-        {"Unknown ID (98468932764512)", "98468932764512"},
+        {"Unknown ID", "98468932764512"},
         {"الآء 20.7", "134763052215450"},
         {"Robot Phonkstep", "105300007125743"},
         {"PPFKT 3345", "119372546759640"},
         {"BASS DA DA DA", "138410854139543"},
-        -- الأكواد الجديدة من الصور
-        {"Better off alone x Slaughter House mix", "112439283898361"},
-        {"Hztk 8021", "104704891783894"},
-        {"OWTR 7322", "135047699123451"},
-        {"ID 128934903242385", "128934903242385"},
+        {"HEAVENLY JUMPSTYLE (new)", "139945126932727"},
     }
-
     for _, song in ipairs(randomSongs) do
         if song[2] and song[2] ~= "" then
             MusicTab:CreateButton({Name = song[1], Callback = function() playMusic(song[2]) end})
         end
     end
 
-    -- ========== باقي الأقسام كما هي (بدون تغيير) ==========
     MusicTab:CreateSection("الاغاني العربيه | المصريه")
     local arabicSongs = {
         {"دمرتي حياتي", "124482316940059"},
@@ -314,7 +304,6 @@ function loadMainUI()
         Callback = function() if currentID ~= "" then playMusic(currentID) end end
     })
 
-    -- تبويب الأدوات
     local ToolsTab = Window:CreateTab("الأدوات 🛠️", 4483362458)
 
     local clickTeleportActive = false
@@ -341,7 +330,6 @@ function loadMainUI()
 
     ToolsTab:CreateToggle({Name = "Click Teleport 🔮", CurrentValue = false, Callback = function(s) clickTeleportActive = s; if s then startClickTeleport() else stopClickTeleport() end end})
 
-    -- تبويب سكربتات خارجية
     local ScriptsTab = Window:CreateTab("سكربتات 🔥", 4483362458)
 
     ScriptsTab:CreateButton({
