@@ -1,6 +1,6 @@
 -- =====================================================
--- JOO MUSIC + KEY SYSTEM (Rayfield) - النسخة النهائية
--- تم تعديل الاسم والبايو
+-- JOO MUSIC (Full Mode) - بدون Key System
+-- جميع الأغاني والأدوات متاحة فوراً
 -- =====================================================
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
@@ -57,309 +57,200 @@ local function startRainbowName()
     end)
 end
 
--- تعديل الاسم والبايو
 setRPName("ⓙⓞⓞ ⓜⓤⓢⓘⓒ ⓗⓤⓑ ⓢⓒⓡⓘⓟⓣ", "a script was developed by joo & Amrke")
 task.wait(0.5)
 startRainbowName()
 
--- ========== Key System GUI ==========
-local correctKey = "JOO2025"
-local keyPassed = false
-local normalMode = false
+-- ========== الوظيفة الرئيسية (Rayfield) - Full Mode مباشرة ==========
+local Window = Rayfield:CreateWindow({
+    Name = "JÓÖ MÛẞÎÇ",
+    LoadingTitle = "تحميل...",
+    LoadingSubtitle = "Full Mode (All Songs)",
+    ConfigurationSaving = {Enabled = false}
+})
 
-local keyGui = Instance.new("ScreenGui")
-keyGui.Name = "JOOKeySystem"
-keyGui.ResetOnSpawn = false
-keyGui.Parent = lp:WaitForChild("PlayerGui")
+local MusicTab = Window:CreateTab("الاغاني 🎵", 4483362458)
 
-local blurBg = Instance.new("Frame")
-blurBg.Size = UDim2.fromScale(1, 1)
-blurBg.BackgroundColor3 = Color3.fromRGB(0,0,0)
-blurBg.BackgroundTransparency = 0.6
-blurBg.Parent = keyGui
-
-local keyFrame = Instance.new("Frame")
-keyFrame.Size = UDim2.new(0, 350, 0, 200)
-keyFrame.Position = UDim2.new(0.5, -175, 0.5, -100)
-keyFrame.BackgroundColor3 = Color3.fromRGB(20,20,35)
-keyFrame.BackgroundTransparency = 0.1
-keyFrame.BorderSizePixel = 0
-keyFrame.ClipsDescendants = true
-keyFrame.Parent = keyGui
-local keyCorner = Instance.new("UICorner")
-keyCorner.CornerRadius = UDim.new(0, 12)
-keyCorner.Parent = keyFrame
-
-local keyTitle = Instance.new("TextLabel")
-keyTitle.Size = UDim2.new(1,0,0,45)
-keyTitle.BackgroundTransparency = 1
-keyTitle.Text = "JOO MUSIC - KEY SYSTEM"
-keyTitle.TextColor3 = Color3.fromRGB(255,100,150)
-keyTitle.Font = Enum.Font.GothamBold
-keyTitle.TextSize = 18
-keyTitle.Parent = keyFrame
-
-local keyInput = Instance.new("TextBox")
-keyInput.Size = UDim2.new(0.8,0,0,40)
-keyInput.Position = UDim2.new(0.1,0,0.3,0)
-keyInput.BackgroundColor3 = Color3.fromRGB(40,40,55)
-keyInput.Text = ""
-keyInput.PlaceholderText = "Enter Key..."
-keyInput.TextColor3 = Color3.fromRGB(255,255,255)
-keyInput.Font = Enum.Font.Gotham
-keyInput.TextSize = 14
-keyInput.Parent = keyFrame
-local keyInputCorner = Instance.new("UICorner")
-keyInputCorner.CornerRadius = UDim.new(0, 8)
-keyInputCorner.Parent = keyInput
-
-local submitBtn = Instance.new("TextButton")
-submitBtn.Size = UDim2.new(0.4,0,0,35)
-submitBtn.Position = UDim2.new(0.05,0,0.7,0)
-submitBtn.BackgroundColor3 = Color3.fromRGB(255,70,120)
-submitBtn.Text = "FULL MODE"
-submitBtn.TextColor3 = Color3.fromRGB(255,255,255)
-submitBtn.Font = Enum.Font.GothamBold
-submitBtn.TextSize = 14
-submitBtn.Parent = keyFrame
-local submitCorner = Instance.new("UICorner")
-submitCorner.CornerRadius = UDim.new(0, 8)
-submitCorner.Parent = submitBtn
-
-local normalBtn = Instance.new("TextButton")
-normalBtn.Size = UDim2.new(0.4,0,0,35)
-normalBtn.Position = UDim2.new(0.55,0,0.7,0)
-normalBtn.BackgroundColor3 = Color3.fromRGB(80,80,100)
-normalBtn.Text = "NORMAL MODE"
-normalBtn.TextColor3 = Color3.fromRGB(255,255,255)
-normalBtn.Font = Enum.Font.GothamBold
-normalBtn.TextSize = 14
-normalBtn.Parent = keyFrame
-local normalCorner = Instance.new("UICorner")
-normalCorner.CornerRadius = UDim.new(0, 8)
-normalCorner.Parent = normalBtn
-
-submitBtn.MouseButton1Click:Connect(function()
-    if keyInput.Text == correctKey then
-        keyPassed = true
-        normalMode = false
-        TS:Create(keyFrame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-        TS:Create(blurBg, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-        task.wait(0.3)
-        keyGui:Destroy()
-        loadMainUI()
-    else
-        StarterGui:SetCore("SendNotification", {Title = "Error", Text = "Invalid Key! Use NORMAL MODE or correct key.", Duration = 3})
-        keyInput.Text = ""
+MusicTab:CreateSection("اغاني عشوائية")
+local randomSongs = {
+    {"افخم فونك", "17647322226"},
+    {"فونك غضب", "115859025716354"},
+    {"فونك عالمي", "76578817848504"},
+    {"فونك ممتاز", "102402883551679"},
+    {"فونك ازعاج", "85682109892034"},
+    {"BATTLE OF EGYPT JumpSTYLE", "98965852907043"},
+    {"LAZERSTYLERZ MIX", "72205284895340"},
+    {"JUMPSTYLE 2003 (SLOWED)", "133557915783857"},
+    {"MAYHEM EXEC", "76333126810079"},
+    {"LOST", "106586241621814"},
+    {"CRYPTDUST.MID", "138397903891342"},
+    {"JumpStyling 10.06.08", "99352274208551"},
+    {"JUMPSTYLE LORD (SPED UP)", "94533013083491"},
+    {"HOLLOW DISTORTION", "106489098327460"},
+    {"2004ASHEN BOOTLeG.WEBP", "135881205397136"},
+    {"AVENGER", "135881205397136"},
+    {"افشخ اغنيه", "121755260609793"},
+    {"اغنيه حلوه موت", "82696338249251"},
+    {"HEAVENLY JUMPSTYLE (SLOWED + REVERBED)", "124956832051872"},
+    {"MONTAGEM TENTA (Slowed)", "95799488312338"},
+    {"MONTAGEM E", "73211638025913"},
+    {"MONTAGEM DO KARMA (SLOWED)", "79148752172118"},
+    {"DJ MONTAGEM FUNK! (8D)", "80640214873696"},
+    {"MONTAGEM TSUNAMI GIGANTE", "107424491541808"},
+    {"MONTAGEM MARIO", "122192366231455"},
+    {"PASSINHO BEM SOLTO", "106185171358009"},
+    {"MONTAGEM YOSHO HAI", "126971857595847"},
+    {"Midnight Winter", "115590187881251"},
+    {"Unknown ID", "98468932764512"},
+    {"الآء 20.7", "134763052215450"},
+    {"Robot Phonkstep", "105300007125743"},
+    {"PPFKT 3345", "119372546759640"},
+    {"BASS DA DA DA", "138410854139543"},
+    {"HEAVENLY JUMPSTYLE (new)", "139945126932727"},
+    {"Better off alone x Slaughter House mix", "112439283898361"},
+    {"Hztk 8021", "104704891783894"},
+    {"OWTR 7322", "135047699123451"},
+    {"ID 128934903242385", "128934903242385"},
+}
+for _, song in ipairs(randomSongs) do
+    if song[2] and song[2] ~= "" then
+        MusicTab:CreateButton({Name = song[1], Callback = function() playMusic(song[2]) end})
     end
-end)
+end
 
-normalBtn.MouseButton1Click:Connect(function()
-    keyPassed = false
-    normalMode = true
-    TS:Create(keyFrame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-    TS:Create(blurBg, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-    task.wait(0.3)
-    keyGui:Destroy()
-    loadMainUI()
-end)
-
--- ========== الوظيفة الرئيسية (Rayfield) ==========
-function loadMainUI()
-    local Window = Rayfield:CreateWindow({
-        Name = "JÓÖ MÛẞÎÇ",
-        LoadingTitle = "تحميل...",
-        LoadingSubtitle = normalMode and "Normal Mode (No Insult Songs)" or "Full Mode (All Songs)",
-        ConfigurationSaving = {Enabled = false}
-    })
-
-    local MusicTab = Window:CreateTab("الاغاني 🎵", 4483362458)
-
-    MusicTab:CreateSection("اغاني عشوائية")
-    local randomSongs = {
-        {"افخم فونك", "17647322226"},
-        {"فونك غضب", "115859025716354"},
-        {"فونك عالمي", "76578817848504"},
-        {"فونك ممتاز", "102402883551679"},
-        {"فونك ازعاج", "85682109892034"},
-        {"BATTLE OF EGYPT JumpSTYLE", "98965852907043"},
-        {"LAZERSTYLERZ MIX", "72205284895340"},
-        {"JUMPSTYLE 2003 (SLOWED)", "133557915783857"},
-        {"MAYHEM EXEC", "76333126810079"},
-        {"LOST", "106586241621814"},
-        {"CRYPTDUST.MID", "138397903891342"},
-        {"JumpStyling 10.06.08", "99352274208551"},
-        {"JUMPSTYLE LORD (SPED UP)", "94533013083491"},
-        {"HOLLOW DISTORTION", "106489098327460"},
-        {"2004ASHEN BOOTLeG.WEBP", "135881205397136"},
-        {"AVENGER", "135881205397136"},
-        {"افشخ اغنيه", "121755260609793"},
-        {"اغنيه حلوه موت", "82696338249251"},
-        {"HEAVENLY JUMPSTYLE (SLOWED + REVERBED)", "124956832051872"},
-        {"MONTAGEM TENTA (Slowed)", "95799488312338"},
-        {"MONTAGEM E", "73211638025913"},
-        {"MONTAGEM DO KARMA (SLOWED)", "79148752172118"},
-        {"DJ MONTAGEM FUNK! (8D)", "80640214873696"},
-        {"MONTAGEM TSUNAMI GIGANTE", "107424491541808"},
-        {"MONTAGEM MARIO", "122192366231455"},
-        {"PASSINHO BEM SOLTO", "106185171358009"},
-        {"MONTAGEM YOSHO HAI", "126971857595847"},
-        {"Midnight Winter", "115590187881251"},
-        {"Unknown ID", "98468932764512"},
-        {"الآء 20.7", "134763052215450"},
-        {"Robot Phonkstep", "105300007125743"},
-        {"PPFKT 3345", "119372546759640"},
-        {"BASS DA DA DA", "138410854139543"},
-        {"HEAVENLY JUMPSTYLE (new)", "139945126932727"},
-        {"Better off alone x Slaughter House mix", "112439283898361"},
-        {"Hztk 8021", "104704891783894"},
-        {"OWTR 7322", "135047699123451"},
-        {"ID 128934903242385", "128934903242385"},
-    }
-    for _, song in ipairs(randomSongs) do
-        if song[2] and song[2] ~= "" then
-            MusicTab:CreateButton({Name = song[1], Callback = function() playMusic(song[2]) end})
-        end
+MusicTab:CreateSection("الاغاني العربيه | المصريه")
+local arabicSongs = {
+    {"دمرتي حياتي", "124482316940059"},
+    {"تصدق كرهتك", "113478978326245"},
+    {"اه يا حلو", "93620598835551"},
+    {"اكبر غلطه", "127085435747898"},
+    {"ليه جي", "92304349905750"},
+    {"هات الدكتور", "8776769631"},
+    {"علي كيفك", "123487073954032"},
+    {"بخطار بس قني بروك", "125693571824719"},
+    {"أغنية جديدة 1", "138648345036748"},
+    {"أغنية جديدة 2", "113052183515304"},
+}
+for _, song in ipairs(arabicSongs) do
+    if song[2] and song[2] ~= "" then
+        MusicTab:CreateButton({Name = song[1], Callback = function() playMusic(song[2]) end})
     end
+end
 
-    MusicTab:CreateSection("الاغاني العربيه | المصريه")
-    local arabicSongs = {
-        {"دمرتي حياتي", "124482316940059"},
-        {"تصدق كرهتك", "113478978326245"},
-        {"اه يا حلو", "93620598835551"},
-        {"اكبر غلطه", "127085435747898"},
-        {"ليه جي", "92304349905750"},
-        {"هات الدكتور", "8776769631"},
-        {"علي كيفك", "123487073954032"},
-        {"بخطار بس قني بروك", "125693571824719"},
-        {"أغنية جديدة 1", "138648345036748"},
-        {"أغنية جديدة 2", "113052183515304"},
-    }
-    for _, song in ipairs(arabicSongs) do
-        if song[2] and song[2] ~= "" then
-            MusicTab:CreateButton({Name = song[1], Callback = function() playMusic(song[2]) end})
-        end
-    end
+MusicTab:CreateSection("اغاني عراقيه")
+for name,id in pairs({
+    ["راب عراقي 🧩"]="116272643488592",
+    ["اخذت بدنيا تعناط ودروس"]="112254940188047",
+    ["شراره 🎻"]="81023003196738",
+    ["عراقي 🔥"]="116815742960163",
+    ["عراقي حب ❤"]="105956659839019",
+    ["ميت انا من فراقك"]="98313375960954",
+    ["دم حزني"]="99123490695024",
+    ["الحجني يا شرطي"]="120675895107276",
+    ["ريمكس عراقي"]="136909019669593",
+    ["شعر عراقي"]="83309655997452",
+    ["ازعاج عراقي"]="127840997774724",
+    ["عراقي حزين"]="106271890575602",
+    ["عود عراقي"]="94546035218751",
+    ["قول الصواري"]="135009652401688",
+    ["قررنا رحيلك"]="87510423075068",
+    ["تراني سكران 😂"]="111811908070601"
+}) do
+    MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
+end
 
-    MusicTab:CreateSection("اغاني عراقيه")
-    for name,id in pairs({
-        ["راب عراقي 🧩"]="116272643488592",
-        ["اخذت بدنيا تعناط ودروس"]="112254940188047",
-        ["شراره 🎻"]="81023003196738",
-        ["عراقي 🔥"]="116815742960163",
-        ["عراقي حب ❤"]="105956659839019",
-        ["ميت انا من فراقك"]="98313375960954",
-        ["دم حزني"]="99123490695024",
-        ["الحجني يا شرطي"]="120675895107276",
-        ["ريمكس عراقي"]="136909019669593",
-        ["شعر عراقي"]="83309655997452",
-        ["ازعاج عراقي"]="127840997774724",
-        ["عراقي حزين"]="106271890575602",
-        ["عود عراقي"]="94546035218751",
-        ["قول الصواري"]="135009652401688",
-        ["قررنا رحيلك"]="87510423075068",
-        ["تراني سكران 😂"]="111811908070601"
-    }) do
-        MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
-    end
+MusicTab:CreateSection("اغاني سب")
+for name,id in pairs({
+    ["سب 1"]="91611648163631",
+    ["كشلي امك"]="71491005545506",
+    ["سب 2"]="131794008455004",
+    ["سب 3"]="88304661583351",
+    ["سب 4"]="94943308357738",
+    ["يابن القحبه"]="5849978429"
+}) do
+    MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
+end
 
-    if keyPassed and not normalMode then
-        MusicTab:CreateSection("اغاني سب")
-        for name,id in pairs({
-            ["سب 1"]="91611648163631",
-            ["كشلي امك"]="71491005545506",
-            ["سب 2"]="131794008455004",
-            ["سب 3"]="88304661583351",
-            ["سب 4"]="94943308357738",
-            ["يابن القحبه"]="5849978429"
-        }) do
-            MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
-        end
-    end
+MusicTab:CreateSection("اغاني اجنبيه")
+for name,id in pairs({
+    ["اجنبي حزين"]="72320758533508",
+    ["my money"]="1846687233",
+    ["ريمكس"]="120871403922972",
+    ["فونك GTA"]="109337680029292",
+    ["فونك قوي"]="138361625716987",
+    ["كرسمس"]="135528953872601"
+}) do
+    MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
+end
 
-    MusicTab:CreateSection("اغاني اجنبيه")
-    for name,id in pairs({
-        ["اجنبي حزين"]="72320758533508",
-        ["my money"]="1846687233",
-        ["ريمكس"]="120871403922972",
-        ["فونك GTA"]="109337680029292",
-        ["فونك قوي"]="138361625716987",
-        ["كرسمس"]="135528953872601"
-    }) do
-        MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
-    end
+MusicTab:CreateSection("اغاني ازعاج")
+for name,id in pairs({
+    ["get out"]="99796748877356",
+    ["علي البي"]="105438850576001",
+    ["ازعاج فونك"]="120576436665675"
+}) do
+    MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
+end
 
-    MusicTab:CreateSection("اغاني ازعاج")
-    for name,id in pairs({
-        ["get out"]="99796748877356",
-        ["علي البي"]="105438850576001",
-        ["ازعاج فونك"]="120576436665675"
-    }) do
-        MusicTab:CreateButton({Name = name, Callback = function() playMusic(id) end})
-    end
+MusicTab:CreateSection("ادخل كود خاص")
+local currentID = ""
+MusicTab:CreateInput({
+    Name = "كود يدوي",
+    PlaceholderText = "ID هنا",
+    Callback = function(v) currentID = v end
+})
+MusicTab:CreateButton({
+    Name = "▶️ تشغيل",
+    Callback = function() if currentID ~= "" then playMusic(currentID) end end
+})
 
-    MusicTab:CreateSection("ادخل كود خاص")
-    local currentID = ""
-    MusicTab:CreateInput({
-        Name = "كود يدوي",
-        PlaceholderText = "ID هنا",
-        Callback = function(v) currentID = v end
-    })
-    MusicTab:CreateButton({
-        Name = "▶️ تشغيل",
-        Callback = function() if currentID ~= "" then playMusic(currentID) end end
-    })
+local ToolsTab = Window:CreateTab("الأدوات 🛠️", 4483362458)
 
-    local ToolsTab = Window:CreateTab("الأدوات 🛠️", 4483362458)
-
-    local clickTeleportActive = false
-    local clickConn = nil
-    local function startClickTeleport()
-        if clickConn then clickConn:Disconnect() end
-        clickConn = Mouse.Button1Down:Connect(function()
-            if not clickTeleportActive then return end
-            local target = Mouse.Target
-            if target then
-                local pos = target.Position
-                local char = lp.Character
-                if char then
-                    local hrp = char:FindFirstChild("HumanoidRootPart")
-                    if hrp then
-                        hrp.CFrame = CFrame.new(pos.X, pos.Y + 3, pos.Z)
-                        hrp.AssemblyLinearVelocity = Vector3.zero
-                    end
+local clickTeleportActive = false
+local clickConn = nil
+local function startClickTeleport()
+    if clickConn then clickConn:Disconnect() end
+    clickConn = Mouse.Button1Down:Connect(function()
+        if not clickTeleportActive then return end
+        local target = Mouse.Target
+        if target then
+            local pos = target.Position
+            local char = lp.Character
+            if char then
+                local hrp = char:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    hrp.CFrame = CFrame.new(pos.X, pos.Y + 3, pos.Z)
+                    hrp.AssemblyLinearVelocity = Vector3.zero
                 end
             end
-        end)
-    end
-    local function stopClickTeleport() if clickConn then clickConn:Disconnect(); clickConn = nil end end
-
-    ToolsTab:CreateToggle({Name = "Click Teleport 🔮", CurrentValue = false, Callback = function(s) clickTeleportActive = s; if s then startClickTeleport() else stopClickTeleport() end end})
-
-    local ScriptsTab = Window:CreateTab("سكربتات 🔥", 4483362458)
-
-    ScriptsTab:CreateButton({
-        Name = "🔥 أقوا سكربت صملات 🔥",
-        Callback = function()
-            loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Zenix-points-AFK-194181"))()
         end
-    })
-
-    ScriptsTab:CreateButton({
-        Name = "👔 نسخ سكنات (good script )",
-        Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/pro628713-arch/Test-nine-hub/main/IllusionDev_DUELS_v3.json"))()
-        end
-    })
-
-    if keyPassed and not normalMode then
-        ScriptsTab:CreateButton({
-            Name = "🐭 Mickey Music Stealer",
-            Callback = function()
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/Gaurav-0196/Stealer/refs/heads/main/MickeyStealer"))()
-            end
-        })
-    end
-
-    print("JOO MUSIC loaded - Mode: " .. (normalMode and "NORMAL" or "FULL"))
+    end)
 end
+local function stopClickTeleport() if clickConn then clickConn:Disconnect(); clickConn = nil end end
+
+ToolsTab:CreateToggle({Name = "Click Teleport 🔮", CurrentValue = false, Callback = function(s) clickTeleportActive = s; if s then startClickTeleport() else stopClickTeleport() end end})
+
+local ScriptsTab = Window:CreateTab("سكربتات 🔥", 4483362458)
+
+ScriptsTab:CreateButton({
+    Name = "🔥 أقوا سكربت صملات 🔥",
+    Callback = function()
+        loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Zenix-points-AFK-194181"))()
+    end
+})
+
+ScriptsTab:CreateButton({
+    Name = "👔 نسخ سكنات (IllusionDev_DUELS_v3)",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/pro628713-arch/Test-nine-hub/main/IllusionDev_DUELS_v3.json"))()
+    end
+})
+
+ScriptsTab:CreateButton({
+    Name = "🐭 Mickey Music Stealer",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Gaurav-0196/Stealer/refs/heads/main/MickeyStealer"))()
+    end
+})
+
+print("JOO MUSIC (Full Mode) loaded - No key required")
