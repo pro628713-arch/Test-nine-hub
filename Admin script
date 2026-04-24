@@ -1,0 +1,365 @@
+-- =====================================================
+-- Admin for Two Friends (Rayfield UI) + Jumpscare
+-- =====================================================
+
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Players = game:GetService("Players")
+local lp = Players.LocalPlayer
+local StarterGui = game:GetService("StarterGui")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
+-- ================== أسماء الأدمن ==================
+local admins = {
+    ["adam_saadi8737"] = true,   -- غير ده لاسمك
+    ["MALEK50435"] = true  -- غير ده لاسم صاحبك
+}
+
+if not admins[lp.Name] then
+    StarterGui:SetCore("SendNotification", {Title = "Error", Text = "You are not authorized!", Duration = 3})
+    return
+end
+
+-- ================== دوال الأوامر ==================
+local function getTarget(name)
+    if name == "" then return nil end
+    return Players:FindFirstChild(name)
+end
+
+local function killPlayer(target)
+    if target and target.Character then
+        local hum = target.Character:FindFirstChildOfClass("Humanoid")
+        if hum then hum.Health = 0 end
+    end
+end
+
+local function bringPlayer(target)
+    if target and target.Character then
+        local myChar = lp.Character
+        if myChar then
+            local myHrp = myChar:FindFirstChild("HumanoidRootPart")
+            local tHrp = target.Character:FindFirstChild("HumanoidRootPart")
+            if myHrp and tHrp then
+                tHrp.CFrame = myHrp.CFrame + myHrp.CFrame.LookVector * 3
+                tHrp.AssemblyLinearVelocity = Vector3.zero
+            end
+        end
+    end
+end
+
+local function tpToPlayer(target)
+    if target and target.Character then
+        local myChar = lp.Character
+        if myChar then
+            local myHrp = myChar:FindFirstChild("HumanoidRootPart")
+            local tHrp = target.Character:FindFirstChild("HumanoidRootPart")
+            if myHrp and tHrp then
+                myHrp.CFrame = tHrp.CFrame + tHrp.CFrame.LookVector * -2
+                myHrp.AssemblyLinearVelocity = Vector3.zero
+            end
+        end
+    end
+end
+
+local function freezePlayer(target)
+    if target and target.Character then
+        local hrp = target.Character:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            hrp.AssemblyLinearVelocity = Vector3.zero
+            local bv = Instance.new("BodyVelocity")
+            bv.MaxForce = Vector3.new(1e6,1e6,1e6)
+            bv.Velocity = Vector3.zero
+            bv.Parent = hrp
+            task.delay(1, function() if bv.Parent then bv:Destroy() end end)
+        end
+    end
+end
+
+local function jailPlayer(target)
+    if target and target.Character then
+        local hrp = target.Character:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            local jailPos = CFrame.new(0, 100, 0)
+            hrp.CFrame = jailPos
+            -- عمل قفص حوله
+            local cage = Instance.new("Part")
+            cage.Size = Vector3.new(6,6,6)
+            cage.Position = jailPos.Position
+            cage.Anchored = true
+            cage.CanCollide = true
+            cage.Transparency = 0.5
+            cage.BrickColor = BrickColor.new("Really red")
+            cage.Parent = workspace
+            task.delay(8, function() cage:Destroy() end)
+        end
+    end
+end
+
+local function rocketPlayer(target)
+    if target and target.Character then
+        local hrp = target.Character:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            local bv = Instance.new("BodyVelocity")
+            bv.MaxForce = Vector3.new(1e6,1e6,1e6)
+            bv.Velocity = Vector3.new(0, 200, 0) + hrp.CFrame.LookVector * 100
+            bv.Parent = hrp
+            task.delay(2, function() bv:Destroy() end)
+        end
+    end
+end
+
+local function slapPlayer(target)
+    if target and target.Character then
+        local hrp = target.Character:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            local bv = Instance.new("BodyVelocity")
+            bv.MaxForce = Vector3.new(1e6,1e6,1e6)
+            bv.Velocity = Vector3.new(math.random(-100,100), 50, math.random(-100,100))
+            bv.Parent = hrp
+            task.delay(0.5, function() bv:Destroy() end)
+        end
+    end
+end
+
+local function firePlayer(target)
+    if target and target.Character then
+        local hrp = target.Character:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            local fire = Instance.new("Fire")
+            fire.Size = 4
+            fire.Heat = 10
+            fire.Parent = hrp
+            task.delay(5, function() fire:Destroy() end)
+        end
+    end
+end
+
+local function loopPlayer(target)
+    if target and target.Character then
+        local hrp = target.Character:FindFirstChild("HumanoidRootPart")
+        if not hrp then return end
+        local conn
+        conn = RunService.Heartbeat:Connect(function()
+            if not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then
+                conn:Disconnect()
+                return
+            end
+            hrp.CFrame = CFrame.new(lp.Character.HumanoidRootPart.Position + Vector3.new(0, 5, 0))
+            hrp.AssemblyLinearVelocity = Vector3.zero
+        end)
+        task.delay(10, function() if conn then conn:Disconnect() end end)
+    end
+end
+
+-- Jumpscare (على اللاعب المستهدف)
+local function jumpscarePlayer(target)
+    if not target or not target.Character then return end
+    -- إخفاء كاميرا الهدف مؤقتاً وعرض صورة مرعبة
+    local playerGui = target:FindFirstChild("PlayerGui")
+    if not playerGui then return end
+    local jumpscareGui = Instance.new("ScreenGui")
+    jumpscareGui.Name = "Jumpscare"
+    jumpscareGui.IgnoreGuiInset = true
+    jumpscareGui.Parent = playerGui
+    
+    local image = Instance.new("ImageLabel")
+    image.Size = UDim2.new(1,0,1,0)
+    image.Image = "rbxassetid://1234567890" -- ضع ID صورة مرعبة (مؤقت)
+    image.BackgroundColor3 = Color3.new(1,1,1)
+    image.BackgroundTransparency = 0
+    image.Parent = jumpscareGui
+    
+    -- صوت مخيف
+    local sound = Instance.new("Sound")
+    sound.SoundId = "rbxassetid://138184443" -- صوت صراخ (جرب تغيره)
+    sound.Volume = 1
+    sound.Parent = jumpscareGui
+    sound:Play()
+    
+    -- اهتزاز الشاشة لهدف
+    local originalCFrame = workspace.CurrentCamera.CFrame
+    local start = tick()
+    while tick() - start < 0.5 do
+        workspace.CurrentCamera.CFrame = originalCFrame * CFrame.new(math.random(-1,1)/10, math.random(-1,1)/10, 0)
+        RunService.RenderStepped:Wait()
+    end
+    workspace.CurrentCamera.CFrame = originalCFrame
+    
+    task.delay(2, function() jumpscareGui:Destroy() end)
+end
+
+-- ================== نافذة Rayfield ==================
+local Window = Rayfield:CreateWindow({
+    Name = "Friends Admin 👥",
+    LoadingTitle = "Loading...",
+    LoadingSubtitle = "Admin for Two",
+    ConfigurationSaving = {Enabled = false}
+})
+
+local AdminTab = Window:CreateTab("⚙️ Commands", 4483362458)
+local ExtraTab = Window:CreateTab("🎭 Extra", 4483362458)
+local JumpscareTab = Window:CreateTab("👻 Jumpscare", 4483362458)
+
+-- ================== مربع إدخال الهدف ==================
+AdminTab:CreateSection("🎯 Target Player")
+local targetName = ""
+AdminTab:CreateInput({
+    Name = "Player Name",
+    PlaceholderText = "Enter target name...",
+    Callback = function(text)
+        targetName = text
+    end
+})
+
+-- دالة للحصول على اللاعب من الاسم المدخل
+local function getCurrentTarget()
+    if targetName == "" then
+        Rayfield:Notify({Title = "Error", Content = "Please enter a player name", Duration = 2})
+        return nil
+    end
+    local target = Players:FindFirstChild(targetName)
+    if not target then
+        Rayfield:Notify({Title = "Error", Content = "Player not found", Duration = 2})
+        return nil
+    end
+    return target
+end
+
+-- ================== الأوامر في التبويب الرئيسي ==================
+AdminTab:CreateSection("💀 Basic Commands")
+AdminTab:CreateButton({
+    Name = "🔪 Kill",
+    Callback = function()
+        local target = getCurrentTarget()
+        if target then killPlayer(target) end
+    end
+})
+AdminTab:CreateButton({
+    Name = "🚗 Bring",
+    Callback = function()
+        local target = getCurrentTarget()
+        if target then bringPlayer(target) end
+    end
+})
+AdminTab:CreateButton({
+    Name = "🌀 Teleport To",
+    Callback = function()
+        local target = getCurrentTarget()
+        if target then tpToPlayer(target) end
+    end
+})
+AdminTab:CreateButton({
+    Name = "❄️ Freeze",
+    Callback = function()
+        local target = getCurrentTarget()
+        if target then freezePlayer(target) end
+    end
+})
+
+AdminTab:CreateSection("🔥 Advanced Commands")
+AdminTab:CreateButton({
+    Name = "🏚️ Jail",
+    Callback = function()
+        local target = getCurrentTarget()
+        if target then jailPlayer(target) end
+    end
+})
+AdminTab:CreateButton({
+    Name = "🚀 Rocket",
+    Callback = function()
+        local target = getCurrentTarget()
+        if target then rocketPlayer(target) end
+    end
+})
+AdminTab:CreateButton({
+    Name = "🖐️ Slap",
+    Callback = function()
+        local target = getCurrentTarget()
+        if target then slapPlayer(target) end
+    end
+})
+AdminTab:CreateButton({
+    Name = "🔥 Fire",
+    Callback = function()
+        local target = getCurrentTarget()
+        if target then firePlayer(target) end
+    end
+})
+AdminTab:CreateButton({
+    Name = "🔄 Loop (10 sec)",
+    Callback = function()
+        local target = getCurrentTarget()
+        if target then loopPlayer(target) end
+    end
+})
+
+-- ================== الأوامر الإضافية (Jumpscare, إلخ) ==================
+ExtraTab:CreateSection("🎭 Extra Commands")
+ExtraTab:CreateButton({
+    Name = "💣 Explode (Fake)",
+    Callback = function()
+        local target = getCurrentTarget()
+        if target and target.Character then
+            local hrp = target.Character:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                local explosion = Instance.new("Explosion")
+                explosion.Position = hrp.Position
+                explosion.BlastRadius = 10
+                explosion.Parent = workspace
+                explosion:Destroy()
+            end
+        end
+    end
+})
+ExtraTab:CreateButton({
+    Name = "🎈 Float",
+    Callback = function()
+        local target = getCurrentTarget()
+        if target and target.Character then
+            local hrp = target.Character:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                local bv = Instance.new("BodyVelocity")
+                bv.MaxForce = Vector3.new(1e6,1e6,1e6)
+                bv.Velocity = Vector3.new(0, 50, 0)
+                bv.Parent = hrp
+                task.delay(3, function() bv:Destroy() end)
+            end
+        end
+    end
+})
+ExtraTab:CreateButton({
+    Name = "🧹 Clear Tools",
+    Callback = function()
+        local target = getCurrentTarget()
+        if target and target.Character then
+            for _, tool in pairs(target.Character:GetChildren()) do
+                if tool:IsA("Tool") then
+                    tool:Destroy()
+                end
+            end
+        end
+    end
+})
+
+-- ================== Jumpscare ==================
+JumpscareTab:CreateSection("👻 Scare Your Target")
+JumpscareTab:CreateButton({
+    Name = "😱 Jumpscare (Target)",
+    Callback = function()
+        local target = getCurrentTarget()
+        if target then jumpscarePlayer(target) end
+    end
+})
+JumpscareTab:CreateLabel("Note: The jumpscare effect includes:")
+JumpscareTab:CreateLabel("- Loud scream sound")
+JumpscareTab:CreateLabel("- Screen shake")
+JumpscareTab:CreateLabel("- Scary image (you can change ID)")
+
+-- ================== رسالة ترحيب ==================
+Rayfield:Notify({
+    Title = "Friends Admin",
+    Content = "Loaded! Only you and your friend can use this.",
+    Duration = 4
+})
+
+print("✅ Friends Admin (Rayfield) loaded - Jumpscare and more commands added")
