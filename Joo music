@@ -1,5 +1,5 @@
 -- =====================================================
--- JOO MUSIC - WindUI Edition (محدث)
+-- JOO MUSIC - WindUI Edition (بإضافة اغاني سب جديدة)
 -- =====================================================
 
 -- تحميل مكتبة WindUI
@@ -118,17 +118,16 @@ local MainTab = Window:Tab({
     Locked = false,
 })
 
-MainTab:Button({
-    Title = "📢 ترحيب",
-    Desc = "رسالة من المطور",
+MainTab:Paragraph({
+    Title = "📢 رسالة من المطور",
+    Text = "اتمنا يعجبكم سكربت و بحاول انشاء الله اخليه احسن\nسكربت لسه تحت إنشاء و انشاء الله بصلح اي مشاكل",
     Locked = false,
-    Callback = function()
-        StarterGui:SetCore("SendNotification", {
-            Title = "JOO MUSIC",
-            Text = "اتمنا يعجبكم سكربت و بحاول انشاء الله اخليه احسن+ سكربت لسه تحت إنشاء و انشاء الله بصلح اي مشاكل",
-            Duration = 8
-        })
-    end
+})
+
+MainTab:Paragraph({
+    Title = "⭐ شكر خاص",
+    Text = "JOO & Amrke\nباستخدام WindUI Library",
+    Locked = false,
 })
 
 -- ==================== تبويب الأغاني ====================
@@ -138,7 +137,7 @@ local MusicTab = Window:Tab({
     Locked = false,
 })
 
--- قائمة الأغاني العشوائية (كاملة)
+-- قائمة الأغاني العشوائية
 local randomSongs = {
     {"افخم فونك", "17647322226"},
     {"فونك غضب", "115859025716354"},
@@ -191,7 +190,7 @@ for _, song in ipairs(randomSongs) do
     })
 end
 
--- قسم الأغاني العربية والمصرية
+-- الأغاني العربية والمصرية
 MusicTab:Button({
     Title = "--- الاغاني العربيه | المصريه ---",
     Desc = "",
@@ -221,7 +220,7 @@ for _, song in ipairs(arabicSongs) do
     })
 end
 
--- قسم الأغاني العراقية
+-- الأغاني العراقية
 MusicTab:Button({
     Title = "--- اغاني عراقيه ---",
     Desc = "",
@@ -257,7 +256,36 @@ for _, song in ipairs(iraqiSongs) do
     })
 end
 
--- قسم الأغاني الأجنبية
+-- اغاني سب (مع الأكواد الجديدة)
+MusicTab:Button({
+    Title = "--- اغاني سب ---",
+    Desc = "",
+    Locked = true,
+    Callback = function() end
+})
+local insultSongs = {
+    {"سب 1", "91611648163631"},
+    {"كشلي امك", "71491005545506"},
+    {"سب 2", "131794008455004"},
+    {"سب 3", "88304661583351"},
+    {"سب 4", "94943308357738"},
+    -- الأكواد الجديدة التي طلبها المستخدم (سيتم تسميتها من قبله)
+    {"متجوش مع واحد شرموط", "99113135294997"},
+    {"سب بهجت صابر", "6713993281"},
+    {"ارسل كلمه كس", "6536444735"},
+}
+for _, song in ipairs(insultSongs) do
+    MusicTab:Button({
+        Title = song[1],
+        Desc = "ID: " .. song[2],
+        Locked = false,
+        Callback = function()
+            playMusic(song[2])
+        end
+    })
+end
+
+-- الأغاني الأجنبية
 MusicTab:Button({
     Title = "--- اغاني اجنبيه ---",
     Desc = "",
@@ -283,7 +311,7 @@ for _, song in ipairs(foreignSongs) do
     })
 end
 
--- قسم الأغاني المزعجة
+-- الأغاني المزعجة
 MusicTab:Button({
     Title = "--- اغاني ازعاج ---",
     Desc = "",
@@ -308,8 +336,8 @@ end
 
 -- كود يدوي
 MusicTab:Button({
-    Title = "🎧 كود يدوي (اكتب ID في الشات بادئة / )",
-    Desc = "مثال: /17647322226",
+    Title = "🎧 كود يدوي",
+    Desc = "اكتب / ثم ID الأغنية في الشات",
     Locked = false,
     Callback = function()
         StarterGui:SetCore("SendNotification", {Title = "معلومة", Text = "اكتب / ثم ID الأغنية في الشات", Duration = 3})
@@ -383,7 +411,7 @@ local ScriptsTab = Window:Tab({
 
 ScriptsTab:Button({
     Title = "🔥 VR7 On Top 🔥",
-    Desc = "VR7 Script (سكربت ني#)",
+    Desc = "VR7 Script (The Strongest Battlegrounds)",
     Locked = false,
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/VR7ss/OMK/refs/heads/main/VR7-ON-TOP"))()
@@ -426,4 +454,4 @@ welcomeSound.Looped = false
 welcomeSound.Parent = SoundService
 welcomeSound:Play()
 
-print("✅ JOO MUSIC with WindUI (VR7 + Main Tab) loaded successfully!")
+print("✅ JOO MUSIC with WindUI (مع اغاني سب جديدة) loaded successfully!")
