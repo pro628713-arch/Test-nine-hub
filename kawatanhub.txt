@@ -27,7 +27,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local lp = Players.LocalPlayer
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "LaineeHub"
+ScreenGui.Name = "OnS "
 ScreenGui.Parent = CoreGui
 ScreenGui.ResetOnSpawn = false
 
