@@ -1,0 +1,760 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+local Workspace = game:GetService("Workspace")
+
+local lp = Players.LocalPlayer
+local lagEnabled = false
+local speedEnabled = false
+local desyncEnabled = false
+local lagAmount = 0.1
+local speedAmount = 30
+local stealAmount = 30
+local minimized = false
+local sliderDragging = false
+
+local COL_BG = Color3.fromRGB(12, 16, 35)
+local COL_ROW = Color3.fromRGB(20, 25, 50)
+local COL_TOGGLE = Color3.fromRGB(30, 40, 70)
+local COL_GREEN = Color3.fromRGB(0, 200, 0)
+
+local STROKE_COLORS = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 80, 0)),
+	ColorSequenceKeypoint.new(0.4, Color3.fromRGB(0, 200, 0)),
+	ColorSequenceKeypoint.new(0.5, Color3.new(1, 1, 1)),
+	ColorSequenceKeypoint.new(0.6, Color3.fromRGB(0, 200, 0)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 80, 0)),
+})
+
+local allStrokeGrads = {}
+
+local function addAnimatedStroke(parent, thickness)
+	local s = Instance.new("UIStroke")
+	s.Thickness = thickness or 1
+	s.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	s.Color = Color3.new(1, 1, 1)
+	s.Parent = parent
+	local g = Instance.new("UIGradient")
+	g.Color = STROKE_COLORS
+	g.Rotation = 45
+	g.Parent = s
+	table.insert(allStrokeGrads, g)
+	return s, g
+end
+
+local function loadLagValue()
+	if isfile and isfile("IrishHub_LagAmount.txt") then
+		local content = readfile("IrishHub_LagAmount.txt")
+		local value = tonumber(content)
+		if value then return math.clamp(value, 0, 0.2) end
+	end
+	return 0.1
+end
+local function saveLagValue(value)
+	if writefile then writefile("IrishHub_LagAmount.txt", tostring(value)) end
+end
+local function loadSpeedValue()
+	if isfile and isfile("IrishHub_SpeedAmount.txt") then
+		local content = readfile("IrishHub_SpeedAmount.txt")
+		local value = tonumber(content)
+		if value then return math.clamp(value, 1, 120) end
+	end
+	return 30
+end
+local function saveSpeedValue(value)
+	if writefile then writefile("IrishHub_SpeedAmount.txt", tostring(value)) end
+end
+local function loadStealValue()
+	if isfile and isfile("IrishHub_StealAmount.txt") then
+		local content = readfile("IrishHub_StealAmount.txt")
+		local value = tonumber(content)
+		if value then return math.clamp(value, 1, 70) end
+	end
+	return 30
+end
+local function saveStealValue(value)
+	if writefile then writefile("IrishHub_StealAmount.txt", tostring(value)) end
+end
+
+lagAmount = loadLagValue()
+speedAmount = loadSpeedValue()
+stealAmount = loadStealValue()
+
+if not CoreGui:FindFirstChild("HiddenUI") then
+	local f = Instance.new("Folder")
+	f.Name = "HiddenUI"
+	f.Parent = CoreGui
+end
+if CoreGui.HiddenUI:FindFirstChild("IrishHub_DesyncPanel") then
+	CoreGui.HiddenUI.IrishHub_DesyncPanel:Destroy()
+end
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "IrishHub_DesyncPanel"
+gui.ResetOnSpawn = false
+gui.Parent = CoreGui.HiddenUI
+
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0, 200, 0, 290)
+main.Position = UDim2.new(0.5, -100, 0.5, -145)
+main.BackgroundColor3 = COL_BG
+main.BackgroundTransparency = 0.4
+main.BorderSizePixel = 0
+main.ClipsDescendants = true
+main.Active = true
+main.Parent = gui
+
+Instance.new("UICorner", main).CornerRadius = UDim.new(0, 10)
+addAnimatedStroke(main, 2)
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -40, 0, 20)
+title.Position = UDim2.new(0, 10, 0, 5)
+title.BackgroundTransparency = 1
+title.Text = "Irish Hub Desync Panel"
+title.Font = Enum.Font.GothamBlack
+title.TextSize = 15
+title.TextColor3 = Color3.new(1, 1, 1)
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = main
+
+local titleGrad = Instance.new("UIGradient")
+titleGrad.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, COL_GREEN),
+	ColorSequenceKeypoint.new(0.5, Color3.new(1, 1, 1)),
+	ColorSequenceKeypoint.new(1, COL_GREEN),
+})
+titleGrad.Parent = title
+
+local subtitle = Instance.new("TextLabel")
+subtitle.Size = UDim2.new(1, -40, 0, 15)
+subtitle.Position = UDim2.new(0, 10, 0, 23)
+subtitle.BackgroundTransparency = 1
+subtitle.Text = "discord.gg/irsh"
+subtitle.Font = Enum.Font.GothamMedium
+subtitle.TextSize = 11
+subtitle.TextColor3 = Color3.new(1, 1, 1)
+subtitle.TextTransparency = 0.5
+subtitle.TextXAlignment = Enum.TextXAlignment.Left
+subtitle.Parent = main
+
+local minBtn = Instance.new("TextButton")
+minBtn.Size = UDim2.new(0, 24, 0, 24)
+minBtn.Position = UDim2.new(1, -32, 0, 8)
+minBtn.BackgroundColor3 = COL_TOGGLE
+minBtn.Text = "-"
+minBtn.TextColor3 = Color3.new(1, 1, 1)
+minBtn.Font = Enum.Font.GothamBlack
+minBtn.TextSize = 14
+minBtn.BorderSizePixel = 0
+minBtn.AutoButtonColor = false
+minBtn.Parent = main
+
+Instance.new("UICorner", minBtn).CornerRadius = UDim.new(0, 6)
+addAnimatedStroke(minBtn, 1)
+
+minBtn.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	TweenService:Create(main, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {
+		Size = minimized and UDim2.new(0, 200, 0, 40) or UDim2.new(0, 200, 0, 290)
+	}):Play()
+	minBtn.Text = minimized and "+" or "-"
+end)
+
+local function makeRow(yPos, labelText)
+	local row = Instance.new("Frame")
+	row.Size = UDim2.new(1, -20, 0, 34)
+	row.Position = UDim2.new(0, 10, 0, yPos)
+	row.BackgroundColor3 = COL_ROW
+	row.BorderSizePixel = 0
+	row.Parent = main
+	Instance.new("UICorner", row)
+	addAnimatedStroke(row, 1)
+
+	local lbl = Instance.new("TextLabel")
+	lbl.Size = UDim2.new(1, -100, 1, 0)
+	lbl.Position = UDim2.new(0, 10, 0, 0)
+	lbl.BackgroundTransparency = 1
+	lbl.Text = labelText
+	lbl.Font = Enum.Font.GothamBlack
+	lbl.TextSize = 13
+	lbl.TextColor3 = Color3.new(1, 1, 1)
+	lbl.TextXAlignment = Enum.TextXAlignment.Left
+	lbl.Parent = row
+
+	local track = Instance.new("Frame")
+	track.Size = UDim2.new(0, 36, 0, 18)
+	track.Position = UDim2.new(1, -46, 0.5, -9)
+	track.BackgroundColor3 = COL_TOGGLE
+	track.BorderSizePixel = 0
+	track.Parent = row
+	Instance.new("UICorner", track).CornerRadius = UDim.new(0, 9)
+	addAnimatedStroke(track, 1)
+
+	local knob = Instance.new("Frame")
+	knob.Size = UDim2.new(0, 14, 0, 14)
+	knob.Position = UDim2.new(0, 2, 0.5, -7)
+	knob.BackgroundColor3 = Color3.new(1, 1, 1)
+	knob.BorderSizePixel = 0
+	knob.Parent = track
+	Instance.new("UICorner", knob).CornerRadius = UDim.new(0, 7)
+
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(0, 46, 1, 0)
+	btn.Position = UDim2.new(1, -46, 0, 0)
+	btn.BackgroundTransparency = 1
+	btn.Text = ""
+	btn.Parent = row
+
+	return row, btn, knob, track
+end
+
+local function makeSlider(yPos, labelText, min, max, default, formatFn, onChange)
+	local container = Instance.new("Frame")
+	container.Size = UDim2.new(1, -20, 0, 30)
+	container.Position = UDim2.new(0, 10, 0, yPos)
+	container.BackgroundTransparency = 1
+	container.Parent = main
+
+	local lbl = Instance.new("TextLabel")
+	lbl.Size = UDim2.new(1, 0, 0, 14)
+	lbl.Position = UDim2.new(0, 0, 0, 0)
+	lbl.BackgroundTransparency = 1
+	lbl.Text = formatFn(default)
+	lbl.Font = Enum.Font.GothamBold
+	lbl.TextSize = 10
+	lbl.TextColor3 = Color3.new(1, 1, 1)
+	lbl.TextTransparency = 0.3
+	lbl.TextXAlignment = Enum.TextXAlignment.Left
+	lbl.Parent = container
+
+	local bar = Instance.new("Frame")
+	bar.Size = UDim2.new(1, 0, 0, 5)
+	bar.Position = UDim2.new(0, 0, 0, 18)
+	bar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	bar.BorderSizePixel = 0
+	bar.Parent = container
+	Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
+
+	local startRel = (default - min) / (max - min)
+
+	local fill = Instance.new("Frame")
+	fill.Size = UDim2.new(startRel, 0, 1, 0)
+	fill.BackgroundColor3 = COL_GREEN
+	fill.BorderSizePixel = 0
+	fill.Parent = bar
+	Instance.new("UICorner", fill).CornerRadius = UDim.new(1, 0)
+
+	local knobS = Instance.new("Frame")
+	knobS.Size = UDim2.new(0, 10, 0, 10)
+	knobS.AnchorPoint = Vector2.new(0.5, 0.5)
+	knobS.Position = UDim2.new(startRel, 0, 0.5, 0)
+	knobS.BackgroundColor3 = Color3.new(1, 1, 1)
+	knobS.BorderSizePixel = 0
+	knobS.Parent = bar
+	Instance.new("UICorner", knobS).CornerRadius = UDim.new(1, 0)
+
+	local thisSliderDragging = false
+
+	bar.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			thisSliderDragging = true
+			sliderDragging = true
+		end
+	end)
+
+	knobS.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			thisSliderDragging = true
+			sliderDragging = true
+		end
+	end)
+
+	UserInputService.InputChanged:Connect(function(input)
+		if thisSliderDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+			local rel = math.clamp((input.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X, 0, 1)
+			rel = math.floor(rel * 180) / 180
+			fill.Size = UDim2.new(rel, 0, 1, 0)
+			knobS.Position = UDim2.new(rel, 0, 0.5, 0)
+			local val = min + rel * (max - min)
+			lbl.Text = formatFn(val)
+			onChange(val)
+		end
+	end)
+
+	UserInputService.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			if thisSliderDragging then
+				thisSliderDragging = false
+				sliderDragging = false
+			end
+		end
+	end)
+
+	return container
+end
+
+local DESYNC_REPORT_WALK_MIN = 40
+local DESYNC_REPORT_WALK_MAX = 59
+local DESYNC_DRIVE_MIN = 20
+local DESYNC_DRIVE_MAX = 29
+local DESYNC_REPORT_WALK_MIN_TOUCH = 38
+local DESYNC_REPORT_WALK_MAX_TOUCH = 56
+local DESYNC_REPORT_PER_DRIVE_PC = 1.58
+local DESYNC_REPORT_PER_DRIVE_OFF_PC = 1.5
+local DESYNC_REPORT_PER_DRIVE_TOUCH = 1.48
+local DESYNC_REPORT_PER_DRIVE_OFF_TOUCH = 3.2
+local DESYNC_BYPASS_STEAL_MIN_MOBILE = 40
+local DESYNC_BYPASS_STEAL_MAX_MOBILE = 51
+local DESYNC_VEL_SMOOTH_HZ = 4.25
+local DESYNC_SNAP_MIN_INTERVAL = 0.14
+local DESYNC_LV_MAX_FORCE = 1.2e7
+
+local IS_TOUCH_DEVICE = UserInputService.TouchEnabled
+local IS_MOBILE = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+
+local desyncConn = nil
+local desyncInvisiblePart = nil
+local desyncOriginalWalk = nil
+local desyncLastWalkWritten = nil
+local desyncLastSnapTime = 0
+local desyncPostSimLastT = 0
+local desyncLinearVelocity = nil
+local desyncNetworkRefreshConn = nil
+
+local espPart = nil
+local espSkipFrames = 5
+local espLastPosition = nil
+local espPreSimConn = nil
+local espCharAddedConn = nil
+
+local DesyncTuning = { lvMaxForce = DESYNC_LV_MAX_FORCE }
+
+local function applyDesyncHubFFlags()
+	local now = tick()
+	local last = (getgenv and getgenv()._desyncFFLast) or 0
+	if (now - last) < 0.75 then return end
+	if getgenv then getgenv()._desyncFFLast = now end
+	if type(setfflag) ~= "function" then return end
+	local flags = {
+		S2PhysicsSenderRate = 15000,
+		DFIntConnectionMTUSize = 1400,
+		DFIntRakNetResendBufferArrayLength = 128,
+		DFIntRakNetResendTimeoutMS = 300,
+		DFIntNetworkLatencyTolerance = 1,
+		DFIntNetworkPrediction = 1,
+		FFlagRakNetDisableFlowControl = true,
+		DFFlagRakNetDisableCongestionControl = true,
+		DFIntTaskSchedulerTargetFps = 29383,
+		FFlagGameBasicSettingsFramerateCap5 = false,
+		FFlagTaskSchedulerLimitTargetFpsTo2402 = false,
+	}
+	for name, value in pairs(flags) do
+		pcall(function() setfflag(tostring(name), tostring(value)) end)
+	end
+end
+
+local function setRaknetDesync(on)
+	pcall(function()
+		local g = (getgenv and getgenv()) or _G
+		local r = rawget(g, "raknet")
+		if type(r) == "table" and type(r.desync) == "function" then r.desync(on) end
+		local n = rawget(g, "network")
+		if type(n) == "table" and type(n.desync) == "function" then n.desync(on) end
+		local f = rawget(g, "fluxus")
+		if type(f) == "table" and type(f.network_desync) == "function" then f.network_desync(on) end
+	end)
+end
+
+local function updateESPPart(position, labelText)
+	if espPart then espPart:Destroy() end
+	local part = Instance.new("Part")
+	part.Size = Vector3.new(2, 2, 2)
+	part.Shape = Enum.PartType.Ball
+	part.Color = Color3.fromRGB(0, 255, 0)
+	part.Material = Enum.Material.Neon
+	part.Anchored = true
+	part.CanCollide = false
+	part.CFrame = CFrame.new(position)
+	part.Parent = Workspace
+	
+	local billboard = Instance.new("BillboardGui")
+	billboard.Size = UDim2.new(0, 120, 0, 30)
+	billboard.StudsOffset = Vector3.new(0, 2.5, 0)
+	billboard.AlwaysOnTop = true
+	billboard.Parent = part
+	
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.new(1, 0, 1, 0)
+	label.BackgroundTransparency = 1
+	label.Text = labelText
+	label.TextColor3 = Color3.fromRGB(0, 255, 0)
+	label.TextSize = 14
+	label.Font = Enum.Font.GothamBold
+	label.Parent = billboard
+	
+	espPart = part
+end
+
+local function setupESPForCharacter(character)
+	if not desyncEnabled then return end
+	local hrp = character:WaitForChild("HumanoidRootPart")
+	espLastPosition = hrp.Position
+	espSkipFrames = 5
+	updateESPPart(espLastPosition, "Server Pos")
+	
+	if espPreSimConn then espPreSimConn:Disconnect() end
+	espPreSimConn = RunService.PreSimulation:Connect(function()
+		if not desyncEnabled then return end
+		if not character.Parent then
+			if espPreSimConn then espPreSimConn:Disconnect() end
+			return
+		end
+		local currentPos = hrp.Position
+		if espSkipFrames > 0 then
+			espSkipFrames = espSkipFrames - 1
+			espLastPosition = currentPos
+			return
+		end
+		local jumpDist = (currentPos - espLastPosition).Magnitude
+		if jumpDist > 3 then
+			updateESPPart(currentPos, "Server Pos")
+		end
+		espLastPosition = currentPos
+	end)
+end
+
+local function stopESP()
+	if espPreSimConn then espPreSimConn:Disconnect() end
+	if espCharAddedConn then espCharAddedConn:Disconnect() end
+	if espPart then espPart:Destroy() end
+	espPreSimConn = nil
+	espCharAddedConn = nil
+	espPart = nil
+	espLastPosition = nil
+end
+
+local function startESP()
+	if not desyncEnabled then return end
+	stopESP()
+	if lp.Character then setupESPForCharacter(lp.Character) end
+	espCharAddedConn = lp.CharacterAdded:Connect(function(char)
+		if desyncEnabled then setupESPForCharacter(char) end
+	end)
+end
+
+local function updateDesyncMovement(dt)
+	dt = (type(dt) == "number" and dt > 0 and dt < 0.5) and dt or (1 / 60)
+	local blend = math.clamp(dt * DESYNC_VEL_SMOOTH_HZ, 0.08, 0.5)
+	local function applySmoothedHorizontal(targetVx, targetVz)
+		local cur = desyncInvisiblePart.AssemblyLinearVelocity
+		local vy = cur.Y
+		local nvx = cur.X + (targetVx - cur.X) * blend
+		local nvz = cur.Z + (targetVz - cur.Z) * blend
+		local v = Vector3.new(nvx, vy, nvz)
+		if desyncLinearVelocity and desyncLinearVelocity.Parent then
+			desyncLinearVelocity.VectorVelocity = v
+		else
+			desyncInvisiblePart.AssemblyLinearVelocity = v
+		end
+	end
+	if not desyncEnabled or not desyncInvisiblePart or not desyncInvisiblePart.Parent then return end
+	local char = lp.Character
+	if not char or desyncInvisiblePart.Parent ~= char then return end
+	local humanoid = char:FindFirstChildOfClass("Humanoid")
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+	if not humanoid or not hrp then return end
+	if humanoid.Health <= 0 then
+		pcall(function() if desyncOriginalWalk ~= nil then humanoid.WalkSpeed = desyncOriginalWalk end end)
+		desyncLastWalkWritten = nil
+		local vy0 = desyncInvisiblePart.AssemblyLinearVelocity.Y
+		local zv = Vector3.new(0, vy0, 0)
+		if desyncLinearVelocity and desyncLinearVelocity.Parent then
+			desyncLinearVelocity.VectorVelocity = zv
+		else
+			desyncInvisiblePart.AssemblyLinearVelocity = zv
+		end
+		return
+	end
+	local moveDir = humanoid.MoveDirection
+	local moving = moveDir.Magnitude > 0.02
+	local driveUnit = moving and moveDir.Unit or nil
+	local function getDesyncSplitWalkAndDrive()
+		local orig = desyncOriginalWalk or 16
+		orig = math.clamp(orig, 6, 34)
+		local t = math.clamp((orig - 6) / 28, 0, 1)
+		local driveS = DESYNC_DRIVE_MIN + t * (DESYNC_DRIVE_MAX - DESYNC_DRIVE_MIN)
+		local reportW
+		if IS_TOUCH_DEVICE then
+			reportW = driveS * DESYNC_REPORT_PER_DRIVE_TOUCH + DESYNC_REPORT_PER_DRIVE_OFF_TOUCH
+			reportW = math.clamp(reportW, DESYNC_REPORT_WALK_MIN_TOUCH, DESYNC_REPORT_WALK_MAX_TOUCH)
+		else
+			reportW = driveS * DESYNC_REPORT_PER_DRIVE_PC + DESYNC_REPORT_PER_DRIVE_OFF_PC
+			reportW = math.clamp(reportW, DESYNC_REPORT_WALK_MIN, DESYNC_REPORT_WALK_MAX)
+		end
+		return reportW, driveS
+	end
+	local reportW, driveS = getDesyncSplitWalkAndDrive()
+	if moving then
+		if desyncLastWalkWritten == nil or math.abs(desyncLastWalkWritten - reportW) > 0.28 then
+			pcall(function() humanoid.WalkSpeed = reportW end)
+			desyncLastWalkWritten = reportW
+		end
+		applySmoothedHorizontal(driveUnit.X * driveS, driveUnit.Z * driveS)
+	else
+		if desyncLastWalkWritten == nil or math.abs(desyncLastWalkWritten - reportW) > 0.35 then
+			pcall(function() humanoid.WalkSpeed = reportW end)
+			desyncLastWalkWritten = reportW
+		end
+		applySmoothedHorizontal(0, 0)
+	end
+end
+
+local function snapDesyncFollower()
+	if not desyncEnabled or not desyncInvisiblePart or not desyncInvisiblePart.Parent then return end
+	local c = lp.Character
+	if not c or desyncInvisiblePart.Parent ~= c then return end
+	local hrp = c:FindFirstChild("HumanoidRootPart")
+	if not hrp then return end
+	local now = tick()
+	if desyncLastSnapTime > 0 and (now - desyncLastSnapTime) < DESYNC_SNAP_MIN_INTERVAL then return end
+	desyncLastSnapTime = now
+	desyncInvisiblePart.CFrame = hrp.CFrame * CFrame.new(0, 0, -2.85)
+end
+
+local function teardownDesync()
+	if desyncConn then desyncConn:Disconnect() desyncConn = nil end
+	if desyncNetworkRefreshConn then desyncNetworkRefreshConn:Disconnect() desyncNetworkRefreshConn = nil end
+	if desyncInvisiblePart then pcall(function() desyncInvisiblePart:Destroy() end) end
+	desyncInvisiblePart = nil
+	for _, inst in ipairs(workspace:GetChildren()) do
+		if inst.Name == "DarkHub_DesyncFollower" or inst.Name == "DarkHub_DesyncPos" then
+			pcall(function() inst:Destroy() end)
+		end
+	end
+	local char = lp.Character
+	local hum = char and char:FindFirstChildOfClass("Humanoid")
+	if hum and desyncOriginalWalk ~= nil then
+		pcall(function() hum.WalkSpeed = desyncOriginalWalk end)
+	end
+	desyncOriginalWalk = nil
+	desyncLastWalkWritten = nil
+	desyncLastSnapTime = 0
+	desyncPostSimLastT = 0
+	desyncLinearVelocity = nil
+	setRaknetDesync(false)
+end
+
+local function setupDesyncCharacter(char)
+	teardownDesync()
+	if not desyncEnabled then return end
+	local humanoid = char:WaitForChild("Humanoid", 15)
+	local hrp = char:WaitForChild("HumanoidRootPart", 15)
+	if not humanoid or not hrp then return end
+	desyncOriginalWalk = humanoid.WalkSpeed
+	desyncLastWalkWritten = nil
+	desyncInvisiblePart = Instance.new("Part")
+	desyncInvisiblePart.Name = "DarkHub_DesyncFollower"
+	desyncInvisiblePart.Size = Vector3.new(2, 1, 2)
+	desyncInvisiblePart.Transparency = 1
+	desyncInvisiblePart.CanCollide = false
+	desyncInvisiblePart.Anchored = false
+	desyncInvisiblePart.Massless = true
+	desyncInvisiblePart.Parent = char
+	local dhAtt = Instance.new("Attachment")
+	dhAtt.Name = "DH_DesyncDrive"
+	dhAtt.Parent = desyncInvisiblePart
+	local lv = Instance.new("LinearVelocity")
+	lv.Name = "DH_DesyncLinearVelocity"
+	lv.Attachment0 = dhAtt
+	lv.RelativeTo = Enum.ActivationRelativeTo.World
+	lv.MaxForce = DesyncTuning.lvMaxForce
+	lv.VectorVelocity = Vector3.zero
+	lv.Parent = desyncInvisiblePart
+	desyncLinearVelocity = lv
+	local welded = false
+	pcall(function()
+		local w = Instance.new("Weld")
+		w.Name = "DH_DesyncWeld"
+		w.Part0 = hrp
+		w.Part1 = desyncInvisiblePart
+		w.C0 = CFrame.new(0, 0, -3.85)
+		w.Parent = desyncInvisiblePart
+		welded = true
+	end)
+	if not welded then
+		desyncInvisiblePart.CFrame = hrp.CFrame * CFrame.new(0, 0, -3.85)
+		local wc = Instance.new("WeldConstraint")
+		wc.Name = "DH_DesyncWeldConstraint"
+		wc.Part0 = hrp
+		wc.Part1 = desyncInvisiblePart
+		wc.Parent = desyncInvisiblePart
+	end
+	task.defer(function()
+		desyncLastSnapTime = 0
+		snapDesyncFollower()
+		local ps = RunService.PostSimulation
+		if ps then ps:Wait() else RunService.Heartbeat:Wait() end
+		snapDesyncFollower()
+	end)
+	task.delay(0.15, snapDesyncFollower)
+	desyncPostSimLastT = os.clock()
+	local stepper = RunService.PostSimulation or RunService.Heartbeat
+	desyncConn = stepper:Connect(function()
+		local now = os.clock()
+		local dt = math.clamp(now - desyncPostSimLastT, 1 / 240, 1 / 25)
+		desyncPostSimLastT = now
+		updateDesyncMovement(dt)
+	end)
+	local refreshAccum = 0
+	desyncNetworkRefreshConn = RunService.Heartbeat:Connect(function(dt)
+		if not desyncEnabled then return end
+		refreshAccum = refreshAccum + (typeof(dt) == "number" and dt or (1 / 60))
+		if refreshAccum < 1.2 then return end
+		refreshAccum = 0
+		applyDesyncHubFFlags()
+	end)
+	applyDesyncHubFFlags()
+	setRaknetDesync(true)
+end
+
+local function enableDesync()
+	if desyncEnabled then return end
+	desyncEnabled = true
+	if lp.Character then setupDesyncCharacter(lp.Character) end
+	lp.CharacterAdded:Connect(function(char)
+		if desyncEnabled then setupDesyncCharacter(char) end
+	end)
+	startESP()
+end
+
+local function disableDesync()
+	if not desyncEnabled then return end
+	desyncEnabled = false
+	teardownDesync()
+	stopESP()
+end
+
+local _, lagBtn, lagKnob, lagTrack = makeRow(48, "Lag")
+local _, speedBtn, speedKnob, speedTrack = makeRow(88, "Speed")
+local _, desyncBtn, desyncKnob, desyncTrack = makeRow(128, "Desync")
+
+makeSlider(168, "Lag Power", 0, 0.2, lagAmount, function(v)
+	return string.format("Lag Power: %d%%", math.floor(v / 0.2 * 150))
+end, function(v)
+	lagAmount = v
+	saveLagValue(v)
+end)
+
+makeSlider(202, "Speed", 1, 120, speedAmount, function(v)
+	return string.format("Speed: %d", math.floor(v))
+end, function(v)
+	speedAmount = v
+	saveSpeedValue(v)
+end)
+
+makeSlider(236, "Steal Speed", 1, 70, stealAmount, function(v)
+	return string.format("Steal: %d", math.floor(v))
+end, function(v)
+	stealAmount = v
+	saveStealValue(v)
+end)
+
+lagBtn.MouseButton1Click:Connect(function()
+	lagEnabled = not lagEnabled
+	TweenService:Create(lagKnob, TweenInfo.new(0.15), {
+		Position = lagEnabled and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
+	}):Play()
+	TweenService:Create(lagTrack, TweenInfo.new(0.15), {
+		BackgroundColor3 = lagEnabled and COL_GREEN or COL_TOGGLE
+	}):Play()
+end)
+
+speedBtn.MouseButton1Click:Connect(function()
+	speedEnabled = not speedEnabled
+	TweenService:Create(speedKnob, TweenInfo.new(0.15), {
+		Position = speedEnabled and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
+	}):Play()
+	TweenService:Create(speedTrack, TweenInfo.new(0.15), {
+		BackgroundColor3 = speedEnabled and COL_GREEN or COL_TOGGLE
+	}):Play()
+end)
+
+desyncBtn.MouseButton1Click:Connect(function()
+	desyncEnabled = not desyncEnabled
+	TweenService:Create(desyncKnob, TweenInfo.new(0.15), {
+		Position = desyncEnabled and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
+	}):Play()
+	TweenService:Create(desyncTrack, TweenInfo.new(0.15), {
+		BackgroundColor3 = desyncEnabled and COL_GREEN or COL_TOGGLE
+	}):Play()
+	if desyncEnabled then
+		enableDesync()
+	else
+		disableDesync()
+	end
+end)
+
+do
+	local dragging = false
+	local dragStart = nil
+	local startPos = nil
+	main.InputBegan:Connect(function(input)
+		if sliderDragging then return end
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = main.Position
+		end
+	end)
+	UserInputService.InputChanged:Connect(function(input)
+		if sliderDragging then dragging = false return end
+		if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+			local delta = input.Position - dragStart
+			local viewport = workspace.CurrentCamera.ViewportSize
+			local newX = math.clamp(startPos.X.Offset + delta.X, 0, viewport.X - main.AbsoluteSize.X)
+			local newY = math.clamp(startPos.Y.Offset + delta.Y, 0, viewport.Y - main.AbsoluteSize.Y)
+			main.Position = UDim2.new(0, newX, 0, newY)
+		end
+	end)
+	UserInputService.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = false
+		end
+	end)
+end
+
+RunService.RenderStepped:Connect(function()
+	local offset = Vector2.new(math.sin(tick() * 1.5), 0)
+	for _, g in ipairs(allStrokeGrads) do
+		g.Offset = offset
+	end
+end)
+
+RunService.RenderStepped:Connect(function()
+	if speedEnabled then
+		local char = lp.Character
+		if char then
+			local hrp = char:FindFirstChild("HumanoidRootPart")
+			local hum = char:FindFirstChildOfClass("Humanoid")
+			if hrp and hum and hum.MoveDirection.Magnitude > 0 then
+				local dir = hum.MoveDirection.Unit
+				local useSpeed = (hum.WalkSpeed <= 25) and stealAmount or speedAmount
+				hrp.AssemblyLinearVelocity = Vector3.new(
+					dir.X * useSpeed,
+					hrp.AssemblyLinearVelocity.Y,
+					dir.Z * useSpeed
+				)
+			end
+		end
+	end
+end)
+
+RunService.RenderStepped:Connect(function()
+	if lagEnabled and lagAmount > 0 then
+		local t = tick()
+		while tick() - t < lagAmount do end
+	end
+end)
