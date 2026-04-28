@@ -1,5 +1,5 @@
 -- =====================================================
--- JOO MUSIC - WindUI Edition (مع قسم تشغيل أغاني يدوي)
+-- JOO MUSIC - WindUI Edition (الأكواد مخفية بالكامل)
 -- =====================================================
 
 -- تحميل مكتبة WindUI
@@ -9,11 +9,11 @@ local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/rel
 WindUI:AddTheme({
     Name = "JOO Theme",
     Accent = Color3.fromHex("#FF4668"),
-    Background = Color3.fromHex("#14141A"),
+    Background = Color3.fromHex("#0A0A0A"),
     Outline = Color3.fromHex("#FFFFFF"),
     Text = Color3.fromHex("#FFFFFF"),
     Placeholder = Color3.fromHex("#7a7a7a"),
-    Button = Color3.fromHex("#2D2D3A"),
+    Button = Color3.fromHex("#1E1E1E"),
     Icon = Color3.fromHex("#FF4668"),
 })
 
@@ -23,7 +23,7 @@ local Window = WindUI:CreateWindow({
     Icon = "music",
     Author = "JOO & Amrke",
     Folder = "JooMusicHub",
-    Background = "rbxassetid://124984802322746",
+    Background = "",
     Size = UDim2.fromOffset(580, 580),
     MinSize = Vector2.new(520, 500),
     MaxSize = Vector2.new(850, 700),
@@ -31,7 +31,7 @@ local Window = WindUI:CreateWindow({
     Theme = "JOO Theme",
     Resizable = true,
     SideBarWidth = 180,
-    BackgroundImageTransparency = 0.65,
+    BackgroundImageTransparency = 1,
     HideSearchBar = true,
     ScrollBarEnabled = false,
     User = {
@@ -130,14 +130,24 @@ MainTab:Paragraph({
     Locked = false,
 })
 
--- ==================== تبويب الأغاني (الجاهزة) ====================
+-- ==================== تبويب الأغاني (بدون إظهار الأكواد) ====================
 local PresetTab = Window:Tab({
     Title = "🎵 قوائم",
     Icon = "music",
     Locked = false,
 })
 
--- قائمة الأغاني العشوائية (كما هي)
+-- دالة إضافة زر مع إخفاء الـ ID تماماً
+local function addSong(name, id)
+    PresetTab:Button({
+        Title = name,
+        Desc = "",   -- إخفاء الـ ID
+        Locked = false,
+        Callback = function() playMusic(id) end
+    })
+end
+
+-- الأغاني العشوائية
 local randomSongs = {
     {"افخم فونك", "17647322226"},
     {"فونك غضب", "115859025716354"},
@@ -186,66 +196,93 @@ local randomSongs = {
     {"Unknown 2", "85341099264298"},
 }
 for _, song in ipairs(randomSongs) do
-    PresetTab:Button({
-        Title = song[1],
-        Desc = "ID: " .. song[2],
-        Locked = false,
-        Callback = function() playMusic(song[2]) end
-    })
+    addSong(song[1], song[2])
 end
 
--- بقية الأقسام (عربية، عراقية، سب، إلخ) - اختصاراً
+-- الأغاني العربية والمصرية (مع الأغاني الجديدة)
 PresetTab:Button({Title = "--- الاغاني العربيه | المصريه ---", Locked = true, Callback = function() end})
 local arabicSongs = {
-    {"دمرتي حياتي", "124482316940059"}, {"تصدق كرهتك", "113478978326245"}, {"اه يا حلو", "93620598835551"},
-    {"اكبر غلطه", "127085435747898"}, {"ليه جي", "92304349905750"}, {"هات الدكتور", "8776769631"},
-    {"علي كيفك", "123487073954032"}, {"بخطار بس قني بروك", "125693571824719"},
-    {"أغنية جديدة 1", "138648345036748"}, {"أغنية جديدة 2", "113052183515304"},
+    {"دمرتي حياتي", "124482316940059"},
+    {"تصدق كرهتك", "113478978326245"},
+    {"اه يا حلو", "93620598835551"},
+    {"اكبر غلطه", "127085435747898"},
+    {"ليه جي", "92304349905750"},
+    {"هات الدكتور", "8776769631"},
+    {"علي كيفك", "123487073954032"},
+    {"بخطار بس قني بروك", "125693571824719"},
+    {"أغنية جديدة 1", "138648345036748"},
+    {"أغنية جديدة 2", "113052183515304"},
+    {"أغنية جديدة 3", "114316100741483"},
+    {"أغنية جديدة 4", "70646100859753"},
 }
 for _, song in ipairs(arabicSongs) do
-    PresetTab:Button({Title = song[1], Desc = "ID: " .. song[2], Locked = false, Callback = function() playMusic(song[2]) end})
+    addSong(song[1], song[2])
 end
 
+-- الأغاني العراقية
 PresetTab:Button({Title = "--- اغاني عراقيه ---", Locked = true, Callback = function() end})
 local iraqiSongs = {
-    {"راب عراقي 🧩", "116272643488592"}, {"اخذت بدنيا تعناط ودروس", "112254940188047"},
-    {"شراره 🎻", "81023003196738"}, {"عراقي 🔥", "116815742960163"}, {"عراقي حب ❤", "105956659839019"},
-    {"ميت انا من فراقك", "98313375960954"}, {"دم حزني", "99123490695024"}, {"الحجني يا شرطي", "120675895107276"},
-    {"ريمكس عراقي", "136909019669593"}, {"شعر عراقي", "83309655997452"}, {"ازعاج عراقي", "127840997774724"},
-    {"عراقي حزين", "106271890575602"}, {"عود عراقي", "94546035218751"}, {"قول الصواري", "135009652401688"},
-    {"قررنا رحيلك", "87510423075068"}, {"تراني سكران 😂", "111811908070601"},
+    {"راب عراقي 🧩", "116272643488592"},
+    {"اخذت بدنيا تعناط ودروس", "112254940188047"},
+    {"شراره 🎻", "81023003196738"},
+    {"عراقي 🔥", "116815742960163"},
+    {"عراقي حب ❤", "105956659839019"},
+    {"ميت انا من فراقك", "98313375960954"},
+    {"دم حزني", "99123490695024"},
+    {"الحجني يا شرطي", "120675895107276"},
+    {"ريمكس عراقي", "136909019669593"},
+    {"شعر عراقي", "83309655997452"},
+    {"ازعاج عراقي", "127840997774724"},
+    {"عراقي حزين", "106271890575602"},
+    {"عود عراقي", "94546035218751"},
+    {"قول الصواري", "135009652401688"},
+    {"قررنا رحيلك", "87510423075068"},
+    {"تراني سكران 😂", "111811908070601"},
 }
 for _, song in ipairs(iraqiSongs) do
-    PresetTab:Button({Title = song[1], Desc = "ID: " .. song[2], Locked = false, Callback = function() playMusic(song[2]) end})
+    addSong(song[1], song[2])
 end
 
+-- اغاني سب
 PresetTab:Button({Title = "--- اغاني سب ---", Locked = true, Callback = function() end})
 local insultSongs = {
-    {"سب 1", "91611648163631"}, {"كشلي امك", "71491005545506"}, {"سب 2", "131794008455004"},
-    {"سب 3", "88304661583351"}, {"سب 4", "94943308357738"},
+    {"سب 1", "91611648163631"},
+    {"كشلي امك", "71491005545506"},
+    {"سب 2", "131794008455004"},
+    {"سب 3", "88304661583351"},
+    {"سب 4", "94943308357738"},
 }
 for _, song in ipairs(insultSongs) do
-    PresetTab:Button({Title = song[1], Desc = "ID: " .. song[2], Locked = false, Callback = function() playMusic(song[2]) end})
+    addSong(song[1], song[2])
 end
 
+-- اغاني اجنبيه
 PresetTab:Button({Title = "--- اغاني اجنبيه ---", Locked = true, Callback = function() end})
 local foreignSongs = {
-    {"اجنبي حزين", "72320758533508"}, {"my money", "1846687233"}, {"ريمكس", "120871403922972"},
-    {"فونك GTA", "109337680029292"}, {"فونك قوي", "138361625716987"}, {"كرسمس", "135528953872601"},
+    {"اجنبي حزين", "72320758533508"},
+    {"my money", "1846687233"},
+    {"ريمكس", "120871403922972"},
+    {"فونك GTA", "109337680029292"},
+    {"فونك قوي", "138361625716987"},
+    {"كرسمس", "135528953872601"},
 }
 for _, song in ipairs(foreignSongs) do
-    PresetTab:Button({Title = song[1], Desc = "ID: " .. song[2], Locked = false, Callback = function() playMusic(song[2]) end})
+    addSong(song[1], song[2])
 end
 
+-- اغاني ازعاج (مع الأغنية الجديدة)
 PresetTab:Button({Title = "--- اغاني ازعاج ---", Locked = true, Callback = function() end})
 local noisySongs = {
-    {"get out", "99796748877356"}, {"علي البي", "105438850576001"}, {"ازعاج فونك", "120576436665675"},
+    {"get out", "99796748877356"},
+    {"علي البي", "105438850576001"},
+    {"ازعاج فونك", "120576436665675"},
+    {"ازعاج جديد", "110307806482688"},
 }
 for _, song in ipairs(noisySongs) do
-    PresetTab:Button({Title = song[1], Desc = "ID: " .. song[2], Locked = false, Callback = function() playMusic(song[2]) end})
+    addSong(song[1], song[2])
 end
 
--- ==================== تبويب تشغيل يدوي (المطلوب) ====================
+-- ==================== تبويب تشغيل يدوي ====================
 local ManualTab = Window:Tab({
     Title = "🎧 يدوي",
     Icon = "edit",
@@ -260,8 +297,8 @@ ManualTab:Paragraph({
 
 local musicIdInput = ""
 ManualTab:Input({
-    Title = "🎵 معرف الأغنية (ID)",
-    Placeholder = "مثال: 17647322226",
+    Title = "🎵 معرف الأغنية",
+    Placeholder = "أدخل الرقم هنا",
     Locked = false,
     Callback = function(value)
         musicIdInput = value
@@ -269,12 +306,12 @@ ManualTab:Input({
 })
 
 ManualTab:Button({
-    Title = "▶ تشغيل الأغنية",
-    Desc = "يركب السكوتر ويشغل الأغنية المطلوبة",
+    Title = "▶ تشغيل",
+    Desc = "يركب السكوتر ويشغل الأغنية",
     Locked = false,
     Callback = function()
         if musicIdInput == "" then
-            StarterGui:SetCore("SendNotification", {Title = "تنبيه", Text = "الرجاء إدخال معرف الأغنية", Duration = 3})
+            StarterGui:SetCore("SendNotification", {Title = "تنبيه", Text = "أدخل معرف الأغنية أولاً", Duration = 3})
             return
         end
         playMusic(musicIdInput)
@@ -334,7 +371,7 @@ local ScriptsTab = Window:Tab({
     Locked = false,
 })
 
-ScriptsTab:Button({Title = "🔥 VR7 On Top 🔥", Desc = "universal", Locked = false, Callback = function()
+ScriptsTab:Button({Title = "🔥 VR7 On Top 🔥", Locked = false, Callback = function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/VR7ss/OMK/refs/heads/main/VR7-ON-TOP"))()
 end})
 ScriptsTab:Button({Title = "🔥 أقوا سكربت صملات 🔥", Locked = false, Callback = function()
@@ -356,4 +393,4 @@ welcomeSound.Looped = false
 welcomeSound.Parent = SoundService
 welcomeSound:Play()
 
-print("✅ JOO MUSIC (مع تبويب يدوي) loaded successfully!")
+print("✅ JOO MUSIC (جميع الأكواد مخفية تحت أسماء الأغاني) loaded successfully!")
