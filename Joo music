@@ -1,5 +1,5 @@
 -- =====================================================
--- JOO MUSIC - WindUI Edition (بإضافة اغاني سب جديدة)
+-- JOO MUSIC - WindUI Edition (مع قسم تشغيل أغاني يدوي)
 -- =====================================================
 
 -- تحميل مكتبة WindUI
@@ -24,9 +24,9 @@ local Window = WindUI:CreateWindow({
     Author = "JOO & Amrke",
     Folder = "JooMusicHub",
     Background = "rbxassetid://124984802322746",
-    Size = UDim2.fromOffset(580, 520),
-    MinSize = Vector2.new(520, 450),
-    MaxSize = Vector2.new(850, 650),
+    Size = UDim2.fromOffset(580, 580),
+    MinSize = Vector2.new(520, 500),
+    MaxSize = Vector2.new(850, 700),
     Transparent = true,
     Theme = "JOO Theme",
     Resizable = true,
@@ -130,14 +130,14 @@ MainTab:Paragraph({
     Locked = false,
 })
 
--- ==================== تبويب الأغاني ====================
-local MusicTab = Window:Tab({
-    Title = "🎵 الأغاني",
+-- ==================== تبويب الأغاني (الجاهزة) ====================
+local PresetTab = Window:Tab({
+    Title = "🎵 قوائم",
     Icon = "music",
     Locked = false,
 })
 
--- قائمة الأغاني العشوائية
+-- قائمة الأغاني العشوائية (كما هي)
 local randomSongs = {
     {"افخم فونك", "17647322226"},
     {"فونك غضب", "115859025716354"},
@@ -176,179 +176,109 @@ local randomSongs = {
     {"Better off alone x Slaughter House mix", "112439283898361"},
     {"Hztk 8021", "104704891783894"},
     {"OWTR 7322", "135047699123451"},
-    {"ID 128934903242385", "128934903242385"},
+    {"The forgotten treasure", "74658666970693"},
+    {"Charlie Kirky Funk", "113458227429706"},
+    {"坤坤专属（慢速版）", "82944401312241"},
+    {"Hunter Eyes", "139957878565852"},
+    {"Trillium", "115440201770223"},
+    {"#Voyuitwaaien", "123181826801671"},
+    {"Unknown 1", "123267035671850"},
+    {"Unknown 2", "85341099264298"},
 }
-
 for _, song in ipairs(randomSongs) do
-    MusicTab:Button({
+    PresetTab:Button({
         Title = song[1],
         Desc = "ID: " .. song[2],
         Locked = false,
-        Callback = function()
-            playMusic(song[2])
-        end
+        Callback = function() playMusic(song[2]) end
     })
 end
 
--- الأغاني العربية والمصرية
-MusicTab:Button({
-    Title = "--- الاغاني العربيه | المصريه ---",
-    Desc = "",
-    Locked = true,
-    Callback = function() end
-})
+-- بقية الأقسام (عربية، عراقية، سب، إلخ) - اختصاراً
+PresetTab:Button({Title = "--- الاغاني العربيه | المصريه ---", Locked = true, Callback = function() end})
 local arabicSongs = {
-    {"دمرتي حياتي", "124482316940059"},
-    {"تصدق كرهتك", "113478978326245"},
-    {"اه يا حلو", "93620598835551"},
-    {"اكبر غلطه", "127085435747898"},
-    {"ليه جي", "92304349905750"},
-    {"هات الدكتور", "8776769631"},
-    {"علي كيفك", "123487073954032"},
-    {"بخطار بس قني بروك", "125693571824719"},
-    {"أغنية جديدة 1", "138648345036748"},
-    {"أغنية جديدة 2", "113052183515304"},
+    {"دمرتي حياتي", "124482316940059"}, {"تصدق كرهتك", "113478978326245"}, {"اه يا حلو", "93620598835551"},
+    {"اكبر غلطه", "127085435747898"}, {"ليه جي", "92304349905750"}, {"هات الدكتور", "8776769631"},
+    {"علي كيفك", "123487073954032"}, {"بخطار بس قني بروك", "125693571824719"},
+    {"أغنية جديدة 1", "138648345036748"}, {"أغنية جديدة 2", "113052183515304"},
 }
 for _, song in ipairs(arabicSongs) do
-    MusicTab:Button({
-        Title = song[1],
-        Desc = "ID: " .. song[2],
-        Locked = false,
-        Callback = function()
-            playMusic(song[2])
-        end
-    })
+    PresetTab:Button({Title = song[1], Desc = "ID: " .. song[2], Locked = false, Callback = function() playMusic(song[2]) end})
 end
 
--- الأغاني العراقية
-MusicTab:Button({
-    Title = "--- اغاني عراقيه ---",
-    Desc = "",
-    Locked = true,
-    Callback = function() end
-})
+PresetTab:Button({Title = "--- اغاني عراقيه ---", Locked = true, Callback = function() end})
 local iraqiSongs = {
-    {"راب عراقي 🧩", "116272643488592"},
-    {"اخذت بدنيا تعناط ودروس", "112254940188047"},
-    {"شراره 🎻", "81023003196738"},
-    {"عراقي 🔥", "116815742960163"},
-    {"عراقي حب ❤", "105956659839019"},
-    {"ميت انا من فراقك", "98313375960954"},
-    {"دم حزني", "99123490695024"},
-    {"الحجني يا شرطي", "120675895107276"},
-    {"ريمكس عراقي", "136909019669593"},
-    {"شعر عراقي", "83309655997452"},
-    {"ازعاج عراقي", "127840997774724"},
-    {"عراقي حزين", "106271890575602"},
-    {"عود عراقي", "94546035218751"},
-    {"قول الصواري", "135009652401688"},
-    {"قررنا رحيلك", "87510423075068"},
-    {"تراني سكران 😂", "111811908070601"},
+    {"راب عراقي 🧩", "116272643488592"}, {"اخذت بدنيا تعناط ودروس", "112254940188047"},
+    {"شراره 🎻", "81023003196738"}, {"عراقي 🔥", "116815742960163"}, {"عراقي حب ❤", "105956659839019"},
+    {"ميت انا من فراقك", "98313375960954"}, {"دم حزني", "99123490695024"}, {"الحجني يا شرطي", "120675895107276"},
+    {"ريمكس عراقي", "136909019669593"}, {"شعر عراقي", "83309655997452"}, {"ازعاج عراقي", "127840997774724"},
+    {"عراقي حزين", "106271890575602"}, {"عود عراقي", "94546035218751"}, {"قول الصواري", "135009652401688"},
+    {"قررنا رحيلك", "87510423075068"}, {"تراني سكران 😂", "111811908070601"},
 }
 for _, song in ipairs(iraqiSongs) do
-    MusicTab:Button({
-        Title = song[1],
-        Desc = "ID: " .. song[2],
-        Locked = false,
-        Callback = function()
-            playMusic(song[2])
-        end
-    })
+    PresetTab:Button({Title = song[1], Desc = "ID: " .. song[2], Locked = false, Callback = function() playMusic(song[2]) end})
 end
 
--- اغاني سب (مع الأكواد الجديدة)
-MusicTab:Button({
-    Title = "--- اغاني سب ---",
-    Desc = "",
-    Locked = true,
-    Callback = function() end
-})
+PresetTab:Button({Title = "--- اغاني سب ---", Locked = true, Callback = function() end})
 local insultSongs = {
-    {"سب 1", "91611648163631"},
-    {"كشلي امك", "71491005545506"},
-    {"سب 2", "131794008455004"},
-    {"سب 3", "88304661583351"},
-    {"سب 4", "94943308357738"},
-    -- الأكواد الجديدة التي طلبها المستخدم (سيتم تسميتها من قبله)
-    {"متجوش مع واحد شرموط", "99113135294997"},
-    {"سب بهجت صابر", "6713993281"},
-    {"ارسل كلمه كس", "6536444735"},
+    {"سب 1", "91611648163631"}, {"كشلي امك", "71491005545506"}, {"سب 2", "131794008455004"},
+    {"سب 3", "88304661583351"}, {"سب 4", "94943308357738"},
 }
 for _, song in ipairs(insultSongs) do
-    MusicTab:Button({
-        Title = song[1],
-        Desc = "ID: " .. song[2],
-        Locked = false,
-        Callback = function()
-            playMusic(song[2])
-        end
-    })
+    PresetTab:Button({Title = song[1], Desc = "ID: " .. song[2], Locked = false, Callback = function() playMusic(song[2]) end})
 end
 
--- الأغاني الأجنبية
-MusicTab:Button({
-    Title = "--- اغاني اجنبيه ---",
-    Desc = "",
-    Locked = true,
-    Callback = function() end
-})
+PresetTab:Button({Title = "--- اغاني اجنبيه ---", Locked = true, Callback = function() end})
 local foreignSongs = {
-    {"اجنبي حزين", "72320758533508"},
-    {"my money", "1846687233"},
-    {"ريمكس", "120871403922972"},
-    {"فونك GTA", "109337680029292"},
-    {"فونك قوي", "138361625716987"},
-    {"كرسمس", "135528953872601"},
+    {"اجنبي حزين", "72320758533508"}, {"my money", "1846687233"}, {"ريمكس", "120871403922972"},
+    {"فونك GTA", "109337680029292"}, {"فونك قوي", "138361625716987"}, {"كرسمس", "135528953872601"},
 }
 for _, song in ipairs(foreignSongs) do
-    MusicTab:Button({
-        Title = song[1],
-        Desc = "ID: " .. song[2],
-        Locked = false,
-        Callback = function()
-            playMusic(song[2])
-        end
-    })
+    PresetTab:Button({Title = song[1], Desc = "ID: " .. song[2], Locked = false, Callback = function() playMusic(song[2]) end})
 end
 
--- الأغاني المزعجة
-MusicTab:Button({
-    Title = "--- اغاني ازعاج ---",
-    Desc = "",
-    Locked = true,
-    Callback = function() end
-})
+PresetTab:Button({Title = "--- اغاني ازعاج ---", Locked = true, Callback = function() end})
 local noisySongs = {
-    {"get out", "99796748877356"},
-    {"علي البي", "105438850576001"},
-    {"ازعاج فونك", "120576436665675"},
+    {"get out", "99796748877356"}, {"علي البي", "105438850576001"}, {"ازعاج فونك", "120576436665675"},
 }
 for _, song in ipairs(noisySongs) do
-    MusicTab:Button({
-        Title = song[1],
-        Desc = "ID: " .. song[2],
-        Locked = false,
-        Callback = function()
-            playMusic(song[2])
-        end
-    })
+    PresetTab:Button({Title = song[1], Desc = "ID: " .. song[2], Locked = false, Callback = function() playMusic(song[2]) end})
 end
 
--- كود يدوي
-MusicTab:Button({
-    Title = "🎧 كود يدوي",
-    Desc = "اكتب / ثم ID الأغنية في الشات",
+-- ==================== تبويب تشغيل يدوي (المطلوب) ====================
+local ManualTab = Window:Tab({
+    Title = "🎧 يدوي",
+    Icon = "edit",
+    Locked = false,
+})
+
+ManualTab:Paragraph({
+    Title = "📍 تشغيل أغنية يدوياً",
+    Text = "أدخل معرف الأغنية (ID) ثم اضغط تشغيل",
+    Locked = false,
+})
+
+local musicIdInput = ""
+ManualTab:Input({
+    Title = "🎵 معرف الأغنية (ID)",
+    Placeholder = "مثال: 17647322226",
+    Locked = false,
+    Callback = function(value)
+        musicIdInput = value
+    end
+})
+
+ManualTab:Button({
+    Title = "▶ تشغيل الأغنية",
+    Desc = "يركب السكوتر ويشغل الأغنية المطلوبة",
     Locked = false,
     Callback = function()
-        StarterGui:SetCore("SendNotification", {Title = "معلومة", Text = "اكتب / ثم ID الأغنية في الشات", Duration = 3})
-        local conn
-        conn = lp.Chatted:Connect(function(msg)
-            if msg:sub(1,1) == "/" then
-                local id = msg:sub(2)
-                playMusic(id)
-                conn:Disconnect()
-            end
-        end)
+        if musicIdInput == "" then
+            StarterGui:SetCore("SendNotification", {Title = "تنبيه", Text = "الرجاء إدخال معرف الأغنية", Duration = 3})
+            return
+        end
+        playMusic(musicIdInput)
+        StarterGui:SetCore("SendNotification", {Title = "تم التشغيل", Text = "ID: " .. musicIdInput, Duration = 2})
     end
 })
 
@@ -361,7 +291,6 @@ local ToolsTab = Window:Tab({
 
 local clickTeleportActive = false
 local clickConn = nil
-
 local function startClickTeleport()
     if clickConn then clickConn:Disconnect() end
     clickConn = Mouse.Button1Down:Connect(function()
@@ -380,23 +309,19 @@ local function startClickTeleport()
         end
     end)
 end
-
 local function stopClickTeleport()
     if clickConn then clickConn:Disconnect(); clickConn = nil end
 end
-
 ToolsTab:Button({
     Title = "🔮 تفعيل Click Teleport",
     Desc = "اضغط على أي مكان للانتقال إليه",
     Locked = false,
     Callback = function()
         if clickTeleportActive then
-            clickTeleportActive = false
-            stopClickTeleport()
+            clickTeleportActive = false; stopClickTeleport()
             StarterGui:SetCore("SendNotification", {Title = "Click Teleport", Text = "تم إيقاف التفعيل", Duration = 2})
         else
-            clickTeleportActive = true
-            startClickTeleport()
+            clickTeleportActive = true; startClickTeleport()
             StarterGui:SetCore("SendNotification", {Title = "Click Teleport", Text = "التفعيل نشط! اضغط على أي مكان", Duration = 2})
         end
     end
@@ -409,43 +334,20 @@ local ScriptsTab = Window:Tab({
     Locked = false,
 })
 
-ScriptsTab:Button({
-    Title = "🔥 VR7 On Top 🔥",
-    Desc = "VR7 Script (The Strongest Battlegrounds)",
-    Locked = false,
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/VR7ss/OMK/refs/heads/main/VR7-ON-TOP"))()
-    end
-})
+ScriptsTab:Button({Title = "🔥 VR7 On Top 🔥", Desc = "universal", Locked = false, Callback = function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/VR7ss/OMK/refs/heads/main/VR7-ON-TOP"))()
+end})
+ScriptsTab:Button({Title = "🔥 أقوا سكربت صملات 🔥", Locked = false, Callback = function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Zenix-points-AFK-194181"))()
+end})
+ScriptsTab:Button({Title = "👔 نسخ سكنات (IllusionDev DUELS v3)", Locked = false, Callback = function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/pro628713-arch/Test-nine-hub/main/IllusionDev_DUELS_v3.json"))()
+end})
+ScriptsTab:Button({Title = "🐭 Mickey Music Stealer", Locked = false, Callback = function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Gaurav-0196/Stealer/refs/heads/main/MickeyStealer"))()
+end})
 
-ScriptsTab:Button({
-    Title = "🔥 أقوا سكربت صملات 🔥",
-    Desc = "Universal Script - Zenix points",
-    Locked = false,
-    Callback = function()
-        loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Zenix-points-AFK-194181"))()
-    end
-})
-
-ScriptsTab:Button({
-    Title = "👔 نسخ سكنات (IllusionDev DUELS v3)",
-    Desc = "لبروكهافن",
-    Locked = false,
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/pro628713-arch/Test-nine-hub/main/IllusionDev_DUELS_v3.json"))()
-    end
-})
-
-ScriptsTab:Button({
-    Title = "🐭 Mickey Music Stealer",
-    Desc = "يسرق أغاني السيرفر",
-    Locked = false,
-    Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Gaurav-0196/Stealer/refs/heads/main/MickeyStealer"))()
-    end
-})
-
--- تشغيل موسيقى ترحيبية
+-- موسيقى ترحيبية (اختياري)
 local SoundService = game:GetService("SoundService")
 local welcomeSound = Instance.new("Sound")
 welcomeSound.SoundId = "rbxassetid://4503761646"
@@ -454,4 +356,4 @@ welcomeSound.Looped = false
 welcomeSound.Parent = SoundService
 welcomeSound:Play()
 
-print("✅ JOO MUSIC with WindUI (مع اغاني سب جديدة) loaded successfully!")
+print("✅ JOO MUSIC (مع تبويب يدوي) loaded successfully!")
