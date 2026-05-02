@@ -1,0 +1,784 @@
+-- Zenix Hub - WindUI Edition (Complete)
+local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+local player = game:GetService("Players").LocalPlayer
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local StarterGui = game:GetService("StarterGui")
+local UserInputService = game:GetService("UserInputService")
+
+WindUI:AddTheme({
+    Name = "Zenix",
+    Accent = Color3.fromHex("#FF4668"),
+    Background = Color3.fromHex("#0A0A0A"),
+    Outline = Color3.fromHex("#FFFFFF"),
+    Text = Color3.fromHex("#FFFFFF"),
+    Placeholder = Color3.fromHex("#7a7a7a"),
+    Button = Color3.fromHex("#1E1E1E"),
+    Icon = Color3.fromHex("#FF4668"),
+})
+
+local Window = WindUI:CreateWindow({
+    Title = "ZENIX HUB",
+    Icon = "music",
+    Author = "Zain",
+    Folder = "ZenixHub",
+    Background = "rbxassetid://83416943639197",
+    Size = UDim2.fromOffset(680, 680),
+    Theme = "Zenix",
+    Resizable = true,
+    SideBarWidth = 180,
+    BackgroundImageTransparency = 0.5,
+    HideSearchBar = true,
+    ScrollBarEnabled = false,
+    User = {Enabled = true, Anonymous = false},
+})
+
+Window:EditOpenButton({
+    Title = "ZENIX HUB",
+    Icon = "music",
+    CornerRadius = UDim.new(0, 16),
+    StrokeThickness = 2,
+    Color = ColorSequence.new(Color3.fromHex("#FF4668"), Color3.fromHex("#FF8C42")),
+    OnlyMobile = false,
+    Enabled = true,
+    Draggable = true,
+})
+
+local lp = player
+local Remotes = ReplicatedStorage:WaitForChild("Remotes", 5)
+
+-- ==================== جميع المتغيرات ====================
+_G.ZainCustomColors = true
+_G.ColorSpeed = 10
+_G.AntiVoidActive = false
+_G.GlobalPurge = false
+_G.VoidExileActive = false
+local bangEnabled, faceSitEnabled, combinedEnabled, holdSixTools = false, false, false, false
+local antiSitEnabled, antiFlingAll = false, false
+local bangTarget, currentMusicID, copyTarget = nil, "", nil
+local TargetBangV2Enabled, FaceBangV2Enabled = false, false
+local ClearAreaEnabled, ClearAreaOriginalPos, ClearAreaPhysics, ClearAreaThread = false, nil, nil, nil
+local customColors = {Color3.fromRGB(255,255,255), Color3.fromRGB(0,0,0), Color3.fromRGB(255,0,0)}
+local savedLocationCFrame, savedRespawnCFrame = nil, nil
+local lastGroundPos, voidSafePos = nil, nil
+local spinEnabled, spinSpeed = false, 10
+
+-- Skybox
+local PRO_BUILDER_PARTS = {100839513065432,112132665744785,134162178631486,134568824619589,119032106683081,112098331348331}
+local skyboxV1Enabled, skyboxV1SavedBody, skyboxV1Track, skyboxV1NukeTrack, skyboxV1FlashTrack = false, {}, nil, nil, nil
+local nukeFlashEnabled, savedNukeFlashBody, nukeFlashTrack, flashRigidTrack = false, {}, nil, nil
+local nukeBody = {123402086843885,100839513065432,78300682916056,86276701020724,78409653958165,15093053680}
+
+-- أغاني مجانية
+local selectedMusic = ""
+local soundSpeed = 1
+local soundVolume = 20
+local soundRange = 1000
+local spamToggle = false
+local spamTask = nil
+
+local musicList = {
+    ["ضحكة مال سوكونا"] = "116395665143666",
+    ["غوجو توسيع النطاق"] = "139787675170861",
+    ["صوت فايت مزعج شوي"] = "132639404905710",
+    ["صوت بنت انمي مشكوك فجد خالة عمتو"] = "109779146034241",
+    ["صوت بنت انمي ثاني"] = "102993326623397",
+    ["صوت اسد"] = "9126101636",
+    ["صوت بنت انمي 3"] = "103430674469051",
+    ["صوت انمي مزعج"] = "97551835622379",
+    ["صوت سلاح فري فاير"] = "6909650402",
+    ["جراني"] = "1591860354",
+    ["توجي"] = "132509237694639",
+    ["اوريتشيمارو"] = "135109036831389",
+    ["ضحكة سونيك"] = "7337298420",
+    ["ازعاج"] = "146563959",
+    ["اغنية فينوم"] = "8086734311",
+    ["صوت فينوم"] = "126497226413207",
+    ["صوت رعد"] = "6994934244",
+    ["جوجوتسو كايسن"] = "18985328962",
+    ["صوت ازعاج 2"] = "94692079812822",
+    ["صوت ازعاج 3"] = "89442290120460",
+    ["واه بنت"] = "140621694430612",
+    ["اموتشك"] = "91592068403301",
+    ["هاي بنت"] = "137286678153859",
+    ["ياي"] = "131184394702134",
+    ["واو"] = "95139591685380",
+    ["نايس"] = "78280559086303",
+    ["صوت انمي"] = "8842446965",
+    ["ااااه"] = "139418574246974",
+    ["أرا أرا"] = "96797549686303",
+    ["نيا"] = "88503448666896",
+    ["باكا"] = "100787550690954",
+    ["بنت تضحك"] = "93739527256723",
+    ["وحش"] = "99689825846526",
+    ["امينو"] = "125222860308223",
+    ["ولد انمي"] = "117344598141040",
+    ["ايزي ابلع"] = "112847640842699",
+    ["ولا تاكل ولا تشرب"] = "73819155183299",
+    ["ماذا تريد"] = "136789813621839",
+    ["i got this"] = "92223942503349",
+    ["Don't Touch"] = "76186807430383",
+}
+
+local musicOptions = {}
+for name, _ in pairs(musicList) do table.insert(musicOptions, name) end
+table.sort(musicOptions)
+
+-- ==================== الدوال ====================
+local function playMusic(id, t)
+    pcall(function()
+        local v = ReplicatedStorage:WaitForChild("RE", 2):FindFirstChild("1NoMoto1rVehicle1s")
+        if v then v:FireServer(t or "SkateBoard") task.wait(0.4) v:FireServer("PickingScooterMusicText", tostring(id)) end
+    end)
+end
+
+local function GetPlayerMatch(text)
+    local st = text:lower()
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= lp and (p.Name:lower():find(st, 1, true) or p.DisplayName:lower():find(st, 1, true)) then return p end
+    end
+end
+
+local function EquipSix()
+    if not lp.Character then return end
+    local c = 0
+    for _, t in ipairs(lp.Backpack:GetChildren()) do if t:IsA("Tool") and c < 6 then t.Parent = lp.Character c = c + 1 end end
+end
+
+local function copyAvatar(tp)
+    if not tp or not tp.Character then return end
+    local lH = lp.Character:FindFirstChildOfClass("Humanoid")
+    local tH = tp.Character:FindFirstChildOfClass("Humanoid")
+    if not lH or not tH then return end
+    task.spawn(function()
+        pcall(function()
+            local lD = lH:GetAppliedDescription()
+            for _, a in ipairs(lD:GetAccessories(true)) do Remotes.Wear:InvokeServer(tonumber(a.AssetId)) task.wait(0.1) end
+            Remotes.Wear:InvokeServer(0) task.wait(0.5)
+            local pD = tH:GetAppliedDescription()
+            Remotes.ChangeCharacterBody:InvokeServer(unpack({[1] = {pD.Torso, pD.RightArm, pD.LeftArm, pD.RightLeg, pD.LeftLeg, pD.Head}}))
+            if pD.Shirt ~= 0 then Remotes.Wear:InvokeServer(tonumber(pD.Shirt)) task.wait(0.2) end
+            if pD.Pants ~= 0 then Remotes.Wear:InvokeServer(tonumber(pD.Pants)) task.wait(0.2) end
+            for _, a in ipairs(pD:GetAccessories(true)) do if a.AssetId ~= 0 then Remotes.Wear:InvokeServer(tonumber(a.AssetId)) task.wait(0.2) end end
+        end)
+    end)
+end
+
+local function stopNukeFlash()
+    if nukeFlashTrack then pcall(function() nukeFlashTrack:Stop() end) nukeFlashTrack = nil end
+    if flashRigidTrack then pcall(function() flashRigidTrack:Stop() end) flashRigidTrack = nil end
+end
+
+local function stopSkyboxV1()
+    if skyboxV1Track then skyboxV1Track:Stop(0.1) skyboxV1Track = nil end
+    if skyboxV1NukeTrack then skyboxV1NukeTrack:Stop(0) skyboxV1NukeTrack = nil end
+    if skyboxV1FlashTrack then skyboxV1FlashTrack:Stop(0) skyboxV1FlashTrack = nil end
+end
+
+local function playFreeMusic()
+    if selectedMusic == "" then return end
+    local audioID = selectedMusic
+
+    local GunSoundEvent = ReplicatedStorage:FindFirstChild("1Gu1nSound1s", true)
+    if GunSoundEvent then GunSoundEvent:FireServer(workspace, audioID, 1) end
+    task.wait(0.2)
+
+    local GuinRemote = ReplicatedStorage.RE and ReplicatedStorage.RE:FindFirstChild("1Gu1n")
+    if not GuinRemote then
+        for _, p in ipairs(Players:GetPlayers()) do
+            local char = p.Character
+            if char and char:FindFirstChild("HumanoidRootPart") then
+                local hrp = char.HumanoidRootPart
+                local Sound = Instance.new("Sound")
+                Sound.SoundId = "rbxassetid://" .. audioID
+                Sound.Volume = soundVolume
+                Sound.PlaybackSpeed = soundSpeed
+                Sound.RollOffMaxDistance = soundRange
+                Sound.Looped = false
+                Sound.Parent = hrp
+                Sound:Play()
+                Sound.Ended:Connect(function() Sound:Destroy() end)
+            end
+        end
+        return
+    end
+
+    for _, p in ipairs(Players:GetPlayers()) do
+        local char = p.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            local hrp = char.HumanoidRootPart
+
+            task.spawn(function()
+                local Sound = Instance.new("Sound")
+                Sound.SoundId = "rbxassetid://" .. audioID
+                Sound.Volume = soundVolume
+                Sound.PlaybackSpeed = soundSpeed
+                Sound.RollOffMaxDistance = soundRange
+                Sound.Looped = false
+                Sound.Parent = hrp
+                Sound:Play()
+                Sound.Ended:Connect(function() Sound:Destroy() end)
+            end)
+
+            task.spawn(function()
+                pcall(function()
+                    firesignal(GuinRemote.OnClientEvent, table.unpack({
+                        [1] = p, [2] = hrp, [3] = hrp, [4] = Vector3.new(0, -1, 0), [5] = Vector3.new(0, 0, 0),
+                        [6] = hrp, [7] = hrp, [8] = audioID, [9] = audioID, [10] = {[1] = true},
+                        [11] = {25, Vector3.new(0.25, 0.25, soundRange), BrickColor.new("Bright yellow"), 0.25, Enum.Material.SmoothPlastic, 0.25},
+                        [12] = true, [13] = false
+                    }))
+                end)
+            end)
+
+            task.spawn(function()
+                pcall(function()
+                    GuinRemote:FireServer(table.unpack({
+                        [1] = hrp, [2] = hrp, [3] = Vector3.new(0, -1, 0), [4] = Vector3.new(0, 0, 0),
+                        [5] = hrp, [6] = hrp, [7] = audioID, [8] = audioID, [9] = {[1] = true},
+                        [10] = {25, Vector3.new(0.25, 0.25, soundRange), BrickColor.new("Bright yellow"), 0.25, Enum.Material.SmoothPlastic, 0.25},
+                        [11] = true, [12] = false
+                    }))
+                end)
+            end)
+        end
+    end
+end
+
+local function ApplyZainIdentity()
+    pcall(function()
+        local RE = ReplicatedStorage:WaitForChild("RE", 5)
+        if RE then
+            RE:FindFirstChild("1RPNam1eTex1t"):FireServer("RolePlayName", "آلُـِـِِـِِِـِِـِـمـْـْْـْطُـٌـٌٌـٌوُر ڒٍينـِِـِـ | ڛـكُـُربـٌـٌٌـٌتـٌـٌٌـ ȤҼɳΙX ԊuB")
+            RE:FindFirstChild("1RPNam1eTex1t"):FireServer("RolePlayBio", "Script by Zain")
+        end
+    end)
+end
+
+task.spawn(function() if not game:IsLoaded() then game.Loaded:Wait() end task.wait(1) ApplyZainIdentity() end)
+
+-- ألوان RP
+task.spawn(function()
+    local t = 0
+    while task.wait(0.05) do
+        pcall(function()
+            local RE = ReplicatedStorage:FindFirstChild("RE")
+            if RE and _G.ZainCustomColors then
+                t = t + (_G.ColorSpeed or 10) / 100
+                local i1 = (math.floor(t) % #customColors) + 1
+                local i2 = (i1 % #customColors) + 1
+                local c = customColors[i1]:Lerp(customColors[i2], t % 1)
+                local cr = RE:FindFirstChild("1RPNam1eColo1r")
+                if cr then cr:FireServer("PickingRPNameColor", c) cr:FireServer("PickingRPBioColor", c) end
+            end
+        end)
+    end
+end)
+
+lp.CharacterAdded:Connect(function(c)
+    task.wait(0.5)
+    if savedRespawnCFrame then local hrp = c:FindFirstChild("HumanoidRootPart") if hrp then hrp.CFrame = savedRespawnCFrame end end
+end)
+
+-- أنظمة
+RunService.Heartbeat:Connect(function()
+    if _G.AntiVoidActive and lp.Character then
+        local hrp = lp.Character:FindFirstChild("HumanoidRootPart")
+        if hrp and hrp.Position.Y < -350 then hrp.CFrame = CFrame.new(hrp.Position.X, 50, hrp.Position.Z) hrp.Velocity = Vector3.zero end
+    end
+end)
+
+RunService.Stepped:Connect(function()
+    local char = lp.Character
+    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+    if spinEnabled and hrp then hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(spinSpeed * 0.3), 0) hrp.Velocity = Vector3.new(0, hrp.Velocity.Y, 0) end
+    if antiFlingAll then for _, p in ipairs(char:GetDescendants()) do if p:IsA("BasePart") and p.Name ~= "HumanoidRootPart" then p.CanCollide = false end end end
+    local isB = (bangEnabled or faceSitEnabled or combinedEnabled or TargetBangV2Enabled or FaceBangV2Enabled)
+    if isB then for _, p in ipairs(char:GetDescendants()) do if p:IsA("BasePart") then p.CanCollide = false end end hrp.Velocity = Vector3.zero hrp.RotVelocity = Vector3.zero end
+    if not bangTarget or not bangTarget.Character then return end
+    local tc = bangTarget.Character
+    local thrp = tc:FindFirstChild("HumanoidRootPart")
+    local th = tc:FindFirstChild("Head")
+    if not thrp or not th then return end
+    if holdSixTools then EquipSix() end
+    local w = math.sin(tick() * 55) local dr, nr = w * 4.5, w * 2.5
+    if combinedEnabled then
+        if math.floor(tick() * 60) % 2 == 0 then hrp.CFrame = th.CFrame * CFrame.new(0, -0.6, dr) * CFrame.Angles(0, math.rad(180), 0)
+        else hrp.CFrame = thrp.CFrame * CFrame.new(0, 0.5, dr + 1.5) end
+    elseif faceSitEnabled then hrp.CFrame = th.CFrame * CFrame.new(0, -0.6, dr) * CFrame.Angles(0, math.rad(180), 0)
+    elseif bangEnabled then hrp.CFrame = thrp.CFrame * CFrame.new(0, 0.5, nr + 1.2)
+    elseif TargetBangV2Enabled then
+        local pts = {}
+        for _, p in ipairs(tc:GetChildren()) do if p:IsA("BasePart") then table.insert(pts, p) end end
+        if #pts > 0 then hrp.CFrame = pts[math.random(1, #pts)].CFrame * CFrame.new(math.random(-1, 1), math.random(-1, 1), math.random(-1, 1)) * CFrame.Angles(math.rad(math.random(360)), math.rad(math.random(360)), math.rad(math.random(360))) end
+    elseif FaceBangV2Enabled then hrp.CFrame = th.CFrame * CFrame.Angles(math.rad(math.random(360)), math.rad(math.random(360)), math.rad(math.random(360)))
+    end
+    if antiSitEnabled and not isB then local hum = char:FindFirstChildOfClass("Humanoid") if hum then hum.Sit = false hum:SetStateEnabled(Enum.HumanoidStateType.Seated, false) end end
+end)
+
+task.spawn(function()
+    while task.wait(0.3) do
+        if not _G.VoidExileActive then
+            local c = lp.Character local hrp = c and c:FindFirstChild("HumanoidRootPart")
+            if hrp and hrp.Position.Y > -50 then lastGroundPos = hrp.CFrame voidSafePos = hrp.CFrame end
+        end
+    end
+end)
+
+-- ==================== التبويبات ====================
+local MainTab = Window:Tab({Title = "الرئيسية", Icon = "home"})
+local SkinTab = Window:Tab({Title = "نسخ سكنات", Icon = "shirt"})
+local PlayerTab = Window:Tab({Title = "اللاعب", Icon = "user"})
+local MusicTab = Window:Tab({Title = "الاغاني", Icon = "music"})
+local FreeMusicTab = Window:Tab({Title = "اغاني مجانية", Icon = "headphones"})
+local BangTab = Window:Tab({Title = "البانق", Icon = "zap"})
+local FunTab = Window:Tab({Title = "المتعة", Icon = "smile"})
+local AntiTab = Window:Tab({Title = "المضادات", Icon = "shield"})
+local SkyboxTab = Window:Tab({Title = "سكاي بوكس", Icon = "cloud"})
+local ScriptTab = Window:Tab({Title = "سكربتات", Icon = "code"})
+
+-- ==================== MAIN TAB ====================
+MainTab:Paragraph({Title = "ZENIX HUB", Text = "السكربت الكامل المتكامل"})
+
+-- ==================== SKIN TAB ====================
+SkinTab:Paragraph({Title = "نسخ السكنات", Text = ""})
+SkinTab:Input({Title = "اسم اللاعب", Default = "", Placeholder = "اكتب الاسم...", Callback = function(v) copyTarget = GetPlayerMatch(v) end})
+SkinTab:Button({Title = "نسخ سكن كامل", Callback = function() if copyTarget then copyAvatar(copyTarget) end end})
+SkinTab:Button({Title = "حذف الملابس", Callback = function()
+    pcall(function() local d = lp.Character:FindFirstChildOfClass("Humanoid"):GetAppliedDescription()
+        for _, a in ipairs(d:GetAccessories(true)) do Remotes.Wear:InvokeServer(tonumber(a.AssetId)) task.wait(0.05) end
+        Remotes.Wear:InvokeServer(0)
+    end)
+end})
+
+-- ==================== PLAYER TAB ====================
+PlayerTab:Paragraph({Title = "خصائص اللاعب", Text = ""})
+PlayerTab:Input({Title = "السرعة", Default = "16", Placeholder = "رقم...", Callback = function(v) local n = tonumber(v) if n and lp.Character and lp.Character:FindFirstChild("Humanoid") then lp.Character.Humanoid.WalkSpeed = n end end})
+PlayerTab:Button({Title = "اعادة السرعة", Callback = function() if lp.Character and lp.Character:FindFirstChild("Humanoid") then lp.Character.Humanoid.WalkSpeed = 16 end end})
+PlayerTab:Input({Title = "القفز", Default = "50", Placeholder = "رقم...", Callback = function(v) local n = tonumber(v) if n and lp.Character and lp.Character:FindFirstChild("Humanoid") then lp.Character.Humanoid.JumpPower = n end end})
+PlayerTab:Button({Title = "اعادة القفز", Callback = function() if lp.Character and lp.Character:FindFirstChild("Humanoid") then lp.Character.Humanoid.JumpPower = 50 end end})
+PlayerTab:Input({Title = "الجاذبية", Default = "196", Placeholder = "رقم...", Callback = function(v) local n = tonumber(v) if n then workspace.Gravity = n end end})
+PlayerTab:Button({Title = "اعادة الجاذبية", Callback = function() workspace.Gravity = 196.2 end})
+PlayerTab:Input({Title = "سرعة الألوان", Default = "10", Placeholder = "رقم...", Callback = function(v) local n = tonumber(v) if n then _G.ColorSpeed = n end end})
+PlayerTab:Paragraph({Title = "ألوان Zenix", Text = ""})
+PlayerTab:Toggle({Title = "تفعيل ألوان Zenix", Default = true, Callback = function(v) _G.ZainCustomColors = v end})
+
+PlayerTab:Paragraph({Title = "🎨 55 لون RP كاملة", Text = ""})
+local RpColors = {
+    {"1 اسود و ابيض", {Color3.fromRGB(0,0,0), Color3.fromRGB(255,255,255)}},
+    {"2 اسود و احمر", {Color3.fromRGB(0,0,0), Color3.fromRGB(255,0,0)}},
+    {"3 اسود و اخضر", {Color3.fromRGB(0,0,0), Color3.fromRGB(0,255,0)}},
+    {"4 اسود و اصفر", {Color3.fromRGB(0,0,0), Color3.fromRGB(255,255,0)}},
+    {"5 اسود و بنبي", {Color3.fromRGB(0,0,0), Color3.fromRGB(255,105,180)}},
+    {"6 اسود و بنفسجي", {Color3.fromRGB(0,0,0), Color3.fromRGB(128,0,128)}},
+    {"7 اسود و لبني", {Color3.fromRGB(0,0,0), Color3.fromRGB(0,255,255)}},
+    {"8 اسود و ازرق", {Color3.fromRGB(0,0,0), Color3.fromRGB(0,0,255)}},
+    {"9 اسود و ذهبي", {Color3.fromRGB(0,0,0), Color3.fromRGB(255,215,0)}},
+    {"10 اسود و برتقالي", {Color3.fromRGB(0,0,0), Color3.fromRGB(255,165,0)}},
+    {"11 اسود و زيتي", {Color3.fromRGB(0,0,0), Color3.fromRGB(128,128,0)}},
+    {"12 ابيض و احمر", {Color3.fromRGB(255,255,255), Color3.fromRGB(255,0,0)}},
+    {"13 ابيض و اخضر", {Color3.fromRGB(255,255,255), Color3.fromRGB(0,255,0)}},
+    {"14 ابيض و اصفر", {Color3.fromRGB(255,255,255), Color3.fromRGB(255,255,0)}},
+    {"15 ابيض و بنبي", {Color3.fromRGB(255,255,255), Color3.fromRGB(255,105,180)}},
+    {"16 ابيض و بنفسجي", {Color3.fromRGB(255,255,255), Color3.fromRGB(128,0,128)}},
+    {"17 ابيض و لبني", {Color3.fromRGB(255,255,255), Color3.fromRGB(0,255,255)}},
+    {"18 ابيض و ازرق", {Color3.fromRGB(255,255,255), Color3.fromRGB(0,0,255)}},
+    {"19 ابيض و ذهبي", {Color3.fromRGB(255,255,255), Color3.fromRGB(255,215,0)}},
+    {"20 ابيض و زيتي", {Color3.fromRGB(255,255,255), Color3.fromRGB(128,128,0)}},
+    {"21 احمر و اخضر", {Color3.fromRGB(255,0,0), Color3.fromRGB(0,255,0)}},
+    {"22 احمر و اصفر", {Color3.fromRGB(255,0,0), Color3.fromRGB(255,255,0)}},
+    {"23 احمر و بنبي", {Color3.fromRGB(255,0,0), Color3.fromRGB(255,105,180)}},
+    {"24 احمر و بنفسجي", {Color3.fromRGB(255,0,0), Color3.fromRGB(128,0,128)}},
+    {"25 احمر و لبني", {Color3.fromRGB(255,0,0), Color3.fromRGB(0,255,255)}},
+    {"26 احمر و ازرق", {Color3.fromRGB(255,0,0), Color3.fromRGB(0,0,255)}},
+    {"27 احمر و ذهبي", {Color3.fromRGB(255,0,0), Color3.fromRGB(255,215,0)}},
+    {"28 احمر و زيتي", {Color3.fromRGB(255,0,0), Color3.fromRGB(128,128,0)}},
+    {"29 اخضر و اصفر", {Color3.fromRGB(0,255,0), Color3.fromRGB(255,255,0)}},
+    {"30 اخضر و بنبي", {Color3.fromRGB(0,255,0), Color3.fromRGB(255,105,180)}},
+    {"31 اخضر و بنفسجي", {Color3.fromRGB(0,255,0), Color3.fromRGB(128,0,128)}},
+    {"32 اخضر و لبني", {Color3.fromRGB(0,255,0), Color3.fromRGB(0,255,255)}},
+    {"33 اخضر و ازرق", {Color3.fromRGB(0,255,0), Color3.fromRGB(0,0,255)}},
+    {"34 اخضر و ذهبي", {Color3.fromRGB(0,255,0), Color3.fromRGB(255,215,0)}},
+    {"35 اخضر و زيتي", {Color3.fromRGB(0,255,0), Color3.fromRGB(128,128,0)}},
+    {"36 اصفر و بنبي", {Color3.fromRGB(255,255,0), Color3.fromRGB(255,105,180)}},
+    {"37 اصفر و بنفسجي", {Color3.fromRGB(255,255,0), Color3.fromRGB(128,0,128)}},
+    {"38 اصفر و لبني", {Color3.fromRGB(255,255,0), Color3.fromRGB(0,255,255)}},
+    {"39 اصفر و ازرق", {Color3.fromRGB(255,255,0), Color3.fromRGB(0,0,255)}},
+    {"40 اصفر و ذهبي", {Color3.fromRGB(255,255,0), Color3.fromRGB(255,215,0)}},
+    {"41 اصفر و زيتي", {Color3.fromRGB(255,255,0), Color3.fromRGB(128,128,0)}},
+    {"42 بنبي و بنفسجي", {Color3.fromRGB(255,105,180), Color3.fromRGB(128,0,128)}},
+    {"43 بنبي و لبني", {Color3.fromRGB(255,105,180), Color3.fromRGB(0,255,255)}},
+    {"44 بنبي و ازرق", {Color3.fromRGB(255,105,180), Color3.fromRGB(0,0,255)}},
+    {"45 بنبي و ذهبي", {Color3.fromRGB(255,105,180), Color3.fromRGB(255,215,0)}},
+    {"46 بنبي و زيتي", {Color3.fromRGB(255,105,180), Color3.fromRGB(128,128,0)}},
+    {"47 بنفسجي و لبني", {Color3.fromRGB(128,0,128), Color3.fromRGB(0,255,255)}},
+    {"48 بنفسجي و ازرق", {Color3.fromRGB(128,0,128), Color3.fromRGB(0,0,255)}},
+    {"49 بنفسجي و ذهبي", {Color3.fromRGB(128,0,128), Color3.fromRGB(255,215,0)}},
+    {"50 بنفسجي و زيتي", {Color3.fromRGB(128,0,128), Color3.fromRGB(128,128,0)}},
+    {"51 لبني و ازرق", {Color3.fromRGB(0,255,255), Color3.fromRGB(0,0,255)}},
+    {"52 لبني و ذهبي", {Color3.fromRGB(0,255,255), Color3.fromRGB(255,215,0)}},
+    {"53 لبني و زيتي", {Color3.fromRGB(0,255,255), Color3.fromRGB(128,128,0)}},
+    {"54 ازرق و ذهبي", {Color3.fromRGB(0,0,255), Color3.fromRGB(255,215,0)}},
+    {"55 ازرق و زيتي", {Color3.fromRGB(0,0,255), Color3.fromRGB(128,128,0)}},
+}
+for _, cd in ipairs(RpColors) do
+    PlayerTab:Toggle({Title = cd[1], Default = false, Callback = function(v) if v then customColors = cd[2] _G.ZainCustomColors = true end end})
+end
+
+PlayerTab:Paragraph({Title = "حفظ الموقع", Text = ""})
+PlayerTab:Button({Title = "حفظ الموقع", Callback = function() if lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then savedLocationCFrame = lp.Character.HumanoidRootPart.CFrame end end})
+PlayerTab:Button({Title = "العودة للموقع", Callback = function() if lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") and savedLocationCFrame then lp.Character.HumanoidRootPart.CFrame = savedLocationCFrame end end})
+PlayerTab:Button({Title = "حفظ الريسبون", Callback = function() if lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then savedRespawnCFrame = lp.Character.HumanoidRootPart.CFrame end end})
+PlayerTab:Button({Title = "الغاء الريسبون", Callback = function() savedRespawnCFrame = nil end})
+
+-- ==================== MUSIC TAB ====================
+MusicTab:Paragraph({Title = "🎧 تشغيل سكوتر", Text = ""})
+MusicTab:Input({Title = "كود الاغنية", Default = "", Placeholder = "ادخل ID...", Callback = function(v) currentMusicID = v end})
+MusicTab:Button({Title = "▶️ تشغيل عادي", Callback = function() if currentMusicID ~= "" then playMusic(currentMusicID) end end})
+MusicTab:Button({Title = "✨ تشغيل بريميوم", Callback = function() if currentMusicID ~= "" then playMusic(currentMusicID, "Haverboard") end end})
+
+MusicTab:Paragraph({Title = "🎲 اغاني عشوائية", Text = ""})
+local songs = {
+    {"يقول الولد","107178585445032"},{"ترتمي وسط الخطر","112240853142302"},{"حنا الزمن طار","91223173809939"},
+    {"هبيك فيكي وجهي","126784347964689"},{"اطفال و الجوع","109959176513792"},{"يا خالق الاكوان","107814849078376"},
+    {"بعد طه","96707729194183"},{"تبسم","90746199853459"},{"تبسم 2","84462606932320"},
+    {"خير البريــــة","130387868861288"},{"ما ودي","72738584902275"},{"من بشتكي","71455394954902"},
+    {"لا سامحك","140251460855891"},{"اللي يصاحبك","124407666161812"},{"قالوا المحبة دواء","139577782919780"},
+    {"بكرا لما يجي","72215182167578"},{"احكي مع الله","88119678765223"},{"صورة حلوة","121463880944892"},
+    {"مبحبش حد","103753392891507"},{"سوا سوا","96851518139813"},{"جمالها حصري","121794055315417"},
+    {"متقولش ربي","128944885919441"},{"بهجة","122435042374498"},{"وانت صغير","130028180657610"},
+    {"اللي عايز","72120834501000"},{"انا مش بعيد","88320558572596"},{"مستعد","82047945085802"},
+    {"متسأليش","114807847162411"},{"قلبي الك","138011619495293"},{"وردة","134067986890446"},
+    {"جمالك","114863567321217"},{"حسي بالقلب مغربي","118320829215981"},{"كردية","129546179244845"},
+    {"انساها مغربي","77163359306014"},
+}
+for _, s in ipairs(songs) do MusicTab:Button({Title = s[1], Callback = function() playMusic(s[2]) end}) end
+
+MusicTab:Paragraph({Title = "🇮🇶 عراقي", Text = ""})
+local iraqi = {
+    {"راب عراقي","116272643488592"},{"شراره","81023003196738"},{"عراقي","116815742960163"},
+    {"عراقي حب","105956659839019"},{"فنان","130012558337510"},{"فنان راب 2","80945632184135"},
+    {"ابشرك","82396938710161"},{"الحجني يا شرطي","120675895107276"},{"الف صلاه","103786200526639"},
+    {"ريمكس عراقي","136909019669593"},{"شعر عراقي","83309655997452"},{"ازعاج عراقي","127840997774724"},
+    {"عود عراقي","94546035218751"},{"قول الصواري","135009652401688"},{"قررنا رحيلك","87510423075068"},
+    {"حلوه","77951452994771"},{"سبحيني","80017487709494"},{"غرقت بحبو","118850051381032"},
+    {"تراني سكران","111811908070601"},{"عود قوي","89535137402880"},{"عود جميل","116698448296371"},
+    {"وكر العصفور","102614859260356"},{"رقص للعرسان","107582806271620"},{"عزف يا دنيا","75997967186313"},
+    {"ليبي بعد سنين","114138252573975"},{"كل عقلك","122774951440401"},{"ردوا الله اكبر","106330590409106"},
+    {"يم عيونك","110078712223926"},
+}
+for _, s in ipairs(iraqi) do MusicTab:Button({Title = s[1], Callback = function() playMusic(s[2]) end}) end
+
+MusicTab:Paragraph({Title = "🇪🇬 مصري", Text = ""})
+local masri = {
+    {"انساها","77163359306014"},{"سلمولي","73294187923231"},{"يا حلوة حلاوة","126351447107230"},
+    {"قلبو انا","120161135152444"},{"اقول بحبك","130580284231852"},{"مصرية","128624259208020"},
+    {"رمضان","123555966146480"},{"دمرتي حياتي","124482316940059"},{"راب","8559374146822"},
+    {"جامدة","106941936452890"},{"جامدة 2","107471923441527"},{"تصدق كرهتك","113478978326245"},
+    {"كارزما","89189069089618"},{"الله يا جمالك","102463539890606"},{"اكبر غلطة","127085435747898"},
+    {"اه يا حلو","93620598835551"},{"اتركيني","131870431323817"},{"فارس سكر","115153161936086"},
+    {"هات الدكتور","8776769631"},{"فكني منها","125880160870644"},{"علي كيفك","123487073954032"},
+    {"بره المجره","134955716549974"},{"دا حب","106099918876009"},{"راب 76am","86238849012344"},
+}
+for _, s in ipairs(masri) do MusicTab:Button({Title = s[1], Callback = function() playMusic(s[2]) end}) end
+
+MusicTab:Paragraph({Title = "💀 سب", Text = ""})
+local sb = {
+    {"سب 1","91611648163631"},{"كشلي امك","71491005545506"},{"كسر كي*ك","79928045539255"},
+    {"العن الق*به","131006804177346"},{"متجيش","99113135294997"},{"سب بهجت صابر","6713993281"},
+    {"كي*ك يا حلبي","7942547789"},{"سب 2","131794008455004"},{"سب 3","88304661583351"},
+    {"سب 4","94943308357738"},{"يابن القحبه","5849978429"},{"يا ويلي","78275845721592"},
+    {"فري مايك سب","87920916682123"},{"الله يلع*ن","75745765058107"},
+}
+for _, s in ipairs(sb) do MusicTab:Button({Title = s[1], Callback = function() playMusic(s[2]) end}) end
+
+MusicTab:Paragraph({Title = "🎧 اجنبي", Text = ""})
+local ajnabi = {
+    {"اجنبية","70782176012619"},{"اجنبي حزين","72320758533508"},{"حلوة","130721206402716"},
+    {"حلوة 2","136869502216760"},{"فونك اجنبي","130721206402716"},{"قوية","103288558732219"},
+    {"كرسمس","135528953872601"},{"فونك","111205815697819"},{"جامدة 1","127775034804421"},
+    {"جامدة 2","135454681412242"},{"جامدة 3","127491720343331"},{"فونك GTA","109337680029292"},
+    {"فونك قوي","138361625716987"},{"فونك خطير","92165865063521"},{"my money","1846687233"},
+    {"break it down","105210695336144"},{"فونك ماريو","122192366231455"},{"ترند تيك توك","106185171358009"},
+    {"ترند تيك توك 2","99695831392938"},{"ريمكس","92959057847076"},{"فونك DJ","76312991186384"},
+}
+for _, s in ipairs(ajnabi) do MusicTab:Button({Title = s[1], Callback = function() playMusic(s[2]) end}) end
+
+MusicTab:Paragraph({Title = "🕋 قرآن وديني", Text = ""})
+local deen = {
+    {"صلي عليك","96350513745873"},{"قرآن","75228291149543"},{"يا اجمل الانبياء","95558570672066"},
+    {"يا رايح المدينة","113624682660870"},{"باسم الله","108621294653117"},{"علي شيعي","70969698201901"},
+    {"احلى كلمة","74023750343124"},{"بيت النبي","79401362038431"},{"الله هما","97018921060930"},
+    {"يا رمضان","94251559614845"},{"خلي صلاتك","71465231554402"},{"يا رب","104530451796036"},
+}
+for _, s in ipairs(deen) do MusicTab:Button({Title = s[1], Callback = function() playMusic(s[2]) end}) end
+
+MusicTab:Paragraph({Title = "💬 كلام", Text = ""})
+local kalam = {
+    {"واه بنت","140621694430612"},{"اموتشك","91592068403301"},{"هاي بنت","137286678153859"},
+    {"ياي","131184394702134"},{"ايزي ابلع","112847640842699"},{"ولا تاكل ولا تشرب","73819155183299"},
+    {"ماذا تريد","136789813621839"},{"واو","95139591685380"},{"نايس","78280559086303"},
+    {"i got this","92223942503349"},{"Don't Touch","76186807430383"},
+}
+for _, s in ipairs(kalam) do MusicTab:Button({Title = s[1], Callback = function() playMusic(s[2]) end}) end
+
+-- ==================== FREE MUSIC TAB ====================
+FreeMusicTab:Paragraph({Title = "🎵 اغاني مجانية قصيرة (الكل يسمعها)", Text = ""})
+FreeMusicTab:Paragraph({Title = "اختيار الصوت:", Text = ""})
+for name, id in pairs(musicList) do
+    FreeMusicTab:Button({Title = name, Callback = function()
+        selectedMusic = id
+        playFreeMusic()
+    end})
+end
+
+FreeMusicTab:Paragraph({Title = "الإعدادات", Text = ""})
+FreeMusicTab:Input({Title = "سرعة الصوت (0.5 - 2)", Default = "1", Placeholder = "ادخل السرعة...", Callback = function(v) local n = tonumber(v) if n and n >= 0.5 and n <= 2 then soundSpeed = n end end})
+FreeMusicTab:Input({Title = "قوة الصوت (1 - 20)", Default = "20", Placeholder = "ادخل القوة...", Callback = function(v) local n = tonumber(v) if n and n >= 1 and n <= 20 then soundVolume = n end end})
+FreeMusicTab:Input({Title = "مدى الصوت (10 - 3000)", Default = "1000", Placeholder = "ادخل المدى...", Callback = function(v) local n = tonumber(v) if n and n >= 10 and n <= 3000 then soundRange = n end end})
+
+FreeMusicTab:Paragraph({Title = "التحكم", Text = ""})
+FreeMusicTab:Button({Title = "▶️ تشغيل مرة واحدة", Callback = function() playFreeMusic() end})
+FreeMusicTab:Toggle({Title = "🔄 سبام تشغيل", Default = false, Callback = function(v)
+    spamToggle = v
+    if v then
+        spamTask = task.spawn(function()
+            while spamToggle do
+                playFreeMusic()
+                task.wait(1)
+            end
+        end)
+    else
+        if spamTask then task.cancel(spamTask) spamTask = nil end
+    end
+end})
+
+-- ==================== BANG TAB ====================
+BangTab:Paragraph({Title = "نظام البانق", Text = ""})
+BangTab:Input({Title = "اسم الهدف", Default = "", Placeholder = "ابحث عن لاعب...", Callback = function(v) bangTarget = GetPlayerMatch(v) end})
+BangTab:Toggle({Title = "وضع الدمج 🌀", Default = false, Callback = function(v) combinedEnabled = v holdSixTools = false if v then bangEnabled = false faceSitEnabled = false end end})
+BangTab:Toggle({Title = "بانق خلفي 🍑", Default = false, Callback = function(v) bangEnabled = v holdSixTools = false if v then combinedEnabled = false faceSitEnabled = false end end})
+BangTab:Toggle({Title = "فيس سيت 👅", Default = false, Callback = function(v) faceSitEnabled = v holdSixTools = false if v then combinedEnabled = false bangEnabled = false end end})
+BangTab:Paragraph({Title = "6 أدوات", Text = ""})
+BangTab:Toggle({Title = "دمج (6)", Default = false, Callback = function(v) combinedEnabled = v holdSixTools = v end})
+BangTab:Toggle({Title = "خلفي (6)", Default = false, Callback = function(v) bangEnabled = v holdSixTools = v end})
+BangTab:Button({Title = "اجمع 6", Callback = function() EquipSix() end})
+BangTab:Toggle({Title = "V2 الجسم 💥", Default = false, Callback = function(v) TargetBangV2Enabled = v end})
+BangTab:Toggle({Title = "V2 الوجه 😈", Default = false, Callback = function(v) FaceBangV2Enabled = v end})
+
+-- ==================== FUN TAB ====================
+FunTab:Paragraph({Title = "🌀 Spin", Text = ""})
+FunTab:Input({Title = "سرعة الدوران (ماكس 1000)", Default = "100", Placeholder = "ادخل رقم...", Callback = function(v) local n = tonumber(v) if n and n >= 1 and n <= 1000 then spinSpeed = n end end})
+FunTab:Toggle({Title = "تفعيل Spin 🔄", Default = false, Callback = function(v) spinEnabled = v end})
+
+FunTab:Paragraph({Title = "🎲 انتقال عشوائي", Text = ""})
+FunTab:Button({Title = "انتقل لاماكن عشوائيه", Callback = function()
+    local hrp = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+    for i = 1, 15 do
+        local params = RaycastParams.new() params.FilterDescendantsInstances = {lp.Character} params.FilterType = Enum.RaycastFilterType.Exclude
+        local result = workspace:Raycast(Vector3.new(math.random(-2000, 2000), 1000, math.random(-2000, 2000)), Vector3.new(0, -2000, 0), params)
+        if result and result.Instance and result.Instance.CanCollide then
+            hrp.CFrame = CFrame.new(result.Position + Vector3.new(0, 3, 0))
+            hrp.Velocity = Vector3.zero
+            return
+        end
+    end
+end})
+
+FunTab:Paragraph({Title = "🕹️ تحكم بالطيران", Text = ""})
+FunTab:Button({Title = "تفعيل الطيران", Callback = function()
+    if lp.PlayerGui:FindFirstChild("ZainFly") then return end
+    local cam = workspace.CurrentCamera local moveDir = Vector3.zero
+    local gui = Instance.new("ScreenGui", lp:WaitForChild("PlayerGui")) gui.Name = "ZainFly" gui.ResetOnSpawn = false
+    
+    local ctrl = Instance.new("Frame", gui)
+    ctrl.Size = UDim2.new(0, 350, 0, 350)
+    ctrl.Position = UDim2.new(0.5, -175, 0.5, -175)
+    ctrl.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    ctrl.BackgroundTransparency = 0.2
+    ctrl.Active = true
+    Instance.new("UICorner", ctrl).CornerRadius = UDim.new(0, 20)
+    
+    local head = Instance.new("Frame", ctrl)
+    head.Size = UDim2.new(1, 0, 0, 50)
+    head.BackgroundColor3 = Color3.fromRGB(255, 70, 104)
+    head.BackgroundTransparency = 0.2
+    Instance.new("UICorner", head).CornerRadius = UDim.new(0, 20)
+    local ht = Instance.new("TextLabel", head)
+    ht.Size = UDim2.new(1, 0, 1, 0)
+    ht.Text = "✈️ FLY CONTROL - اسحب من هنا"
+    ht.TextColor3 = Color3.new(1, 1, 1)
+    ht.TextSize = 16
+    ht.Font = Enum.Font.GothamBold
+    ht.BackgroundTransparency = 1
+    
+    local dragging, dragStart, startPos = false, nil, nil
+    head.InputBegan:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+            dragging = true dragStart = i.Position startPos = ctrl.Position
+            i.Changed:Connect(function() if i.UserInputState == Enum.UserInputState.End then dragging = false end end)
+        end
+    end)
+    head.InputChanged:Connect(function(i)
+        if dragging and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
+            local d = i.Position - dragStart
+            ctrl.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + d.X, startPos.Y.Scale, startPos.Y.Offset + d.Y)
+        end
+    end)
+    
+    local function makeBtn(pos, txt, dir)
+        local b = Instance.new("TextButton", ctrl)
+        b.Size = UDim2.new(0, 85, 0, 85) b.Position = pos
+        b.BackgroundColor3 = Color3.fromRGB(30, 30, 30) b.BackgroundTransparency = 0.3
+        b.Text = txt b.TextSize = 36 b.TextColor3 = Color3.new(1, 1, 1) b.Font = Enum.Font.GothamBold
+        Instance.new("UICorner", b).CornerRadius = UDim.new(0, 16)
+        b.InputBegan:Connect(function(i)
+            if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+                moveDir = dir b.BackgroundTransparency = 0.1 b.BackgroundColor3 = Color3.fromRGB(255, 70, 104)
+            end
+        end)
+        b.InputEnded:Connect(function(i)
+            if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+                moveDir = Vector3.zero b.BackgroundTransparency = 0.3 b.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+            end
+        end)
+    end
+    
+    makeBtn(UDim2.new(0.38, 0, 0.2, 0), "▲", Vector3.new(0, 0, -1))
+    makeBtn(UDim2.new(0.38, 0, 0.7, 0), "▼", Vector3.new(0, 0, 1))
+    makeBtn(UDim2.new(0.05, 0, 0.45, 0), "◀", Vector3.new(-1, 0, 0))
+    makeBtn(UDim2.new(0.72, 0, 0.45, 0), "▶", Vector3.new(1, 0, 0))
+    
+    local upBtn = Instance.new("TextButton", ctrl)
+    upBtn.Size = UDim2.new(0, 75, 0, 75) upBtn.Position = UDim2.new(1.25, 0, 0.15, 0)
+    upBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30) upBtn.BackgroundTransparency = 0.3
+    upBtn.Text = "⬆" upBtn.TextSize = 36 upBtn.TextColor3 = Color3.new(1, 1, 1) upBtn.Font = Enum.Font.GothamBold
+    Instance.new("UICorner", upBtn).CornerRadius = UDim.new(0, 16)
+    upBtn.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then moveDir = Vector3.new(0, 1, 0) end end)
+    upBtn.InputEnded:Connect(function() moveDir = Vector3.zero end)
+    
+    local downBtn = Instance.new("TextButton", ctrl)
+    downBtn.Size = UDim2.new(0, 75, 0, 75) downBtn.Position = UDim2.new(1.25, 0, 0.72, 0)
+    downBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30) downBtn.BackgroundTransparency = 0.3
+    downBtn.Text = "⬇" downBtn.TextSize = 36 downBtn.TextColor3 = Color3.new(1, 1, 1) downBtn.Font = Enum.Font.GothamBold
+    Instance.new("UICorner", downBtn).CornerRadius = UDim.new(0, 16)
+    downBtn.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then moveDir = Vector3.new(0, -1, 0) end end)
+    downBtn.InputEnded:Connect(function() moveDir = Vector3.zero end)
+    
+    local exitBtn = Instance.new("TextButton", gui)
+    exitBtn.Size = UDim2.new(0, 50, 0, 50) exitBtn.Position = UDim2.new(0.5, 200, 0.5, -210)
+    exitBtn.Text = "✕" exitBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+    exitBtn.TextColor3 = Color3.new(1, 1, 1) exitBtn.TextSize = 24 exitBtn.Font = Enum.Font.GothamBold
+    Instance.new("UICorner", exitBtn).CornerRadius = UDim.new(0, 25)
+    
+    local bv = Instance.new("BodyVelocity", lp.Character:WaitForChild("HumanoidRootPart"))
+    bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+    local bg = Instance.new("BodyGyro", lp.Character:WaitForChild("HumanoidRootPart"))
+    bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9) bg.P = 15000
+    
+    task.spawn(function()
+        while gui.Parent do
+            bg.CFrame = cam.CFrame
+            bv.Velocity = moveDir.Magnitude > 0 and cam.CFrame:VectorToWorldSpace(moveDir) * 70 or Vector3.zero
+            RunService.RenderStepped:Wait()
+        end
+    end)
+    
+    exitBtn.MouseButton1Click:Connect(function() bv:Destroy() bg:Destroy() gui:Destroy() end)
+end})
+
+-- ==================== ANTI TAB ====================
+AntiTab:Paragraph({Title = "الحماية", Text = ""})
+AntiTab:Toggle({Title = "مسح المنطقه 🌪️", Default = false, Callback = function(v)
+    ClearAreaEnabled = v
+    local c, hrp = lp.Character, lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
+    if v then
+        if not hrp then return end ClearAreaOriginalPos = hrp.CFrame
+        ClearAreaPhysics = RunService.Heartbeat:Connect(function() if ClearAreaEnabled and hrp and hrp.Parent then hrp.Velocity = Vector3.new(50000, 50000, 50000) hrp.RotVelocity = Vector3.new(50000, 50000, 50000) for _, p in ipairs(c:GetChildren()) do if p:IsA("BasePart") then p.CanCollide = false end end end end)
+        ClearAreaThread = task.spawn(function() while ClearAreaEnabled and hrp and hrp.Parent do hrp.CFrame = ClearAreaOriginalPos * CFrame.new(math.random(-2000, 2000), math.random(20, 1000), math.random(-2000, 2000)) task.wait(0.005) end end)
+    else
+        if ClearAreaPhysics then ClearAreaPhysics:Disconnect() end if ClearAreaThread then task.cancel(ClearAreaThread) end
+        if c then for _, p in ipairs(c:GetChildren()) do if p:IsA("BasePart") then p.CanCollide = true end end end
+        task.wait(0.05) if hrp and hrp.Parent and ClearAreaOriginalPos then hrp.Velocity = Vector3.zero hrp.RotVelocity = Vector3.zero hrp.CFrame = ClearAreaOriginalPos * CFrame.new(0, 3, 0) end
+    end
+end})
+AntiTab:Toggle({Title = "مضاد فويد 🛡️", Default = false, Callback = function(v) _G.AntiVoidActive = v end})
+AntiTab:Toggle({Title = "مضاد لاج 🛡️", Default = false, Callback = function(v) _G.GlobalPurge = v end})
+AntiTab:Toggle({Title = "مانع فلينق 🛡️", Default = false, Callback = function(v) antiFlingAll = v end})
+AntiTab:Toggle({Title = "مانع جلوس 🚫", Default = false, Callback = function(v) antiSitEnabled = v if v and lp.Character and lp.Character:FindFirstChildOfClass("Humanoid") then lp.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false) lp.Character.Humanoid.Sit = false end end})
+
+AntiTab:Paragraph({Title = "🌌 القتل الفوري", Text = ""})
+AntiTab:Toggle({Title = "قتل فوري ⚡", Default = false, Callback = function(v)
+    _G.VoidExileActive = v
+    if v then
+        if lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") and lp.Character.HumanoidRootPart.Position.Y > -50 then voidSafePos = lp.Character.HumanoidRootPart.CFrame elseif lastGroundPos then voidSafePos = lastGroundPos end
+        pcall(function() local hum = lp.Character and lp.Character:FindFirstChildOfClass("Humanoid") if hum then hum.MaxHealth = 999999 hum.Health = 999999 hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false) end end)
+        task.spawn(function()
+            while _G.VoidExileActive do
+                task.wait(0.02) local c = lp.Character local hrp = c and c:FindFirstChild("HumanoidRootPart") local hum = c and c:FindFirstChildOfClass("Humanoid")
+                if not hrp or not hum then continue end
+                hum.Health = 999999 local sp = voidSafePos or lastGroundPos or hrp.CFrame
+                workspace.FallenPartsDestroyHeight = -10000
+                hrp.CFrame = CFrame.new(sp.X, -500, sp.Z) task.wait(0.02)
+                hrp.CFrame = CFrame.new(sp.X, 5000, sp.Z) task.wait(0.02)
+                hrp.CFrame = CFrame.new(sp.X, -500, sp.Z) task.wait(0.02)
+                hrp.CFrame = CFrame.new(sp.X, 5000, sp.Z) task.wait(0.02)
+                hrp.CFrame = sp * CFrame.new(0, 3, 0) hrp.Velocity = Vector3.zero hum.Health = 999999
+            end workspace.FallenPartsDestroyHeight = -500
+        end)
+    else
+        workspace.FallenPartsDestroyHeight = -500 task.wait(0.1)
+        local sp = voidSafePos or lastGroundPos
+        if sp and lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then lp.Character.HumanoidRootPart.CFrame = sp * CFrame.new(0, 3, 0) lp.Character.HumanoidRootPart.Velocity = Vector3.zero end
+        pcall(function() local hum = lp.Character and lp.Character:FindFirstChildOfClass("Humanoid") if hum then hum.MaxHealth = 100 hum.Health = 100 hum:SetStateEnabled(Enum.HumanoidStateType.Dead, true) end end)
+    end
+end})
+
+AntiTab:Button({Title = "🔥 جميع المضادات (النظام العربي)", Callback = function() loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Advanced-Arabic-Protection-System-111187"))() end})
+
+-- ==================== SKYBOX TAB ====================
+SkyboxTab:Paragraph({Title = "Nuke FlashBack", Text = "يحفظ جسمك ويطبق تأثير النيوك"})
+SkyboxTab:Toggle({Title = "تفعيل Nuke FlashBack", Default = false, Callback = function(v)
+    nukeFlashEnabled = v
+    if v then
+        local char = lp.Character if not char then return end local hum = char:FindFirstChildOfClass("Humanoid") if not hum then return end
+        local desc = hum:GetAppliedDescription() savedNukeFlashBody = {desc.Torso, desc.RightArm, desc.LeftArm, desc.RightLeg, desc.LeftLeg, desc.Head}
+        task.wait(0.2) pcall(function() ReplicatedStorage.Remotes.ChangeCharacterBody:InvokeServer(nukeBody) end)
+        task.wait(0.3) local newAnim = Instance.new("Animation") newAnim.AnimationId = "rbxassetid://70883871260184"
+        nukeFlashTrack = hum:LoadAnimation(newAnim) nukeFlashTrack.Priority = Enum.AnimationPriority.Action4 nukeFlashTrack:Play(0.1, 1, 1) task.wait(0.1) nukeFlashTrack:AdjustSpeed(5)
+        task.wait(0.3) local plankAnim = Instance.new("Animation") plankAnim.AnimationId = "rbxassetid://3695333486"
+        flashRigidTrack = hum:LoadAnimation(plankAnim) flashRigidTrack.Priority = Enum.AnimationPriority.Movement flashRigidTrack:Play(0.1, 1, 0)
+    else stopNukeFlash() task.wait(0.2) if #savedNukeFlashBody > 0 and lp.Character and lp.Character:FindFirstChildOfClass("Humanoid") then pcall(function() ReplicatedStorage.Remotes.ChangeCharacterBody:InvokeServer(savedNukeFlashBody) end) savedNukeFlashBody = {} end end
+end})
+
+SkyboxTab:Paragraph({Title = "Skybox V1", Text = "برو بيلدر + إيموت + نيوك"})
+SkyboxTab:Toggle({Title = "تفعيل Skybox V1", Default = false, Callback = function(v)
+    if v then
+        if skyboxV1Enabled then return end skyboxV1Enabled = true
+        local char = lp.Character if not char then return end local hum = char:FindFirstChildOfClass("Humanoid") if not hum then return end
+        local desc = hum:GetAppliedDescription() skyboxV1SavedBody = {desc.Torso, desc.RightArm, desc.LeftArm, desc.RightLeg, desc.LeftLeg, desc.Head}
+        task.wait(0.3) pcall(function() ReplicatedStorage.Remotes.ChangeCharacterBody:InvokeServer(PRO_BUILDER_PARTS) end)
+        task.wait(0.3) local emoteAnim = Instance.new("Animation") emoteAnim.AnimationId = "rbxassetid://93224413172183"
+        skyboxV1Track = hum:LoadAnimation(emoteAnim) skyboxV1Track.Priority = Enum.AnimationPriority.Action4 skyboxV1Track:Play(0.1, 1, 1) skyboxV1Track:AdjustSpeed(5)
+        task.wait(0.3) local nukeAnim = Instance.new("Animation") nukeAnim.AnimationId = "rbxassetid://70883871260184"
+        skyboxV1NukeTrack = hum:LoadAnimation(nukeAnim) skyboxV1NukeTrack.Priority = Enum.AnimationPriority.Action4 skyboxV1NukeTrack:Play(0.1, 1, 1) skyboxV1NukeTrack:AdjustSpeed(8)
+        local plankAnim = Instance.new("Animation") plankAnim.AnimationId = "rbxassetid://3695333486"
+        skyboxV1FlashTrack = hum:LoadAnimation(plankAnim) skyboxV1FlashTrack.Priority = Enum.AnimationPriority.Movement skyboxV1FlashTrack:Play(0.1, 1, 0)
+    else
+        if not skyboxV1Enabled then return end skyboxV1Enabled = false stopSkyboxV1() task.wait(0.3)
+        if #skyboxV1SavedBody > 0 and lp.Character and lp.Character:FindFirstChildOfClass("Humanoid") then pcall(function() ReplicatedStorage.Remotes.ChangeCharacterBody:InvokeServer(skyboxV1SavedBody) end) skyboxV1SavedBody = {} end
+    end
+end})
+
+-- ==================== SCRIPT TAB ====================
+ScriptTab:Paragraph({Title = "سكربتات خارجية", Text = ""})
+ScriptTab:Button({Title = "🔥 VR7 On Top", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/VR7ss/OMK/refs/heads/main/VR7-ON-TOP"))() end})
+ScriptTab:Button({Title = "🔥 سكربت صملات", Callback = function() loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Zenix-points-AFK-194181"))() end})
+ScriptTab:Button({Title = "👔 نسخ سكنات IllusionDev", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/pro628713-arch/Test-nine-hub/main/IllusionDev_DUELS_v3.json"))() end})
+ScriptTab:Button({Title = "🎵 Mickey Stealer", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/Gaurav-0196/Stealer/refs/heads/main/MickeyStealer"))() end})
+ScriptTab:Button({Title = "🛡️ المضادات العربية", Callback = function() loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Advanced-Arabic-Protection-System-111187"))() end})
+
+print("✅ ZENIX HUB - Fully Loaded!")
