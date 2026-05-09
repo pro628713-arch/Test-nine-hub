@@ -1,11 +1,9 @@
 -- =====================================================
--- JOO MUSIC - WindUI Edition (الأكواد مخفية بالكامل)
+-- JOO MUSIC - WindUI Edition (Premium Only + New Song)
 -- =====================================================
 
--- تحميل مكتبة WindUI
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
--- تعريف الثيم
 WindUI:AddTheme({
     Name = "JOO Theme",
     Accent = Color3.fromHex("#FF4668"),
@@ -17,7 +15,6 @@ WindUI:AddTheme({
     Icon = Color3.fromHex("#FF4668"),
 })
 
--- نافذة رئيسية
 local Window = WindUI:CreateWindow({
     Title = "🎵 JOO MUSIC HUB",
     Icon = "music",
@@ -41,7 +38,6 @@ local Window = WindUI:CreateWindow({
     },
 })
 
--- تخصيص زر الفتح
 Window:EditOpenButton({
     Title = "JOO MUSIC 🎧",
     Icon = "music",
@@ -60,14 +56,27 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
 local Mouse = lp:GetMouse()
 
--- تشغيل أغنية (سكوتر)
-local function playMusic(id, type)
+-- تشغيل الأغنية (السكوتر البريمية فقط)
+local function playMusic(id)
     pcall(function()
-        local remote = ReplicatedStorage:WaitForChild("RE",3):FindFirstChild("1NoMoto1rVehicle1s")
+        local remote = ReplicatedStorage:WaitForChild("RE",2):FindFirstChild("1NoMoto1rVehicle1s")
         if remote then
-            remote:FireServer(type or "SkateBoard")
+            remote:FireServer("SegwaySmall") -- بريميوم دايمًا
             task.wait(0.3)
             remote:FireServer("PickingScooterMusicText", tostring(id))
+        end
+    end)
+end
+
+-- إزالة السكوتر
+local function removeScooter()
+    pcall(function()
+        local remote = ReplicatedStorage:WaitForChild("RE",2):FindFirstChild("1NoMoto1rVehicle1s")
+        if remote then
+            remote:FireServer("Delete NoMotorVehicle")
+        end
+        if lp.Character and lp.Character:FindFirstChild("Humanoid") then
+            lp.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Running)
         end
     end)
 end
@@ -130,157 +139,82 @@ MainTab:Paragraph({
     Locked = false,
 })
 
--- ==================== تبويب الأغاني (بدون إظهار الأكواد) ====================
+-- ==================== تبويب الأغاني ====================
 local PresetTab = Window:Tab({
     Title = "🎵 قوائم",
     Icon = "music",
     Locked = false,
 })
 
--- دالة إضافة زر مع إخفاء الـ ID تماماً
 local function addSong(name, id)
     PresetTab:Button({
         Title = name,
-        Desc = "",   -- إخفاء الـ ID
+        Desc = "",
         Locked = false,
         Callback = function() playMusic(id) end
     })
 end
 
--- الأغاني العشوائية
+-- الأغاني العشوائية (تمت إضافة Back Rooms Funk)
 local randomSongs = {
-    {"افخم فونك", "17647322226"},
-    {"فونك غضب", "115859025716354"},
-    {"فونك عالمي", "76578817848504"},
-    {"فونك ممتاز", "102402883551679"},
-    {"فونك ازعاج", "85682109892034"},
-    {"BATTLE OF EGYPT JumpSTYLE", "98965852907043"},
-    {"LAZERSTYLERZ MIX", "72205284895340"},
-    {"JUMPSTYLE 2003 (SLOWED)", "133557915783857"},
-    {"MAYHEM EXEC", "76333126810079"},
-    {"LOST", "106586241621814"},
-    {"CRYPTDUST.MID", "138397903891342"},
-    {"JumpStyling 10.06.08", "99352274208551"},
-    {"JUMPSTYLE LORD (SPED UP)", "94533013083491"},
-    {"HOLLOW DISTORTION", "106489098327460"},
-    {"2004ASHEN BOOTLeG.WEBP", "135881205397136"},
-    {"AVENGER", "135881205397136"},
-    {"افشخ اغنيه", "121755260609793"},
-    {"اغنيه حلوه موت", "82696338249251"},
-    {"HEAVENLY JUMPSTYLE (SLOWED + REVERBED)", "124956832051872"},
-    {"MONTAGEM TENTA (Slowed)", "95799488312338"},
-    {"MONTAGEM E", "73211638025913"},
-    {"MONTAGEM DO KARMA (SLOWED)", "79148752172118"},
-    {"DJ MONTAGEM FUNK! (8D)", "80640214873696"},
-    {"MONTAGEM TSUNAMI GIGANTE", "107424491541808"},
-    {"MONTAGEM MARIO", "122192366231455"},
-    {"PASSINHO BEM SOLTO", "106185171358009"},
-    {"MONTAGEM YOSHO HAI", "126971857595847"},
-    {"Midnight Winter", "115590187881251"},
-    {"Unknown ID", "98468932764512"},
-    {"الآء 20.7", "134763052215450"},
-    {"Robot Phonkstep", "105300007125743"},
-    {"PPFKT 3345", "119372546759640"},
-    {"BASS DA DA DA", "138410854139543"},
-    {"HEAVENLY JUMPSTYLE (new)", "139945126932727"},
-    {"Better off alone x Slaughter House mix", "112439283898361"},
-    {"Hztk 8021", "104704891783894"},
-    {"OWTR 7322", "135047699123451"},
-    {"The forgotten treasure", "74658666970693"},
-    {"Charlie Kirky Funk", "113458227429706"},
-    {"坤坤专属（慢速版）", "82944401312241"},
-    {"Hunter Eyes", "139957878565852"},
-    {"Trillium", "115440201770223"},
-    {"#Voyuitwaaien", "123181826801671"},
-    {"Unknown 1", "123267035671850"},
-    {"Unknown 2", "85341099264298"},
+    {"افخم فونك", "17647322226"}, {"فونك غضب", "115859025716354"}, {"فونك عالمي", "76578817848504"},
+    {"فونك ممتاز", "102402883551679"}, {"فونك ازعاج", "85682109892034"}, {"BATTLE OF EGYPT JumpSTYLE", "98965852907043"},
+    {"LAZERSTYLERZ MIX", "72205284895340"}, {"JUMPSTYLE 2003 (SLOWED)", "133557915783857"}, {"MAYHEM EXEC", "76333126810079"},
+    {"LOST", "106586241621814"}, {"CRYPTDUST.MID", "138397903891342"}, {"JumpStyling 10.06.08", "99352274208551"},
+    {"JUMPSTYLE LORD (SPED UP)", "94533013083491"}, {"HOLLOW DISTORTION", "106489098327460"}, {"2004ASHEN BOOTLeG.WEBP", "135881205397136"},
+    {"AVENGER", "135881205397136"}, {"افشخ اغنيه", "121755260609793"}, {"اغنيه حلوه موت", "82696338249251"},
+    {"HEAVENLY JUMPSTYLE (SLOWED + REVERBED)", "124956832051872"}, {"MONTAGEM TENTA (Slowed)", "95799488312338"},
+    {"MONTAGEM E", "73211638025913"}, {"MONTAGEM DO KARMA (SLOWED)", "79148752172118"}, {"DJ MONTAGEM FUNK! (8D)", "80640214873696"},
+    {"MONTAGEM TSUNAMI GIGANTE", "107424491541808"}, {"MONTAGEM MARIO", "122192366231455"}, {"PASSINHO BEM SOLTO", "106185171358009"},
+    {"MONTAGEM YOSHO HAI", "126971857595847"}, {"Midnight Winter", "115590187881251"}, {"Unknown ID", "98468932764512"},
+    {"الآء 20.7", "134763052215450"}, {"Robot Phonkstep", "105300007125743"}, {"PPFKT 3345", "119372546759640"},
+    {"BASS DA DA DA", "138410854139543"}, {"HEAVENLY JUMPSTYLE (new)", "139945126932727"}, {"Better off alone x Slaughter House mix", "112439283898361"},
+    {"Hztk 8021", "104704891783894"}, {"OWTR 7322", "135047699123451"}, {"The forgotten treasure", "74658666970693"},
+    {"Charlie Kirky Funk", "113458227429706"}, {"坤坤专属（慢速版）", "82944401312241"}, {"Hunter Eyes", "139957878565852"},
+    {"Trillium", "115440201770223"}, {"#Voyuitwaaien", "123181826801671"}, {"Unknown 1", "123267035671850"}, {"Unknown 2", "85341099264298"},
+    {"Back Rooms Funk", "106711954990826"}, -- الأغنية الجديدة
 }
-for _, song in ipairs(randomSongs) do
-    addSong(song[1], song[2])
-end
+for _, song in ipairs(randomSongs) do addSong(song[1], song[2]) end
 
--- الأغاني العربية والمصرية (مع الأغاني الجديدة)
 PresetTab:Button({Title = "--- الاغاني العربيه | المصريه ---", Locked = true, Callback = function() end})
 local arabicSongs = {
-    {"دمرتي حياتي", "124482316940059"},
-    {"تصدق كرهتك", "113478978326245"},
-    {"اه يا حلو", "93620598835551"},
-    {"اكبر غلطه", "127085435747898"},
-    {"ليه جي", "92304349905750"},
-    {"هات الدكتور", "8776769631"},
-    {"علي كيفك", "123487073954032"},
-    {"بخطار بس قني بروك", "125693571824719"},
-    {"أغنية جديدة 1", "138648345036748"},
-    {"أغنية جديدة 2", "113052183515304"},
-    {"أغنية جديدة 3", "114316100741483"},
-    {"أغنية جديدة 4", "70646100859753"},
+    {"دمرتي حياتي", "124482316940059"}, {"تصدق كرهتك", "113478978326245"}, {"اه يا حلو", "93620598835551"},
+    {"اكبر غلطه", "127085435747898"}, {"ليه جي", "92304349905750"}, {"هات الدكتور", "8776769631"},
+    {"علي كيفك", "123487073954032"}, {"بخطار بس قني بروك", "125693571824719"}, {"أغنية جديدة 1", "138648345036748"},
+    {"أغنية جديدة 2", "113052183515304"}, {"أغنية جديدة 3", "114316100741483"}, {"أغنية جديدة 4", "70646100859753"},
 }
-for _, song in ipairs(arabicSongs) do
-    addSong(song[1], song[2])
-end
+for _, song in ipairs(arabicSongs) do addSong(song[1], song[2]) end
 
--- الأغاني العراقية
 PresetTab:Button({Title = "--- اغاني عراقيه ---", Locked = true, Callback = function() end})
 local iraqiSongs = {
-    {"راب عراقي 🧩", "116272643488592"},
-    {"اخذت بدنيا تعناط ودروس", "112254940188047"},
-    {"شراره 🎻", "81023003196738"},
-    {"عراقي 🔥", "116815742960163"},
-    {"عراقي حب ❤", "105956659839019"},
-    {"ميت انا من فراقك", "98313375960954"},
-    {"دم حزني", "99123490695024"},
-    {"الحجني يا شرطي", "120675895107276"},
-    {"ريمكس عراقي", "136909019669593"},
-    {"شعر عراقي", "83309655997452"},
-    {"ازعاج عراقي", "127840997774724"},
-    {"عراقي حزين", "106271890575602"},
-    {"عود عراقي", "94546035218751"},
-    {"قول الصواري", "135009652401688"},
-    {"قررنا رحيلك", "87510423075068"},
+    {"راب عراقي 🧩", "116272643488592"}, {"اخذت بدنيا تعناط ودروس", "112254940188047"}, {"شراره 🎻", "81023003196738"},
+    {"عراقي 🔥", "116815742960163"}, {"عراقي حب ❤", "105956659839019"}, {"ميت انا من فراقك", "98313375960954"},
+    {"دم حزني", "99123490695024"}, {"الحجني يا شرطي", "120675895107276"}, {"ريمكس عراقي", "136909019669593"},
+    {"شعر عراقي", "83309655997452"}, {"ازعاج عراقي", "127840997774724"}, {"عراقي حزين", "106271890575602"},
+    {"عود عراقي", "94546035218751"}, {"قول الصواري", "135009652401688"}, {"قررنا رحيلك", "87510423075068"},
     {"تراني سكران 😂", "111811908070601"},
 }
-for _, song in ipairs(iraqiSongs) do
-    addSong(song[1], song[2])
-end
+for _, song in ipairs(iraqiSongs) do addSong(song[1], song[2]) end
 
--- اغاني سب
 PresetTab:Button({Title = "--- اغاني سب ---", Locked = true, Callback = function() end})
 local insultSongs = {
-    {"سب 1", "91611648163631"},
-    {"كشلي امك", "71491005545506"},
-    {"سب 2", "131794008455004"},
-    {"سب 3", "88304661583351"},
-    {"سب 4", "94943308357738"},
+    {"سب 1", "91611648163631"}, {"كشلي امك", "71491005545506"}, {"سب 2", "131794008455004"},
+    {"سب 3", "88304661583351"}, {"سب 4", "94943308357738"},
 }
-for _, song in ipairs(insultSongs) do
-    addSong(song[1], song[2])
-end
+for _, song in ipairs(insultSongs) do addSong(song[1], song[2]) end
 
--- اغاني اجنبيه
 PresetTab:Button({Title = "--- اغاني اجنبيه ---", Locked = true, Callback = function() end})
 local foreignSongs = {
-    {"اجنبي حزين", "72320758533508"},
-    {"my money", "1846687233"},
-    {"ريمكس", "120871403922972"},
-    {"فونك GTA", "109337680029292"},
-    {"فونك قوي", "138361625716987"},
-    {"كرسمس", "135528953872601"},
+    {"اجنبي حزين", "72320758533508"}, {"my money", "1846687233"}, {"ريمكس", "120871403922972"},
+    {"فونك GTA", "109337680029292"}, {"فونك قوي", "138361625716987"}, {"كرسمس", "135528953872601"},
 }
-for _, song in ipairs(foreignSongs) do
-    addSong(song[1], song[2])
-end
+for _, song in ipairs(foreignSongs) do addSong(song[1], song[2]) end
 
--- اغاني ازعاج (مع الأغنية الجديدة)
 PresetTab:Button({Title = "--- اغاني ازعاج ---", Locked = true, Callback = function() end})
 local noisySongs = {
-    {"get out", "99796748877356"},
-    {"علي البي", "105438850576001"},
-    {"ازعاج فونك", "120576436665675"},
-    {"ازعاج جديد", "110307806482688"},
+    {"get out", "99796748877356"}, {"علي البي", "105438850576001"}, {"ازعاج فونك", "120576436665675"}, {"ازعاج جديد", "110307806482688"},
 }
-for _, song in ipairs(noisySongs) do
-    addSong(song[1], song[2])
-end
+for _, song in ipairs(noisySongs) do addSong(song[1], song[2]) end
 
 -- ==================== تبويب تشغيل يدوي ====================
 local ManualTab = Window:Tab({
@@ -300,14 +234,12 @@ ManualTab:Input({
     Title = "🎵 معرف الأغنية",
     Placeholder = "أدخل الرقم هنا",
     Locked = false,
-    Callback = function(value)
-        musicIdInput = value
-    end
+    Callback = function(value) musicIdInput = value end
 })
 
 ManualTab:Button({
-    Title = "▶ تشغيل",
-    Desc = "يركب السكوتر ويشغل الأغنية",
+    Title = "✨ تشغيل (بريميوم)",
+    Desc = "يركب السكوتر البريمية ويشغل الأغنية",
     Locked = false,
     Callback = function()
         if musicIdInput == "" then
@@ -316,6 +248,16 @@ ManualTab:Button({
         end
         playMusic(musicIdInput)
         StarterGui:SetCore("SendNotification", {Title = "تم التشغيل", Text = "ID: " .. musicIdInput, Duration = 2})
+    end
+})
+
+ManualTab:Button({
+    Title = "❌ إزالة السكوتر",
+    Desc = "يحذف السكوتر أو أي مركبة NoMotorVehicle",
+    Locked = false,
+    Callback = function()
+        removeScooter()
+        StarterGui:SetCore("SendNotification", {Title = "تم", Text = "تم إزالة السكوتر", Duration = 2})
     end
 })
 
@@ -393,4 +335,4 @@ welcomeSound.Looped = false
 welcomeSound.Parent = SoundService
 welcomeSound:Play()
 
-print("✅ JOO MUSIC (جميع الأكواد مخفية تحت أسماء الأغاني) loaded successfully!")
+print("✅ JOO MUSIC (Premium Mode + Back Rooms Funk) loaded successfully!")
