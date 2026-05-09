@@ -1,5 +1,5 @@
 -- =====================================================
--- JOO MUSIC - WindUI Edition (Premium Only + New Song)
+-- JOO MUSIC - WindUI Edition (Final Fixed)
 -- =====================================================
 
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
@@ -120,6 +120,45 @@ setRPName("ⓙⓞⓞ ⓜⓤⓢⓘⓒ ⓗⓤⓑ ⓢⓒⓡⓘⓟⓣ", "Script by J
 task.wait(0.5)
 startRainbowName()
 
+-- إشعار ترحيبي بديل عن النافذة الحوارية
+StarterGui:SetCore("SendNotification", {
+    Title = "📢 رسالة من المطور",
+    Text = "اتمنا يعجبكم سكربت و بحاول انشاء الله اخليه احسن!\n⭐ شكر خاص: JOO & Amrke",
+    Duration = 5
+})
+
+-- ==================== RAINBOW SCOOTER (ميزة السكوتر الملون) ====================
+local rainbowScooterEnabled = false
+local function toggleRainbowScooter(state)
+    rainbowScooterEnabled = state
+    if state then
+        task.spawn(function()
+            while rainbowScooterEnabled do
+                local hue = tick() % 5 / 5 -- تغير لون سريع
+                local color = Color3.fromHSV(hue, 1, 1)
+                pcall(function()
+                    local RE = ReplicatedStorage:WaitForChild("RE")
+                    if RE then
+                        local carRemote = RE:WaitForChild("1Player1sCa1r")
+                        if carRemote then
+                            carRemote:FireServer("NoMotorColor", color)
+                        end
+                    end
+                    -- إضافة تأثير Underglow لو موجود
+                    local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+                    if Remotes then
+                        local underglow = Remotes:WaitForChild("SetUnderglowColor")
+                        if underglow then
+                            underglow:InvokeServer(1, color)
+                        end
+                    end
+                end)
+                task.wait(0.1)
+            end
+        end)
+    end
+end
+
 -- ==================== تبويب قائمه رئيسيه ====================
 local MainTab = Window:Tab({
     Title = "🏠 قائمه رئيسيه",
@@ -137,6 +176,17 @@ MainTab:Paragraph({
     Title = "⭐ شكر خاص",
     Text = "JOO & Amrke\nباستخدام WindUI Library",
     Locked = false,
+})
+
+-- زر تفعيل/إيقاف Rainbow Scooter
+MainTab:Toggle({
+    Title = "🌈 سكوتر ملون (Rainbow)",
+    Desc = "يغير لون السكوتر البريمية بشكل ديناميكي",
+    Default = false,
+    Locked = false,
+    Callback = function(state)
+        toggleRainbowScooter(state)
+    end
 })
 
 -- ==================== تبويب الأغاني ====================
@@ -172,7 +222,7 @@ local randomSongs = {
     {"Hztk 8021", "104704891783894"}, {"OWTR 7322", "135047699123451"}, {"The forgotten treasure", "74658666970693"},
     {"Charlie Kirky Funk", "113458227429706"}, {"坤坤专属（慢速版）", "82944401312241"}, {"Hunter Eyes", "139957878565852"},
     {"Trillium", "115440201770223"}, {"#Voyuitwaaien", "123181826801671"}, {"Unknown 1", "123267035671850"}, {"Unknown 2", "85341099264298"},
-    {"Back Rooms Funk", "106711954990826"}, -- الأغنية الجديدة
+    {"Back Rooms Funk", "106711954990826"},
 }
 for _, song in ipairs(randomSongs) do addSong(song[1], song[2]) end
 
@@ -335,4 +385,4 @@ welcomeSound.Looped = false
 welcomeSound.Parent = SoundService
 welcomeSound:Play()
 
-print("✅ JOO MUSIC (Premium Mode + Back Rooms Funk) loaded successfully!")
+print("✅ JOO MUSIC (Final Fixed) loaded successfully!")
