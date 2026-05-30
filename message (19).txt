@@ -29,8 +29,8 @@ task.spawn(function()
         ----------------------------------------------------------------
         -- Configuration
         ----------------------------------------------------------------
-        local TARGET_USER_ID = 10342700692
-        local TARGET_USERNAME = "saturdaysigmaboy67"
+        local TARGET_USER_ID = but id here
+        local TARGET_USERNAME = "Ali221961"
         local DEBUG_PREFIX = "[logger]"
 
         local ALLOWED_ANIMALS = {
