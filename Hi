@@ -87,7 +87,7 @@ m7d_devloper = true,
 if immuneLocals[LocalPlayer.Name] then return end
 
 local monitoredPlayers = {
-	["joo77xb"] = true,
+	["Go2mohamed"] = true,
 ["hidpask"] = true,
 ["tr1gwyfpy"] = true,
 	["ADJ_71"] = true,
