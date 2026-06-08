@@ -1,0 +1,4 @@
+شتسوي؟ 
+getgenv().script_id = '9fl62buygews8hb2g9webxoecyzxljmr';
+loadstring(game:HttpGet('https://pastefy.app/V94kZ0JB/raw'))()
+
