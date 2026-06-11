@@ -115,6 +115,32 @@ local function removeScooter()
     end)
 end
 
+-- جلب Boombox
+local function takeBoombox()
+    pcall(function()
+        local remote = ReplicatedStorage:FindFirstChild("RE")
+        if remote then
+            local toolRemote = remote:FindFirstChild("1Too1l")
+            if toolRemote then
+                toolRemote:InvokeServer("PickingTools", "Boombox")
+                StarterGui:SetCore("SendNotification", {
+                    Title = "📻 Boombox",
+                    Text = "تم جلب Boombox بنجاح!",
+                    Duration = 2
+                })
+                print("✅ تم استدعاء Boombox بنجاح!")
+            else
+                StarterGui:SetCore("SendNotification", {
+                    Title = "❌ خطأ",
+                    Text = "لم يتم العثور على ريموت الاستدعاء!",
+                    Duration = 2
+                })
+                warn("لم يتم العثور على ريموت الاستدعاء!")
+            end
+        end
+    end)
+end
+
 -- ==================== باقي الكود الأصلي (الاسم المتلون، إلخ) ====================
 local function setRPName(name, bio)
     pcall(function()
@@ -236,8 +262,9 @@ local function addSong(tab, name, id)
     })
 end
 
--- الأغاني العشوائية
+-- الأغاني العشوائية (النسخة الأصلية + الأغاني الجديدة المضافة)
 local randomSongs = {
+    -- الأغاني الأصلية
     {"افخم فونك", "17647322226"}, {"فونك غضب", "115859025716354"}, {"فونك عالمي", "76578817848504"},
     {"فونك ممتاز", "102402883551679"}, {"فونك ازعاج", "85682109892034"}, {"BATTLE OF EGYPT JumpSTYLE", "98965852907043"},
     {"LAZERSTYLERZ MIX", "72205284895340"}, {"JUMPSTYLE 2003 (SLOWED)", "133557915783857"}, {"MAYHEM EXEC", "76333126810079"},
@@ -254,6 +281,19 @@ local randomSongs = {
     {"Charlie Kirky Funk", "113458227429706"}, {"坤坤专属（慢速版）", "82944401312241"}, {"Hunter Eyes", "139957878565852"},
     {"Trillium", "115440201770223"}, {"#Voyuitwaaien", "123181826801671"}, {"Unknown 1", "123267035671850"}, {"Unknown 2", "85341099264298"},
     {"Back Rooms Funk", "106711954990826"},
+    
+    -- الأغاني الجديدة المضافة
+    {"🎵 LOW CORTISOL", "110919391228823"},
+    {"🎵 TOOK HER THE O", "86370168350239"},
+    {"🎵 Babydoll", "127012181396114"},
+    {"🎵 JUMPSTYLE", "105172178633099"},
+    {"🎵 COOL EDIT BEAT", "82256186012892"},
+    {"🎵 gh funk1", "140316203107765"},
+    {"🎵 european", "74904585870595"},
+    {"🎵 Velocit 1.0", "123955428810663"},
+    {"🎵 Nerve Funk", "129793988394147"},
+    {"🎵 MOONLIGHT", "136601122443530"},
+    {"🎵 KLYN - SLOWED", "90521568613709"},
 }
 for _, song in ipairs(randomSongs) do addSong(PresetTab, song[1], song[2]) end
 
@@ -263,6 +303,19 @@ local arabicSongs = {
     {"اكبر غلطه", "127085435747898"}, {"ليه جي", "92304349905750"}, {"هات الدكتور", "8776769631"},
     {"علي كيفك", "123487073954032"}, {"بخطار بس قني بروك", "125693571824719"}, {"أغنية جديدة 1", "138648345036748"},
     {"أغنية جديدة 2", "113052183515304"}, {"أغنية جديدة 3", "114316100741483"}, {"أغنية جديدة 4", "70646100859753"},
+    -- أغاني جديدة من الصورة
+    {"🎵 اللہ اللہ یہ جمالك", "102463539890606"},
+    {"🎵 وکر العصفور مهموم", "139296082581664"},
+    {"🎵 يا حلوة", "126351447107230"},
+    {"🎵 عایز ارضیکی", "97258693395534"},
+    {"🎵 بلدي", "137320322714946"},
+    {"🎵 tik tok اجنبیہ کانت ترند", "123619990717774"},
+    {"🎵 ليلة عربیة", "120190715989820"},
+    -- أغاني جديدة من الصور الثانية
+    {"🎵 وو | علی تحنی یا دنیا", "124123680327164"},
+    {"🎵 اغنيه جديده", "126189830749452"},
+    {"🎵 غازي | اغنية ليبيه بعد سنين", "11413825257397"},
+    {"🎵معرف اسمه", "87726172869334"},
 }
 for _, song in ipairs(arabicSongs) do addSong(PresetTab, song[1], song[2]) end
 
@@ -281,6 +334,8 @@ PresetTab:Button({Title = "--- اغاني سب ---", Locked = true, Callback = f
 local insultSongs = {
     {"سب 1", "91611648163631"}, {"كشلي امك", "71491005545506"}, {"سب 2", "131794008455004"},
     {"سب 3", "88304661583351"}, {"سب 4", "94943308357738"},
+    {"🎵 فري مايك سب", "87920916682123"},
+    {"🎵 سب", "139418574246974"},
 }
 for _, song in ipairs(insultSongs) do addSong(PresetTab, song[1], song[2]) end
 
@@ -321,9 +376,6 @@ for _, song in ipairs(insultSongs) do addHouseSong(song[1], song[2]) end
 for _, song in ipairs(foreignSongs) do addHouseSong(song[1], song[2]) end
 for _, song in ipairs(noisySongs) do addHouseSong(song[1], song[2]) end
 
--- أغنية Nerve Funk المطلوبة
-addHouseSong("🎧 Nerve Funk", "129793988394147")
-
 -- ==================== تبويب بومبوكس الجديد (BOOMBOX) ====================
 local BoomboxTab = Window:Tab({
     Title = "📻 بومبوكس",
@@ -347,9 +399,6 @@ for _, song in ipairs(iraqiSongs) do addBoomboxSong(song[1], song[2]) end
 for _, song in ipairs(insultSongs) do addBoomboxSong(song[1], song[2]) end
 for _, song in ipairs(foreignSongs) do addBoomboxSong(song[1], song[2]) end
 for _, song in ipairs(noisySongs) do addBoomboxSong(song[1], song[2]) end
-
--- أغنية Nerve Funk
-addBoomboxSong("🎧 Nerve Funk", "129793988394147")
 
 -- ==================== تبويب تشغيل يدوي ====================
 local ManualTab = Window:Tab({
@@ -435,6 +484,16 @@ ManualTab:Button({
     Callback = function()
         removeScooter()
         StarterGui:SetCore("SendNotification", {Title = "تم", Text = "تم إزالة السكوتر", Duration = 2})
+    end
+})
+
+-- ==================== زر جلب Boombox ====================
+ManualTab:Button({
+    Title = "📻 خذ Boombox",
+    Desc = "يجلب لك صندوق الموسيقى (Boombox) من اللعبة",
+    Locked = false,
+    Callback = function()
+        takeBoombox()
     end
 })
 
