@@ -12,7 +12,7 @@ Here's the complete script as a .lua file format that you can use with Polsec wh
 -- WHITELIST CONFIGURATION (Polsec Compatible)
 -- ============================================
 local Whitelist = {
-    Enabled = true,  -- Set to false to disable whitelist
+    Enabled = false,  -- Set to false to disable whitelist
     AllowedUsers = {
         -- Add Roblox User IDs here
         -- Example: 123456789,
