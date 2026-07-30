@@ -1,5 +1,3 @@
--- Fixed & Fully Functional Cloud Chat + Aura System (Mickey Chat)
--- All variables fixed, HTTP requests corrected, functions properly defined.
 
 local _select = select
 
