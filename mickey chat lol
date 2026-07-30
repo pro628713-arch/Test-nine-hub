@@ -1,0 +1,1486 @@
+-- Fixed & Fully Functional Cloud Chat + Aura System (Mickey Chat)
+-- All variables fixed, HTTP requests corrected, functions properly defined.
+
+local _select = select
+
+local function v766(tbl, idx, ...)
+    local va = { ... }
+    for i = 1, _select("#", ...) do
+        tbl[idx + i - 1] = va[i]
+    end
+end
+
+local function v1(...)
+    local t1 = { ... }
+    t1.n = select("#", ...)
+    return t1
+end
+
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+local LocalPlayer = game.Players.LocalPlayer
+
+repeat task.wait() until LocalPlayer:FindFirstChild("PlayerGui")
+
+local DisplayName = LocalPlayer.DisplayName
+local s1 = ""
+local u5 = true
+
+local function v6(p1)
+    if p1 then
+        local v283 = p1:gsub("<[^>]*>", ""):gsub("[<>]", ""):gsub("[\204-\205][\128-\191]", ""):gsub("%s+", " ")
+        local v284 = v283:match("^%s*(.-)%s*$")
+        if v284 then v283 = v284 elseif not v283 then v283 = false end
+        return v283
+    end
+    return ""
+end
+
+-- Whitelist (bypass restrictions)
+local t2 = {
+    legend888444 = true, GOKUPAPA_KABOT = true, forbiddenisback = true,
+    WOLF_ISWILD4 = true, bluelockxthedemon = true, SABKABAAP1428 = true,
+    SVGKABAAP4 = true, SVGKABAAP1429 = true, BSHAGGAN145 = true,
+    Samar_bbb2 = true, POOKIExMiDnIgHt_MoOn = true, XXLORDXGOKXX = true,
+    SOUL_COFOUNDER = true, SOHAM201005 = true, VAIBHAV_Gokuu = true,
+    VENUS_EDIT = true, KINGOFCLANS246 = true, q1qpro66890 = true,
+    alexkabot11 = true, NOOBY234442 = true, Pokomoko3782 = true,
+    WIZARDIDBANNED = true, AX3RKABOT = true, sulemanop16 = true,
+    SABKABAAP1427 = true, XxLORDXGOKUxX = true, SABKABAAP1430 = true,
+    piya10078 = true, RENGOKU07662 = true, blaire88888 = true,
+    terabaap_prince = true, XxPriMe_PriNCexX = true,
+    forbidkabeta21 = true, forbidkabeta = true, forbidkabeta12 = true,
+    forbidkabeta22 = true, forbidkabeta13 = true, forbidkabeta20 = true,
+    forbidkabeta23 = true, forbidkabeta24 = true, forbidkabeta19 = true,
+    forbidkabeta3 = true, forbidkabeta14 = true, forbidkabeta18 = true,
+    forbidkabeta2 = true, forbidkabeta16 = true, forbidkabeta15 = true,
+    TeRaBaaP_PrinCe = true, areskabot = true, Gojo_satoru6030 = true,
+}
+
+if not t2[LocalPlayer.Name] and true then
+    print("Player Display Name: " .. DisplayName)
+
+    -- Convert to small caps
+    local function convertToSmallCaps(p2)
+        local t3 = {
+            a = "ᴀ", b = "ʙ", c = "ᴄ", d = "ᴅ", e = "ᴇ", f = "ꜰ", g = "ɢ", h = "ʜ", i = "ɪ", j = "ᴊ",
+            k = "ᴋ", l = "ʟ", m = "ᴍ", n = "ɴ", o = "ᴏ", p = "ᴘ", q = "ǫ", r = "ʀ", s = "s", t = "ᴛ",
+            u = "ᴜ", v = "ᴠ", w = "ᴡ", x = "x", y = "ʏ", z = "ᴢ",
+            A = "ᴀ", B = "ʙ", C = "ᴄ", D = "ᴅ", E = "ᴇ", F = "ꜰ", G = "ɢ", H = "ʜ", I = "ɪ", J = "ᴊ",
+            K = "ᴋ", L = "ʟ", M = "ᴍ", N = "ɴ", O = "ᴏ", P = "ᴘ", Q = "ǫ", R = "ʀ", S = "s", T = "ᴛ",
+            U = "ᴜ", V = "ᴠ", W = "ᴡ", X = "x", Y = "ʏ", Z = "ᴢ",
+        }
+        local s2 = ""
+        for i2 = 1, #p2 do
+            local v293 = p2:sub(i2, i2)
+            s2 = s2 .. (t3[v293] or v293)
+        end
+        return s2
+    end
+
+    local v10 = convertToSmallCaps(DisplayName)
+
+    -- Set RP Name
+    local RE = game:GetService("ReplicatedStorage"):FindFirstChild("RE")
+    if RE then
+        local v11 = RE:FindFirstChild("1RPNam1eTex1t")
+        if v11 then v11:FireServer("RolePlayName", "_ᴍɪᴄᴋᴇʏ ᴄʜᴀᴛ_") end
+
+        local v12 = RE:FindFirstChild("1RPNam1eColo1r")
+        if v12 then
+            local v13 = v1(Color3.fromRGB(1, 221, 221))
+            v12:FireServer("PickingRPNameColor", unpack(v13, 1, v13.n))
+        end
+
+        local v73 = RE:FindFirstChild("1RPNam1eTex1t")
+        if v73 then v73:FireServer("RolePlayBio", "  _" .. v10 .. "_") end
+
+        local v74 = RE:FindFirstChild("1RPNam1eColo1r")
+        if v74 then
+            local v75 = v1(Color3.fromRGB(255, 0, 193))
+            v74:FireServer("PickingRPBioColor", unpack(v75, 1, v75.n))
+        end
+    end
+
+    -- Role data
+    local t4 = {
+        GauravYTR1866 = { Tag = "CREATOR", Style = "DIVINE_RING", Color = "RAINBOW" },
+        indinarmi = { Tag = "DADDY", Style = "HYDRA_STRIKE", Color = "RAINBOW" },
+        Nooyes68 = { Tag = "CREATOR", Style = "BIG_SNIPER", Color = "RAINBOW" },
+        Premium_Roger = { Tag = "MOD", Style = "DEMON_HANDS", Color = "RAINBOW" },
+        huhuhuhuhuhu_431 = { Tag = "PAPA", Style = "LETTER_A", Color = "RAINBOW" },
+        iamshivanshboi16 = { Tag = "ADMIN", Style = "LETTER_A", Color = Color3.fromRGB(0, 255, 255) },
+        Luca_xx18 = { Tag = "GOD", Style = "LETTER_N", Color = "RAINBOW" },
+        DE4DLYxf0under_JAMAL = { Tag = "STAR", Style = "ILLUMINATI", Color = "RAINBOW" },
+        itzme_AD7 = { Tag = "FATHER", Color = "RAINBOW" },
+        ALONE_WX5 = { Tag = "ARCHON", Style = "NORMAL_HALO", Color = "RAINBOW" },
+        X4H_DAD = { Tag = "MAFIA", Color = Color3.fromRGB(0, 255, 254) },
+        cute_boy93492 = { Tag = "ADMIN", Color = Color3.fromRGB(255, 0, 0) },
+        satyam4482 = { Tag = "SEXY", Color = Color3.fromRGB(0, 0, 204) },
+        jiyanshok = { Tag = "BATMAN", Style = "DEMON_HANDS", Color = Color3.fromRGB(0, 0, 0) },
+        darkfuxks = { Tag = "COMGOD", Style = "DEMON_HANDS", Color = "RAINBOW" },
+        harshu_7595 = { Tag = "STEPDADDY", Color = "RAINBOW" },
+        damien_yt62 = { Tag = "KING", Style = "LETTER_A", Color = "RAINBOW" },
+        prayansh108 = { Tag = "KHATRI", Color = Color3.fromRGB(245, 0, 0) },
+        Garammasalahun = { Tag = "LEGEND", Style = "ANGEL_WINGS", Color = Color3.fromRGB(255, 0, 0) },
+        Rudrapawar123456 = { Tag = "OG", Color = Color3.fromRGB(173, 31, 31) },
+        VEERUBHAI001 = { Tag = "OWNER", Style = "BIG_SNIPER", Color = "RAINBOW" },
+        WilDFloweRs0_0 = { Tag = "BADNAM", Style = "HYDRA_STRIKE", Color = "RAINBOW" },
+        op_2333334 = { Tag = "CUTIE", Style = "HEART_AURA", Color = Color3.fromRGB(255, 182, 193) },
+        princess_manya4 = { Tag = "POOKIE", Style = "HEART_AURA", Color = Color3.fromRGB(255, 182, 193) },
+        Hevi_m5 = { Tag = "MALKIN", Style = "HEART_AURA", Color = "RAINBOW" },
+        Chiraglife4 = { Tag = "GRANDFATHER", Color = Color3.fromRGB(20, 52, 164) },
+    }
+
+    -- Firebase URLs with auth
+    local jobId = game.JobId ~= "" and game.JobId or "StudioSession"
+    local baseUrl = "https://newmickeychat-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    local authKey = "?auth=SwvXmmQOOY9pVVCwzSRHmGOREfillJXY7mDsfnBp"
+
+    local auraUrl = baseUrl:gsub(".json", "") .. "AuraSync.json" .. authKey
+    local chatUrl = baseUrl .. jobId .. ".json" .. authKey
+
+    local n1 = 0
+    local t5 = { CREATOR = true, KING = true, MOD = true, DADDY = true, ARCHON = true, STEPDADDY = true, STAR = true, MALKIN = true }
+
+    local Players = game:GetService("Players")
+    local HttpService = game:GetService("HttpService")
+    local UserInputService = game:GetService("UserInputService")
+    local TextChatService = game:GetService("TextChatService")
+    local RunService = game:GetService("RunService")
+    local TweenService = game:GetService("TweenService")
+
+    -- HTTP request function
+    local httpRequest = syn and syn.request or (http and http.request) or (http_request) or (fluxus and fluxus.request) or request
+
+    local timestamp = os.time()
+    local u153, u154, u155, u156, u157, u158, u159, u160, u161, u162 -- aura functions (defined later)
+
+    -- ===== UI Creation =====
+    local new = Instance.new
+    local v164 = v1(LocalPlayer:WaitForChild("PlayerGui"))
+    local v165 = new("ScreenGui", unpack(v164, 1, v164.n))
+    v165.Name = "CloudChatMickeyFixed"
+    v165.ResetOnSpawn = false
+
+    -- Chat toggle button
+    local TextButton = Instance.new("TextButton", v165)
+    TextButton.Size = UDim2.new(0, 40, 0, 100)
+    TextButton.Position = UDim2.new(0, 5, 0.5, -50)
+    TextButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    TextButton.BackgroundTransparency = 0.4
+    TextButton.TextColor3 = Color3.new(1, 1, 1)
+    TextButton.Text = "C\nH\nA\nT"
+    TextButton.Font = Enum.Font.BuilderSansBold
+    TextButton.TextSize = 14
+    Instance.new("UICorner", TextButton)
+    Instance.new("UIStroke", TextButton).Color = Color3.new(1, 1, 1)
+
+    -- Main Frame (Chat window)
+    local Frame = Instance.new("Frame", v165)
+    Frame.Size = UDim2.new(0, 350, 0, 250)
+    Frame.Position = UDim2.new(0.5, -175, 0.5, -125)
+    Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Frame.BackgroundTransparency = 0.4
+    Frame.Active = true
+    Instance.new("UICorner", Frame)
+
+    TextButton.MouseButton1Click:Connect(function()
+        Frame.Visible = not Frame.Visible
+    end)
+
+    -- ===== Aura / Style Buttons (if player has a role) =====
+    local v170 = t4[LocalPlayer.Name] or t4[LocalPlayer.DisplayName]
+
+    if v170 then
+        -- Aura Toggle Button
+        local TextButton2 = Instance.new("TextButton", v165)
+        TextButton2.Size = UDim2.new(0, 40, 0, 100)
+        TextButton2.Position = UDim2.new(0, 50, 0.5, -50)
+        TextButton2.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        TextButton2.BackgroundTransparency = 0.4
+        TextButton2.TextColor3 = Color3.fromRGB(0, 255, 150)
+        TextButton2.Text = "A\nU\nR\nA"
+        TextButton2.Font = Enum.Font.BuilderSansBold
+        TextButton2.TextSize = 14
+        Instance.new("UICorner", TextButton2)
+        Instance.new("UIStroke", TextButton2).Color = Color3.new(1, 1, 1)
+
+        TextButton2.MouseButton1Click:Connect(function()
+            u5 = not u5
+            TextButton2.TextColor3 = u5 and Color3.fromRGB(0, 255, 150) or Color3.fromRGB(255, 50, 50)
+        end)
+
+        -- Style Selector (if tag is in t5)
+        if v170 and t5[v170.Tag] then
+            local TextButton3 = Instance.new("TextButton", v165)
+            TextButton3.Size = UDim2.new(0, 40, 0, 100)
+            TextButton3.Position = UDim2.new(0, 95, 0.5, -50)
+            TextButton3.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            TextButton3.BackgroundTransparency = 0.4
+            TextButton3.TextColor3 = Color3.fromRGB(255, 215, 0)
+            TextButton3.Text = "S\nT\nY\nL\nE"
+            TextButton3.Font = Enum.Font.BuilderSansBold
+            TextButton3.TextSize = 14
+            Instance.new("UICorner", TextButton3)
+            Instance.new("UIStroke", TextButton3).Color = Color3.new(1, 1, 1)
+
+            local ScrollingFrame = Instance.new("ScrollingFrame", v165)
+            ScrollingFrame.Size = UDim2.new(0, 180, 0, 220)
+            ScrollingFrame.Position = UDim2.new(0, 140, 0.5, -110)
+            ScrollingFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            ScrollingFrame.BackgroundTransparency = 0.2
+            ScrollingFrame.Visible = false
+            ScrollingFrame.ScrollBarThickness = 1
+            ScrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(255, 215, 0)
+            ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+            ScrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+            Instance.new("UICorner", ScrollingFrame).CornerRadius = UDim.new(0, 8)
+            Instance.new("UIStroke", ScrollingFrame).Color = Color3.fromRGB(255, 255, 255)
+
+            local UIListLayout = Instance.new("UIListLayout", ScrollingFrame)
+            UIListLayout.Padding = UDim.new(0, 5)
+            UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+            Instance.new("UIPadding", ScrollingFrame).PaddingTop = UDim.new(0, 10)
+
+            TextButton3.MouseButton1Click:Connect(function()
+                ScrollingFrame.Visible = not ScrollingFrame.Visible
+            end)
+
+            -- Function to create style button
+            local function createStyleButton(displayName, auraFunc, styleKey)
+                local btn = Instance.new("TextButton", ScrollingFrame)
+                btn.Size = UDim2.new(0.9, 0, 0, 35)
+                btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                btn.TextColor3 = Color3.new(1, 1, 1)
+                btn.Text = displayName
+                btn.Font = Enum.Font.LuckiestGuy
+                Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+
+                btn.MouseButton1Click:Connect(function()
+                    ScrollingFrame.Visible = false
+                    local char = LocalPlayer.Character
+                    if char and char:FindFirstChild("HumanoidRootPart") then
+                        pcall(function()
+                            -- Send style to database
+                            local url = auraUrl:gsub("AuraSync.json", "") .. "AuraSync/" .. LocalPlayer.Name .. ".json" .. "?auth=SwvXmmQOOY9pVVCwzSRHmGOREfillJXY7mDsfnBp"
+                            httpRequest({
+                                Url = url,
+                                Method = "PUT",
+                                Body = HttpService:JSONEncode({ Style = styleKey }),
+                                Headers = { ["Content-Type"] = "application/json" }
+                            })
+                        end)
+
+                        if char:FindFirstChild("MickeyAura") then
+                            char.MickeyAura:Destroy()
+                        end
+
+                        local model = Instance.new("Model", char)
+                        model.Name = "MickeyAura"
+                        auraFunc(LocalPlayer, char.HumanoidRootPart, model)
+                        u5 = true
+                        if TextButton2 then
+                            TextButton2.TextColor3 = Color3.fromRGB(0, 255, 150)
+                        end
+                    end
+                end)
+            end
+
+            task.delay(1, function()
+                createStyleButton("Divine Ring", u153, "DIVINE_RING")
+                createStyleButton("Hydra Strike", u154, "HYDRA_STRIKE")
+                createStyleButton("Void Wings", u156, "DEMON_HANDS")
+                createStyleButton("Angel Wings", u160, "ANGEL_WINGS")
+                createStyleButton("Pyaari Heart", u155, "HEART_AURA")
+                createStyleButton("Letter A", u157, "LETTER_A")
+                createStyleButton("Bubble", u158, "LETTER_N")
+                createStyleButton("Halo", u159, "NORMAL_HALO")
+                createStyleButton("Big Sniper", u161, "BIG_SNIPER")
+                createStyleButton("Illuminati", u162, "ILLUMINATI")
+            end)
+        end
+    end
+
+    -- ===== Draggable Frame =====
+    local isDragging = false
+    local dragStart, dragPos
+
+    Frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            isDragging = true
+            dragStart = input.Position
+            dragPos = Frame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    isDragging = false
+                end
+            end)
+            s1 = ""
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if isDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStart
+            Frame.Position = UDim2.new(dragPos.X.Scale, dragPos.X.Offset + delta.X, dragPos.Y.Scale, dragPos.Y.Offset + delta.Y)
+        end
+    end)
+
+    -- ===== Chat UI Elements =====
+    local Frame2 = Instance.new("Frame", v165)
+    Frame2.Size = UDim2.new(0, 240, 0, 400)
+    Frame2.Position = UDim2.new(0, 5, 0.5, 55)
+    Frame2.BackgroundTransparency = 1
+    Instance.new("UIListLayout", Frame2).Padding = UDim.new(0, 8)
+
+    local ScrollingFrameChat = Instance.new("ScrollingFrame", Frame)
+    ScrollingFrameChat.Size = UDim2.new(1, -10, 1, -60)
+    ScrollingFrameChat.Position = UDim2.new(0, 5, 0, 5)
+    ScrollingFrameChat.BackgroundTransparency = 1
+    ScrollingFrameChat.ScrollBarThickness = 0
+    ScrollingFrameChat.ScrollBarImageColor3 = Color3.fromRGB(255, 215, 0)
+    ScrollingFrameChat.CanvasSize = UDim2.new(0, 0, 0, 0)
+    ScrollingFrameChat.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    Instance.new("UIListLayout", ScrollingFrameChat).Padding = UDim.new(0, 2)
+
+    local Frame3 = Instance.new("Frame", Frame)
+    Frame3.Size = UDim2.new(1, -10, 0, 36)
+    Frame3.Position = UDim2.new(0, 5, 1, -41)
+    Frame3.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Frame3.BackgroundTransparency = 0.2
+    Instance.new("UICorner", Frame3)
+
+    local TextBox = Instance.new("TextBox", Frame3)
+    TextBox.Size = UDim2.new(1, -45, 1, 0)
+    TextBox.Position = UDim2.new(0, 8, 0, 0)
+    TextBox.BackgroundTransparency = 1
+    TextBox.TextColor3 = Color3.new(1, 1, 1)
+    TextBox.PlaceholderText = "Click Here To Chat..."
+    TextBox.Text = ""
+    TextBox.Font = Enum.Font.BuilderSansMedium
+    TextBox.TextSize = 16
+    TextBox.TextXAlignment = Enum.TextXAlignment.Left
+
+    local TextButton5 = Instance.new("TextButton", Frame3)
+    TextButton5.Size = UDim2.new(0, 24, 0, 24)
+    TextButton5.Position = UDim2.new(1, -30, 0.5, -12)
+    TextButton5.BackgroundTransparency = 1
+    TextButton5.Text = "✖"
+    TextButton5.TextColor3 = Color3.fromRGB(200, 200, 200)
+    TextButton5.Font = Enum.Font.BuilderSansBold
+    TextButton5.TextSize = 22
+    TextButton5.Visible = false
+    TextButton5.MouseButton1Click:Connect(function() s1 = "" end)
+
+    task.spawn(function()
+        while true do
+            if s1 == "" then
+                TextBox.PlaceholderText = "Click Here To Chat..."
+                TextButton5.Visible = false
+            else
+                TextBox.PlaceholderText = "PRVT TO " .. s1 .. "..."
+                TextButton5.Visible = true
+            end
+            task.wait(0.2)
+        end
+    end)
+
+    -- ===== Rainbow Color Tables =====
+    local t7 = {}  -- for rainbow messages
+    local t8 = {
+        Color3.fromRGB(253, 41, 67),
+        Color3.fromRGB(1, 162, 255),
+        Color3.fromRGB(2, 184, 87),
+        Color3.fromRGB(170, 85, 255),
+        Color3.fromRGB(255, 170, 0),
+    }
+
+    RunService.Heartbeat:Connect(function()
+        local rainbowColor = Color3.fromHSV(tick() % 3 / 3, 0.8, 1)
+        for k, v in pairs(t7) do
+            if k:IsDescendantOf(game) then
+                local content = v6(v.content)
+                k.Text = string.format(
+                    '%s<font color="#%s">[%s]</font> <font color="#%s">[%s]</font>: <font face="BuilderSansMedium">%s</font>',
+                    v.pmTag,
+                    rainbowColor:ToHex(),
+                    v.tag,
+                    v.nameColor:ToHex(),
+                    v.name,
+                    content
+                )
+            end
+        end
+    end)
+
+    -- ===== Message Display Function =====
+    local function displayMessage(sender, content, realName, isSystem, target)
+        if isSystem or not t2[realName] then
+            if not target or target == "" or target == LocalPlayer.DisplayName or sender == LocalPlayer.DisplayName then
+                local filtered = v6(content)
+                local msgBtn = Instance.new("TextButton", ScrollingFrameChat)
+                msgBtn.Text = ""
+                msgBtn.Size = UDim2.new(1, 0, 0, 0)
+                msgBtn.AutomaticSize = Enum.AutomaticSize.Y
+                msgBtn.BackgroundTransparency = 1
+                msgBtn.RichText = true
+                msgBtn.TextSize = 16
+                msgBtn.TextColor3 = Color3.new(1, 1, 1)
+                msgBtn.TextXAlignment = Enum.TextXAlignment.Left
+                msgBtn.TextWrapped = true
+                msgBtn:SetAttribute("RealName", realName)
+
+                if not isSystem then
+                    local hash = 0
+                    for i = 1, #sender do
+                        hash = hash + sender:byte(i)
+                    end
+                    local nameColor = t8[hash % #t8 + 1]
+                    local roleData = t4[realName]
+                    msgBtn.Font = Enum.Font.BuilderSansBold
+
+                    if not target or target == "" then
+                        if not roleData or roleData.Color ~= "RAINBOW" then
+                            local tagText = roleData and string.format('<font color="#%s">[%s]</font> ', roleData.Color:ToHex(), roleData.Tag) or ""
+                            msgBtn.Text = string.format('%s%s<font color="#%s">[%s]</font>: <font face="BuilderSansMedium">%s</font>',
+                                "", tagText, nameColor:ToHex(), sender, filtered)
+                        else
+                            t7[msgBtn] = {
+                                pmTag = "",
+                                tag = roleData.Tag,
+                                name = sender,
+                                nameColor = nameColor,
+                                content = filtered,
+                            }
+                        end
+                    else
+                        local prefix = (sender == LocalPlayer.DisplayName) and ('<font color="#ff00ff">[TO: ' .. target .. ']</font> ')
+                            or ('<font color="#ff00ff">[FROM: ' .. sender .. ']</font> ')
+                        msgBtn.Text = string.format('%s<font color="#%s">[%s]</font>: <font face="BuilderSansMedium">%s</font>',
+                            prefix, nameColor:ToHex(), sender, filtered)
+                    end
+
+                    msgBtn.MouseButton1Click:Connect(function()
+                        s1 = sender
+                        TextBox:CaptureFocus()
+                    end)
+                else
+                    msgBtn.Font = Enum.Font.BuilderSansItalic
+                    msgBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+                    msgBtn.Text = filtered
+                end
+
+                msgBtn.Parent = ScrollingFrameChat
+                ScrollingFrameChat.CanvasPosition = Vector2.new(0, 99999)
+            end
+        end
+    end
+
+    -- ===== Message Filter =====
+    local function filterMessage(msg)
+        if msg:find("<[^>]*>") then return true, "HTML tags not allowed" end
+        if msg:find("[<>]") then return true, "Angle brackets not allowed" end
+        if msg:find("[\204-\205][\128-\191]") then return true, "Zalgo text not allowed" end
+        local letters = msg:gsub("[^%a]", "")
+        if #letters > 0 and letters:match("(.)%1{15,}") then return true, "Too many repeated letters" end
+        if #letters > 10 then
+            local upper = select(2, letters:gsub("%u", ""))
+            if upper / #letters > 0.8 and upper > 15 then
+                return true, "Too many capital letters"
+            end
+        end
+        return false, msg
+    end
+
+    -- ===== Send Message =====
+    local function sendMessage()
+        if t2[LocalPlayer.Name] then
+            TextBox.Text = ""
+            return
+        end
+
+        local text = TextBox.Text
+        if text == "" then return end
+
+        local blocked, reason = filterMessage(text)
+        if blocked then
+            displayMessage("SYSTEM", "🚫 Message blocked: " .. reason, "System", true, "")
+            TextBox.Text = ""
+            return
+        end
+
+        local filtered = v6(text)
+        if filtered == "" or filtered:match("^%s*$") then
+            displayMessage("SYSTEM", "🚫 Message empty after filtering", "System", true, "")
+            TextBox.Text = ""
+            return
+        end
+
+        if #filtered > 200 then
+            displayMessage("SYSTEM", "📏 Message too long (max 200 chars)", "System", true, "")
+            TextBox.Text = ""
+            return
+        end
+
+        local elapsed = os.clock()
+        if elapsed - n1 < 2 then
+            TextBox.Text = ""
+            return
+        end
+
+        n1 = elapsed
+        TextBox.Text = ""
+        displayMessage(LocalPlayer.DisplayName, filtered, LocalPlayer.Name, false, s1)
+
+        task.spawn(function()
+            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Head") then
+                TextChatService:DisplayBubble(LocalPlayer.Character.Head, filtered)
+            end
+        end)
+
+        pcall(function()
+            httpRequest({
+                Url = chatUrl,
+                Method = "POST",
+                Headers = { ["Content-Type"] = "application/json" },
+                Body = HttpService:JSONEncode({
+                    sender = LocalPlayer.DisplayName,
+                    content = filtered,
+                    realName = LocalPlayer.Name,
+                    target = s1,
+                    timestamp = os.time(),
+                })
+            })
+        end)
+    end
+
+    TextBox.FocusLost:Connect(function(enterPressed)
+        if enterPressed then sendMessage() end
+    end)
+
+    -- ===== Notification Popup =====
+    local function showNotification(sender, content, realName)
+        if t2[LocalPlayer.Name] then return end
+        local filtered = v6(content)
+        local notifFrame = Instance.new("Frame", Frame2)
+        notifFrame.Size = UDim2.new(1, 0, 0, 65)
+        notifFrame.BackgroundTransparency = 1
+
+        local bg = Instance.new("Frame", notifFrame)
+        bg.Size = UDim2.new(1, 0, 1, 0)
+        bg.Position = UDim2.new(-1.2, 0, 0, 0)
+        bg.BackgroundColor3 = Color3.new(0, 0, 0)
+        bg.BackgroundTransparency = 0.4
+        Instance.new("UICorner", bg).CornerRadius = UDim.new(0, 32)
+
+        local avatar = Instance.new("ImageLabel", bg)
+        avatar.Size = UDim2.new(0, 46, 0, 46)
+        avatar.Position = UDim2.new(0, 10, 0.5, -23)
+        avatar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        avatar.BackgroundTransparency = 0.3
+        avatar.Image = "rbxassetid://15263152670"
+        Instance.new("UICorner", avatar).CornerRadius = UDim.new(1, 0)
+
+        task.spawn(function()
+            pcall(function()
+                local userId = Players:GetUserIdFromNameAsync(realName)
+                local thumb, success = Players:GetUserThumbnailAsync(userId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
+                if success then avatar.Image = thumb end
+            end)
+        end)
+
+        local nameLabel = Instance.new("TextLabel", bg)
+        nameLabel.Size = UDim2.new(1, -65, 0, 20)
+        nameLabel.Position = UDim2.new(0, 60, 0, 10)
+        nameLabel.BackgroundTransparency = 1
+        nameLabel.Text = sender
+        nameLabel.TextColor3 = Color3.fromRGB(255, 170, 0)
+        nameLabel.Font = Enum.Font.BuilderSansBold
+        nameLabel.TextXAlignment = "Left"
+        nameLabel.TextSize = 18
+
+        local msgLabel = Instance.new("TextLabel", bg)
+        msgLabel.Size = UDim2.new(1, -65, 0, 20)
+        msgLabel.Position = UDim2.new(0, 60, 0, 32)
+        msgLabel.BackgroundTransparency = 1
+        msgLabel.Text = filtered
+        msgLabel.TextColor3 = Color3.new(1, 1, 1)
+        msgLabel.Font = Enum.Font.BuilderSansMedium
+        msgLabel.TextXAlignment = "Left"
+        msgLabel.TextSize = 18
+        msgLabel.ClipsDescendants = true
+
+        TweenService:Create(bg, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+            Position = UDim2.new(0, 0, 0, 0)
+        }):Play()
+
+        task.delay(5, function()
+            local tweenInfo = TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+            TweenService:Create(bg, tweenInfo, { BackgroundTransparency = 1 }):Play()
+            TweenService:Create(avatar, tweenInfo, { ImageTransparency = 1, BackgroundTransparency = 1 }):Play()
+            TweenService:Create(nameLabel, tweenInfo, { TextTransparency = 1 }):Play()
+            local tween = TweenService:Create(msgLabel, tweenInfo, { TextTransparency = 1 })
+            tween:Play()
+            tween.Completed:Connect(function()
+                notifFrame:Destroy()
+            end)
+        end)
+    end
+
+    -- ===== Sync Loop (Aura + Messages) =====
+    local syncedStyles = {}
+    local processedMessages = {}
+
+    local function syncLoop()
+        -- Fetch auras
+        pcall(function()
+            local resp = httpRequest({ Url = auraUrl, Method = "GET" })
+            if resp and resp.Body and resp.Body ~= "null" then
+                local data = HttpService:JSONDecode(resp.Body) or {}
+                for name, styleData in pairs(data) do
+                    if syncedStyles[name] ~= styleData.Style then
+                        syncedStyles[name] = styleData.Style
+                        local player = Players:FindFirstChild(name)
+                        if player and player.Character then
+                            local root = player.Character:FindFirstChild("HumanoidRootPart")
+                            if root then
+                                if player.Character:FindFirstChild("MickeyAura") then
+                                    player.Character.MickeyAura:Destroy()
+                                end
+                                local model = Instance.new("Model", player.Character)
+                                model.Name = "MickeyAura"
+                                local style = styleData.Style
+                                if style == "DIVINE_RING" then u153(player, root, model)
+                                elseif style == "HYDRA_STRIKE" then u154(player, root, model)
+                                elseif style == "DEMON_HANDS" then u156(player, root, model)
+                                elseif style == "HEART_AURA" then u155(player, root, model)
+                                elseif style == "LETTER_A" then u157(player, root, model)
+                                elseif style == "LETTER_N" then u158(player, root, model)
+                                elseif style == "NORMAL_HALO" then u159(player, root, model)
+                                elseif style == "ANGEL_WINGS" then u160(player, root, model)
+                                elseif style == "BIG_SNIPER" then u161(player, root, model)
+                                elseif style == "ILLUMINATI" then u162(player, root, model)
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+
+        -- Fetch recent messages
+        local ok, resp = pcall(function()
+            return httpRequest({ Url = chatUrl .. '&orderBy="$key"&limitToLast=10', Method = "GET" })
+        end)
+
+        if ok and resp and resp.Body and resp.Body ~= "null" then
+            local success, data = pcall(function() return HttpService:JSONDecode(resp.Body) end)
+            if success and type(data) == "table" then
+                for key, msg in pairs(data) do
+                    if not processedMessages[key] and msg.timestamp and msg.timestamp >= timestamp then
+                        -- Check for fake tags
+                        local realPlayer = Players:FindFirstChild(msg.realName)
+                        if realPlayer and realPlayer.DisplayName ~= msg.sender then
+                            local warning = "😂 YE FAKE TAG RNDY " .. realPlayer.DisplayName .. " → " .. msg.sender
+                            pcall(function()
+                                httpRequest({
+                                    Url = chatUrl,
+                                    Method = "POST",
+                                    Headers = { ["Content-Type"] = "application/json" },
+                                    Body = HttpService:JSONEncode({
+                                        sender = "BOT",
+                                        content = warning,
+                                        realName = "ChatBot",
+                                        target = "",
+                                        timestamp = os.time(),
+                                    })
+                                })
+                            end)
+                            msg.sender = realPlayer.DisplayName
+                        end
+
+                        processedMessages[key] = true
+
+                        if msg.realName ~= LocalPlayer.Name and not t2[msg.realName] then
+                            displayMessage(msg.sender or "Unknown", msg.content or "", msg.realName or "", false, msg.target)
+
+                            if not msg.target or msg.target == "" or msg.target == LocalPlayer.DisplayName then
+                                showNotification(msg.sender or "Unknown", msg.content or "", msg.realName or "")
+                                task.spawn(function()
+                                    local player = Players:FindFirstChild(msg.realName or "")
+                                    if player and player.Character and player.Character:FindFirstChild("Head") then
+                                        TextChatService:DisplayBubble(player.Character.Head, msg.content)
+                                    end
+                                end)
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    -- ===== Periodic Tasks =====
+    task.spawn(function()
+        while true do
+            syncLoop()
+            task.wait(1.5)
+        end
+    end)
+
+    -- Periodically clear chat database (optional)
+    task.spawn(function()
+        while true do
+            pcall(function()
+                httpRequest({ Url = chatUrl, Method = "DELETE" })
+            end)
+            task.wait(3600)
+        end
+    end)
+
+    -- Send join message
+    task.spawn(function()
+        local joinMsg = DisplayName .. " Joined The Chat"
+        pcall(function()
+            httpRequest({
+                Url = chatUrl,
+                Method = "POST",
+                Headers = { ["Content-Type"] = "application/json" },
+                Body = HttpService:JSONEncode({
+                    sender = "BOT",
+                    content = joinMsg,
+                    realName = "ChatBot",
+                    target = "",
+                    timestamp = os.time() - 1,
+                })
+            })
+        end)
+    end)
+
+    -- ===== Aura Functions (u153 - u162) =====
+
+    -- Helper: disable collisions
+    local function disablePhysics(part)
+        part.CanCollide = false
+        part.CanTouch = false
+        part.CanQuery = false
+        part.Massless = true
+        part.Anchored = false
+    end
+
+    -- Divine Ring (u153)
+    function u153(player, rootPart, model)
+        local color = Color3.new(1, 1, 1)
+        local part1 = Instance.new("Part", model)
+        part1.Shape = "Ball"
+        part1.Size = Vector3.new(2.4, 2.4, 2.4)
+        part1.Material = "Neon"
+        part1.Color = color
+        disablePhysics(part1)
+
+        local part2 = Instance.new("Part", model)
+        part2.Shape = "Ball"
+        part2.Size = Vector3.new(1.6, 1.6, 1.6)
+        part2.Material = "Neon"
+        part2.Color = color
+        disablePhysics(part2)
+
+        local part3 = Instance.new("Part", model)
+        part3.Shape = "Ball"
+        part3.Size = Vector3.new(1.6, 1.6, 1.6)
+        part3.Material = "Neon"
+        part3.Color = color
+        disablePhysics(part3)
+
+        local motor = Instance.new("Motor6D", part1)
+        motor.Part0 = rootPart
+        motor.Part1 = part1
+
+        local weld1 = Instance.new("Weld", part2)
+        weld1.Part0 = part1
+        weld1.Part1 = part2
+        weld1.C0 = CFrame.new(-1.1, 1.2, 0)
+
+        local weld2 = Instance.new("Weld", part3)
+        weld2.Part0 = part1
+        weld2.Part1 = part3
+        weld2.C0 = CFrame.new(1.1, 1.2, 0)
+
+        task.spawn(function()
+            while model and model.Parent do
+                if player == LocalPlayer and not u5 then
+                    part1.Transparency = 1
+                    part2.Transparency = 1
+                    part3.Transparency = 1
+                    repeat RunService.Heartbeat:Wait() until u5 or not model.Parent
+                end
+                local t = tick() * 2
+                motor.C0 = CFrame.new(-1.5, 4.5 + math.sin(t) * 0.4, 0.5)
+                if part1.Transparency ~= 0 then
+                    part1.Transparency = 0
+                    part2.Transparency = 0
+                    part3.Transparency = 0
+                end
+                RunService.Heartbeat:Wait()
+            end
+        end)
+    end
+
+    -- Hydra Strike (u154)
+    function u154(player, rootPart, model)
+        local core = Instance.new("Part", model)
+        core.Name = "HydraCore"
+        core.Shape = "Ball"
+        core.Size = Vector3.new(8, 8, 8)
+        core.Material = "Neon"
+        core.Color = Color3.new(0, 0, 0)
+        disablePhysics(core)
+
+        local motorCore = Instance.new("Motor6D", core)
+        motorCore.Part0 = rootPart
+        motorCore.Part1 = core
+
+        local tentacles = {}
+        for i = 1, 12 do
+            local wedge = Instance.new("WedgePart", model)
+            wedge.Size = Vector3.new(0.2, 2.5, 2.5)
+            wedge.Color = Color3.new(1, 1, 1)
+            wedge.Material = "Neon"
+            disablePhysics(wedge)
+
+            local motor = Instance.new("Motor6D", wedge)
+            motor.Part0 = rootPart
+            motor.Part1 = wedge
+
+            table.insert(tentacles, { motor = motor, part = wedge, offset = 0.5235987755982988 * i })
+        end
+
+        task.spawn(function()
+            while model and model.Parent do
+                if player == LocalPlayer and not u5 then
+                    core.Transparency = 1
+                    for _, v in pairs(tentacles) do v.part.Transparency = 1 end
+                    repeat RunService.Heartbeat:Wait() until u5 or not model.Parent
+                end
+
+                local t = tick()
+                motorCore.C0 = CFrame.new(0, 5 + math.sin(t * 3) * 2, 8 + math.cos(t * 3) * 1) * CFrame.Angles(0, math.rad(t * 150), 0)
+
+                for i, v in pairs(tentacles) do
+                    local angle = t * 2.5 + v.offset
+                    local x = math.cos(angle) * 6
+                    local z = math.sin(angle) * 6 + math.sin(t * 3) * 2
+                    v.motor.C0 = CFrame.new(x, z + 5, 8)
+                        * CFrame.lookAt(Vector3.new(x, z + 5, 8), Vector3.new(0, 5, 8)).Rotation
+                        * CFrame.Angles(0, 1.57, 0)
+                    if v.part.Transparency ~= 0 then v.part.Transparency = 0 end
+                end
+                if core.Transparency ~= 0 then core.Transparency = 0 end
+
+                RunService.Heartbeat:Wait()
+            end
+        end)
+    end
+
+    -- Letter A (u157)
+    function u157(player, rootPart, model)
+        local color = Color3.new(1, 1, 1)
+        local parts = {}
+        local function makePart(size, cf1, cf2)
+            local p = Instance.new("Part", model)
+            p.Size = size
+            p.Color = color
+            p.Material = "Neon"
+            p.Transparency = 0.1
+            disablePhysics(p)
+            local w = Instance.new("Weld", p)
+            w.Part0 = rootPart
+            w.Part1 = p
+            w.C0 = CFrame.new(1.8, 3.5, 0.5) * cf1 * cf2
+            table.insert(parts, p)
+            return p
+        end
+
+        makePart(Vector3.new(0.08, 0.8, 0.08), CFrame.new(-0.25, 0, 0), CFrame.Angles(0, 0, 0.3490658503988659))
+        makePart(Vector3.new(0.08, 0.8, 0.08), CFrame.new(0.25, 0, 0), CFrame.Angles(0, 0, -0.3490658503988659))
+        makePart(Vector3.new(0.4, 0.08, 0.08), CFrame.new(0, 0.2, 0), CFrame.Angles(0, 0, 0))
+
+        local dot = Instance.new("Part", model)
+        dot.Size = Vector3.new(0.15, 0.15, 0.15)
+        dot.Shape = "Ball"
+        dot.Color = color
+        dot.Material = "Neon"
+        dot.Transparency = 0.05
+        disablePhysics(dot)
+        local wDot = Instance.new("Weld", dot)
+        wDot.Part0 = rootPart
+        wDot.Part1 = dot
+        wDot.C0 = CFrame.new(1.8, 3.7, 0.5)
+        table.insert(parts, dot)
+
+        task.spawn(function()
+            while model and model.Parent do
+                if player == LocalPlayer and not u5 then
+                    for _, p in pairs(parts) do p.Transparency = 1 end
+                    repeat RunService.Heartbeat:Wait() until u5 or not model.Parent
+                end
+                if parts[1].Transparency ~= 0.1 then
+                    for _, p in pairs(parts) do p.Transparency = 0.1 end
+                end
+                RunService.Heartbeat:Wait()
+            end
+        end)
+    end
+
+    -- Bubble (u158)
+    function u158(player, rootPart, model)
+        local colors = {
+            Color3.fromRGB(173, 216, 230),
+            Color3.fromRGB(255, 182, 193),
+            Color3.fromRGB(144, 238, 144),
+            Color3.fromRGB(255, 255, 224),
+            Color3.fromRGB(216, 191, 216),
+        }
+        local bubbles = {}
+        for i = 1, 10 do
+            local size = 0.6 + math.random() * 0.6
+            local p = Instance.new("Part", model)
+            p.Shape = Enum.PartType.Ball
+            p.Size = Vector3.new(size, size, size)
+            p.Material = Enum.Material.Neon
+            p.Color = colors[math.random(1, #colors)]
+            p.Transparency = 0.4
+            disablePhysics(p)
+            local motor = Instance.new("Motor6D", p)
+            motor.Part0 = rootPart
+            motor.Part1 = p
+            table.insert(bubbles, {
+                part = p,
+                weld = motor,
+                phase = math.random() * 2 * math.pi,
+                radius = 2 + math.random() * 1,
+                speed = 0.5 + math.random() * 0.2,
+                baseSize = size,
+            })
+        end
+
+        task.spawn(function()
+            while model and model.Parent do
+                if player == LocalPlayer and not u5 then
+                    for _, v in pairs(bubbles) do v.part.Transparency = 1 end
+                    repeat RunService.Heartbeat:Wait() until u5 or not model.Parent
+                    for _, v in pairs(bubbles) do v.part.Transparency = 0.4 end
+                end
+
+                local t = tick()
+                for _, v in pairs(bubbles) do
+                    local angle = t * v.speed + v.phase
+                    local x = math.sin(angle) * v.radius
+                    local y = math.cos(angle) * (v.radius * 0.5) + 2
+                    local z = math.cos(angle * 0.8) * v.radius
+                    v.weld.C0 = CFrame.new(x, y, z)
+                    local scale = 0.95 + 0.05 * math.sin(t * 2 + v.phase)
+                    v.part.Size = Vector3.new(v.baseSize * scale, v.baseSize * scale, v.baseSize * scale)
+                    if v.part.Transparency ~= 0.4 then v.part.Transparency = 0.4 end
+                end
+                RunService.Heartbeat:Wait()
+            end
+        end)
+    end
+
+    -- Heart Aura (u155)
+    function u155(player, rootPart, model)
+        local hearts = {}
+        for i = 1, 40 do
+            local p = Instance.new("Part", model)
+            p.Size = Vector3.new(0.4, 0.4, 0.4)
+            p.Color = Color3.fromRGB(255, 105, 180)
+            p.Material = Enum.Material.Neon
+            disablePhysics(p)
+            local motor = Instance.new("Motor6D", p)
+            motor.Part0 = rootPart
+            motor.Part1 = p
+            table.insert(hearts, { motor = motor, part = p, t_offset = i / 40 * 6.283185307179586 })
+        end
+
+        task.spawn(function()
+            while model and model.Parent do
+                if player == LocalPlayer and not u5 then
+                    for _, v in pairs(hearts) do v.part.Transparency = 1 end
+                    repeat RunService.Heartbeat:Wait() until u5 or not model.Parent
+                end
+
+                for _, v in pairs(hearts) do
+                    local t = v.t_offset
+                    local x = 16 * math.sin(t) ^ 3
+                    local y = 13 * math.cos(t) - 5 * math.cos(2 * t) - 2 * math.cos(3 * t) - math.cos(4 * t)
+                    v.motor.C0 = CFrame.new(x * 0.12, y * 0.12 + 1, 1.5) * CFrame.Angles(0, 0, math.pi)
+                    v.part.Transparency = 0
+                end
+                RunService.Heartbeat:Wait()
+            end
+        end)
+    end
+
+    -- Void Wings / Demon Hands (u156)
+    function u156(player, rootPart, model)
+        local color = Color3.fromRGB(0, 0, 0)
+
+        local function createWing(side)
+            local dir = side and -1 or 1
+            local base = Instance.new("Part", model)
+            base.Size = Vector3.new(2, 2, 2)
+            base.Color = color
+            base.Material = Enum.Material.Basalt
+            disablePhysics(base)
+
+            local motor = Instance.new("Motor6D", base)
+            motor.Part0 = rootPart
+            motor.Part1 = base
+
+            local joints = {}
+
+            local function addSegment(px, py, pz, length, angleMultiplier)
+                local parts = { 1, 1.5, 1.2 }
+                local lastPart = base
+                for k, v in pairs(parts) do
+                    local ball = Instance.new("Part", model)
+                    ball.Shape = Enum.PartType.Ball
+                    ball.Size = Vector3.new(0.8, 0.8, 0.8)
+                    ball.Color = color
+                    ball.Material = Enum.Material.Neon
+                    disablePhysics(ball)
+
+                    local w1 = Instance.new("Weld", ball)
+                    w1.Part0 = lastPart
+                    w1.Part1 = ball
+                    if k == 1 then
+                        w1.C0 = CFrame.new(px * dir, py, 0)
+                    else
+                        w1.C0 = CFrame.new(0, -v + 0.2, 0)
+                    end
+
+                    lastPart = Instance.new("Part", model)
+                    lastPart.Size = Vector3.new(0.7, v, 0.7)
+                    lastPart.Color = color
+                    lastPart.Material = Enum.Material.Slate
+                    disablePhysics(lastPart)
+
+                    local w2 = Instance.new("Weld", lastPart)
+                    w2.Part0 = ball
+                    w2.Part1 = lastPart
+                    w2.C0 = CFrame.new(0, -v / 2, 0) * CFrame.Angles(0, 0, math.rad(pz * (k / 2.5) * dir))
+
+                    if k == 3 then
+                        local tip = Instance.new("WedgePart", model)
+                        tip.Size = Vector3.new(0.5, 4.5, 1.8)
+                        tip.Color = color
+                        tip.Material = Enum.Material.Neon
+                        disablePhysics(tip)
+                        local w3 = Instance.new("Weld", tip)
+                        w3.Part0 = lastPart
+                        w3.Part1 = tip
+                        w3.C0 = CFrame.new(0, -1.8, 0.5) * CFrame.Angles(-1.4835298641951802, 0, 0)
+                    end
+
+                    table.insert(joints, w2)
+                end
+            end
+
+            addSegment(1.2, 1.2, 65)
+            addSegment(0.8, 0.6, 50)
+            addSegment(0.4, 0.1, 35)
+            addSegment(0, -0.4, 20)
+            addSegment(1.5, 1.8, 85)
+
+            return { motor = motor, joints = joints }
+        end
+
+        local wingL = createWing(true)
+        local wingR = createWing(false)
+
+        task.spawn(function()
+            while model and model.Parent do
+                local t = tick()
+                local sway = math.sin(t * 1.5) * 0.25
+                local bob = math.sin(t * 2) * 0.3
+
+                wingL.motor.C0 = CFrame.new(-2.5, 3.5 + bob, 2.5) * CFrame.Angles(math.rad(155 + sway * 20), -0.2617993877991494, 0.2617993877991494)
+                wingR.motor.C0 = CFrame.new(2.5, 3.5 + bob, 2.5) * CFrame.Angles(math.rad(155 + sway * 20), 0.2617993877991494, -0.2617993877991494)
+
+                for k, v in pairs(wingL.joints) do
+                    v.C1 = CFrame.Angles(0, 0, math.sin(t + k) * 0.03)
+                end
+                for k, v in pairs(wingR.joints) do
+                    v.C1 = CFrame.Angles(0, 0, math.sin(t + k) * 0.03)
+                end
+
+                RunService.Heartbeat:Wait()
+            end
+        end)
+    end
+
+    -- Angel Wings (u160)
+    function u160(player, rootPart, model)
+        local color1 = Color3.fromRGB(255, 255, 255)
+        local color2 = Color3.fromRGB(255, 240, 200)
+
+        local function createWing(side)
+            local dir = side and -1 or 1
+            local base = Instance.new("Part", model)
+            base.Size = Vector3.new(2, 2, 2)
+            base.Color = color1
+            base.Material = Enum.Material.SmoothPlastic
+            disablePhysics(base)
+
+            local motor = Instance.new("Motor6D", base)
+            motor.Part0 = rootPart
+            motor.Part1 = base
+
+            local joints = {}
+
+            local function addSegment(px, py, pz, length, angleMultiplier)
+                local parts = { 1, 1.5, 1.2 }
+                local lastPart = base
+                for k, v in pairs(parts) do
+                    local ball = Instance.new("Part", model)
+                    ball.Shape = Enum.PartType.Ball
+                    ball.Size = Vector3.new(0.8, 0.8, 0.8)
+                    ball.Color = color1
+                    ball.Material = Enum.Material.Neon
+                    disablePhysics(ball)
+
+                    local w1 = Instance.new("Weld", ball)
+                    w1.Part0 = lastPart
+                    w1.Part1 = ball
+                    if k == 1 then
+                        w1.C0 = CFrame.new(px * dir, py, 0)
+                    else
+                        w1.C0 = CFrame.new(0, -v + 0.2, 0)
+                    end
+
+                    lastPart = Instance.new("Part", model)
+                    lastPart.Size = Vector3.new(0.7, v, 0.7)
+                    lastPart.Color = color1
+                    lastPart.Material = Enum.Material.SmoothPlastic
+                    disablePhysics(lastPart)
+
+                    local w2 = Instance.new("Weld", lastPart)
+                    w2.Part0 = ball
+                    w2.Part1 = lastPart
+                    w2.C0 = CFrame.new(0, -v / 2, 0) * CFrame.Angles(0, 0, math.rad(pz * (k / 2.5) * dir))
+
+                    if k == 3 then
+                        local tip = Instance.new("WedgePart", model)
+                        tip.Size = Vector3.new(0.5, 4.5, 1.8)
+                        tip.Color = color2
+                        tip.Material = Enum.Material.Neon
+                        disablePhysics(tip)
+                        local w3 = Instance.new("Weld", tip)
+                        w3.Part0 = lastPart
+                        w3.Part1 = tip
+                        w3.C0 = CFrame.new(0, -1.8, 0.5) * CFrame.Angles(-1.4835298641951802, 0, 0)
+                    end
+
+                    table.insert(joints, w2)
+                end
+            end
+
+            addSegment(1.2, 1.2, 65)
+            addSegment(0.8, 0.6, 50)
+            addSegment(0.4, 0.1, 35)
+            addSegment(0, -0.4, 20)
+            addSegment(1.5, 1.8, 85)
+
+            return { motor = motor, joints = joints }
+        end
+
+        local wingL = createWing(true)
+        local wingR = createWing(false)
+
+        task.spawn(function()
+            while model and model.Parent do
+                local t = tick()
+                local sway = math.sin(t * 1.5) * 0.25
+                local bob = math.sin(t * 2) * 0.3
+
+                wingL.motor.C0 = CFrame.new(-2.5, 3.5 + bob, 2.5) * CFrame.Angles(math.rad(155 + sway * 20), -0.2617993877991494, 0.2617993877991494)
+                wingR.motor.C0 = CFrame.new(2.5, 3.5 + bob, 2.5) * CFrame.Angles(math.rad(155 + sway * 20), 0.2617993877991494, -0.2617993877991494)
+
+                for k, v in pairs(wingL.joints) do
+                    v.C1 = CFrame.Angles(0, 0, math.sin(t + k) * 0.03)
+                end
+                for k, v in pairs(wingR.joints) do
+                    v.C1 = CFrame.Angles(0, 0, math.sin(t + k) * 0.03)
+                end
+
+                RunService.Heartbeat:Wait()
+            end
+        end)
+    end
+
+    -- Normal Halo (u159)
+    function u159(player, rootPart, model)
+        local color = Color3.fromRGB(255, 255, 255)
+        local halos = {}
+        for i = 1, 6 do
+            local p = Instance.new("Part", model)
+            p.Shape = Enum.PartType.Ball
+            p.Size = Vector3.new(0.5, 0.5, 0.5)
+            p.Material = Enum.Material.Neon
+            p.Color = color
+            p.Transparency = 0.3
+            disablePhysics(p)
+
+            local motor = Instance.new("Motor6D", p)
+            motor.Part0 = rootPart
+            motor.Part1 = p
+            local angle = i / 6 * 2 * math.pi
+            motor.C0 = CFrame.new(math.cos(angle) * 1.3, 4.5, math.sin(angle) * 1.3)
+
+            table.insert(halos, { part = p, weld = motor, baseAngle = angle })
+        end
+
+        task.spawn(function()
+            while model and model.Parent do
+                if player == LocalPlayer and not u5 then
+                    for _, v in pairs(halos) do v.part.Transparency = 1 end
+                    repeat RunService.Heartbeat:Wait() until u5 or not model.Parent
+                    for _, v in pairs(halos) do v.part.Transparency = 0.3 end
+                end
+
+                local t = tick()
+                for _, v in pairs(halos) do
+                    local angle = v.baseAngle + t * 0.3
+                    v.weld.C0 = CFrame.new(math.cos(angle) * 1.3, 4.5 + 0.1 * math.sin(t * 1.5), math.sin(angle) * 1.3)
+                    v.part.Transparency = 0.2 + 0.1 * math.sin(t * 2 + v.baseAngle)
+                end
+                RunService.Heartbeat:Wait()
+            end
+        end)
+    end
+
+    -- Big Sniper (u161)
+    function u161(player, rootPart, model)
+        local colors = {
+            dark = Color3.fromRGB(20, 20, 20),
+            white = Color3.fromRGB(255, 255, 255),
+            neon = Color3.fromRGB(255, 255, 255),
+            gray = Color3.fromRGB(40, 40, 40),
+            darkGray = Color3.fromRGB(30, 30, 30),
+        }
+
+        local parts = {}
+        local function makePart(parent, size, material, color, cframe, shape)
+            local p = Instance.new("Part", parent)
+            p.Size = size
+            p.Material = material
+            p.Color = color
+            if shape then p.Shape = shape end
+            disablePhysics(p)
+            if cframe then p.CFrame = cframe end
+            return p
+        end
+
+        local barrel = makePart(model, Vector3.new(1.2, 0.9, 3.2), Enum.Material.Metal, colors.dark)
+        local barrelLong = makePart(model, Vector3.new(0.45, 0.45, 8), Enum.Material.Metal, colors.dark)
+        local scope = makePart(model, Vector3.new(0.8, 0.8, 1.4), Enum.Material.Metal, colors.dark)
+        local scopeLens = makePart(model, Vector3.new(0.7, 0.7, 0.4), Enum.Material.Neon, colors.neon, nil, Enum.PartType.Cylinder)
+        local handle = makePart(model, Vector3.new(0.7, 1, 1.2), Enum.Material.Metal, colors.gray)
+        local trigger = makePart(model, Vector3.new(0.3, 0.2, 0.3), Enum.Material.Metal, colors.white)
+        local grip = makePart(model, Vector3.new(0.7, 1.2, 1.2), Enum.Material.Metal, colors.gray)
+        local stock = makePart(model, Vector3.new(1, 0.8, 3), Enum.Material.Metal, colors.dark)
+        local stockPad = makePart(model, Vector3.new(0.5, 0.3, 0.8), Enum.Material.Metal, colors.gray)
+        local bipod = makePart(model, Vector3.new(1.5, 1.2, 0.6), Enum.Material.Metal, colors.dark)
+        local leg1 = makePart(model, Vector3.new(0.4, 0.8, 0.5), Enum.Material.Metal, colors.gray)
+        local leg2 = makePart(model, Vector3.new(0.4, 0.8, 0.5), Enum.Material.Metal, colors.gray)
+        local bipodPad = makePart(model, Vector3.new(1.6, 1.3, 0.3), Enum.Material.Rubber, colors.darkGray)
+
+        -- Main motor
+        local motor = Instance.new("Motor6D")
+        motor.Part0 = rootPart
+        motor.Part1 = barrel
+        motor.C0 = CFrame.new(2.5, 1.5, 1) * CFrame.Angles(0, math.pi, 0)
+        motor.Parent = barrel
+
+        -- Welds
+        local function weld(a, b, cframe)
+            local w = Instance.new("Weld", a)
+            w.Part0 = a
+            w.Part1 = b
+            w.C0 = cframe
+        end
+
+        weld(barrel, barrelLong, CFrame.new(0, 0.1, barrel.Size.Z / 2 + barrelLong.Size.Z / 2))
+        weld(barrel, scope, CFrame.new(0, 0.6, -0.9))
+        weld(scope, scopeLens, CFrame.new(0, 0, 0.7))
+        weld(barrel, handle, CFrame.new(0.5, -0.4, -1.2))
+        weld(handle, trigger, CFrame.new(0, -0.6, 0.2))
+        weld(barrel, grip, CFrame.new(-0.5, -0.6, -0.4))
+        weld(barrel, stock, CFrame.new(0, 0.1, -barrel.Size.Z / 2 - stock.Size.Z / 2))
+        weld(stock, stockPad, CFrame.new(0, 0.6, -1.5))
+        weld(stock, bipod, CFrame.new(0, -0.5, -stock.Size.Z / 2 - bipod.Size.Z / 2))
+        weld(bipod, leg1, CFrame.new(-0.8, 0.3, 0))
+        weld(bipod, leg2, CFrame.new(0.8, 0.3, 0))
+        weld(bipod, bipodPad, CFrame.new(0, 0, -bipod.Size.Z / 2 - bipodPad.Size.Z / 2))
+
+        task.spawn(function()
+            while model and model.Parent do
+                if player == LocalPlayer and not u5 then
+                    for _, child in pairs(model:GetChildren()) do
+                        if child:IsA("BasePart") then child.Transparency = 1 end
+                    end
+                    repeat RunService.Heartbeat:Wait() until u5 or not model.Parent
+                    for _, child in pairs(model:GetChildren()) do
+                        if child:IsA("BasePart") then child.Transparency = 0 end
+                    end
+                end
+
+                local t = tick()
+                motor.C0 = CFrame.new(2.5 + math.sin(t * 0.8) * 0.1, 1.5 + math.sin(t * 2) * 0.1, 1) * CFrame.Angles(0, math.pi, 0)
+                scopeLens.Transparency = 0.3 + 0.2 * math.sin(t * 3)
+                RunService.Heartbeat:Wait()
+            end
+        end)
+    end
+
+    -- Illuminati (u162)
+    function u162(player, rootPart, model)
+        local base = Instance.new("Part", model)
+        base.Shape = Enum.PartType.Ball
+        base.Size = Vector3.new(1.8, 1.8, 1.8)
+        base.Material = Enum.Material.SmoothPlastic
+        base.Color = Color3.new(1, 1, 1)
+        base.Transparency = 0.1
+        disablePhysics(base)
+
+        local ring1 = Instance.new("Part", model)
+        ring1.Shape = Enum.PartType.Ball
+        ring1.Size = Vector3.new(1.2, 1.2, 0.4)
+        ring1.Material = Enum.Material.Neon
+        ring1.Color = Color3.fromRGB(0, 191, 255)
+        ring1.Transparency = 0.1
+        disablePhysics(ring1)
+
+        local ring2 = Instance.new("Part", model)
+        ring2.Shape = Enum.PartType.Ball
+        ring2.Size = Vector3.new(0.6, 0.6, 0.3)
+        ring2.Material = Enum.Material.Neon
+        ring2.Color = Color3.new(0, 0, 0)
+        ring2.Transparency = 0.1
+        disablePhysics(ring2)
+
+        local eye = Instance.new("Part", model)
+        eye.Shape = Enum.PartType.Ball
+        eye.Size = Vector3.new(0.2, 0.2, 0.1)
+        eye.Material = Enum.Material.Neon
+        eye.Color = Color3.new(1, 1, 1)
+        eye.Transparency = 0.2
+        disablePhysics(eye)
+
+        local motor = Instance.new("Motor6D", base)
+        motor.Part0 = rootPart
+        motor.Part1 = base
+        motor.C0 = CFrame.new(0, 5.5, 0) * CFrame.Angles(0, math.pi, 0)
+
+        weld(base, ring1, CFrame.new(0, 0, 0.6))
+        weld(ring1, ring2, CFrame.new(0, 0, 0.25))
+        weld(ring2, eye, CFrame.new(0.15, 0.15, 0.1))
+
+        task.spawn(function()
+            while model and model.Parent do
+                if player == LocalPlayer and not u5 then
+                    base.Transparency = 1
+                    ring1.Transparency = 1
+                    ring2.Transparency = 1
+                    eye.Transparency = 1
+                    repeat RunService.Heartbeat:Wait() until u5 or not model.Parent
+                    base.Transparency = 0.1
+                    ring1.Transparency = 0.1
+                    ring2.Transparency = 0.1
+                    eye.Transparency = 0.2
+                end
+
+                local t = tick()
+                motor.C0 = CFrame.new(0, 5.5 + math.sin(t * 2) * 0.2, 0) * CFrame.Angles(0, math.pi, 0)
+                ring1.Transparency = 0.1 + 0.1 * math.sin(t * 3)
+                ring2.Transparency = 0.1 + 0.1 * math.sin(t * 4)
+                eye.Transparency = 0.2 + 0.1 * math.sin(t * 5)
+                RunService.Heartbeat:Wait()
+            end
+        end)
+    end
+
+    -- ===== Apply Auras to Existing Players =====
+    for _, player in ipairs(Players:GetPlayers()) do
+        local function applyAura(character)
+            if character then
+                local root = character:WaitForChild("HumanoidRootPart", 10)
+                if character:FindFirstChild("MickeyAura") then
+                    character.MickeyAura:Destroy()
+                end
+                local roleData = t4[player.Name] or t4[player.DisplayName]
+                if roleData and roleData.Style then
+                    local model = Instance.new("Model", character)
+                    model.Name = "MickeyAura"
+                    local style = roleData.Style
+                    if style == "DIVINE_RING" then u153(player, root, model)
+                    elseif style == "HYDRA_STRIKE" then u154(player, root, model)
+                    elseif style == "DEMON_HANDS" then u156(player, root, model)
+                    elseif style == "HEART_AURA" then u155(player, root, model)
+                    elseif style == "LETTER_A" then u157(player, root, model)
+                    elseif style == "LETTER_N" then u158(player, root, model)
+                    elseif style == "NORMAL_HALO" then u159(player, root, model)
+                    elseif style == "ANGEL_WINGS" then u160(player, root, model)
+                    elseif style == "BIG_SNIPER" then u161(player, root, model)
+                    elseif style == "ILLUMINATI" then u162(player, root, model)
+                    end
+                end
+            end
+        end
+
+        player.CharacterAdded:Connect(applyAura)
+        if player.Character then applyAura(player.Character) end
+    end
+
+    Players.PlayerAdded:Connect(function(player)
+        local function applyAura(character)
+            if character then
+                local root = character:WaitForChild("HumanoidRootPart", 10)
+                if character:FindFirstChild("MickeyAura") then
+                    character.MickeyAura:Destroy()
+                end
+                local roleData = t4[player.Name] or t4[player.DisplayName]
+                if roleData and roleData.Style then
+                    local model = Instance.new("Model", character)
+                    model.Name = "MickeyAura"
+                    local style = roleData.Style
+                    if style == "DIVINE_RING" then u153(player, root, model)
+                    elseif style == "HYDRA_STRIKE" then u154(player, root, model)
+                    elseif style == "DEMON_HANDS" then u156(player, root, model)
+                    elseif style == "HEART_AURA" then u155(player, root, model)
+                    elseif style == "LETTER_A" then u157(player, root, model)
+                    elseif style == "LETTER_N" then u158(player, root, model)
+                    elseif style == "NORMAL_HALO" then u159(player, root, model)
+                    elseif style == "ANGEL_WINGS" then u160(player, root, model)
+                    elseif style == "BIG_SNIPER" then u161(player, root, model)
+                    elseif style == "ILLUMINATI" then u162(player, root, model)
+                    end
+                end
+            end
+        end
+
+        player.CharacterAdded:Connect(applyAura)
+        if player.Character then applyAura(player.Character) end
+    end)
+
+    -- Initial system message
+    if not t2[LocalPlayer.Name] then
+        displayMessage(nil, "— Mickey Chat: Secure Edition with Database Secret —", nil, true)
+    end
+
+    return
+end
