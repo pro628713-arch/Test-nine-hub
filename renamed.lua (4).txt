@@ -1,0 +1,2657 @@
+-- This file was generated at discord.gg/syncrypt
+-- MoonVeil Deobfuscator Created By Skynex Okinbru
+
+local selectFunction = select
+
+local function writeVariadicValues(target, idx, ...)
+	local va = { ... }
+
+	for i = 1, selectFunction("#", ...) do
+		target[idx + i - 1] = va[i]
+	end
+end
+local function packValues(...)
+	local nData = { ... }
+
+	nData.n = select("#", ...)
+
+	return nData
+end
+
+if not game:IsLoaded() then
+	game.Loaded:Wait()
+end
+
+local LocalPlayer = game.Players.LocalPlayer
+
+repeat
+	task.wait()
+until LocalPlayer:FindFirstChild("PlayerGui")
+
+local DisplayName = LocalPlayer.DisplayName
+local updateTextButton = ""
+local createPartFlag = true
+
+local function textCallback(flagCondition)
+	if flagCondition then
+		local conditionFlag =
+			flagCondition:gsub("<[^>]*>", ""):gsub("[<>]", ""):gsub("[\204-\205][\128-\191]", ""):gsub("%s+", " ")
+		local flag = conditionFlag:match("^%s*(.-)%s*$")
+
+		if flag then
+			conditionFlag = flag
+		elseif not conditionFlag then
+			conditionFlag = false
+		end
+
+		return conditionFlag
+	end
+
+	return ""
+end
+
+local data = {
+	legend888444 = true,
+	GOKUPAPA_KABOT = true,
+	forbiddenisback = true,
+	WOLF_ISWILD4 = true,
+	bluelockxthedemon = true,
+	SABKABAAP1428 = true,
+	SVGKABAAP4 = true,
+	SVGKABAAP1429 = true,
+	BSHAGGAN145 = true,
+	Samar_bbb2 = true,
+	POOKIExMiDnIgHt_MoOn = true,
+	XXLORDXGOKXX = true,
+	SOUL_COFOUNDER = true,
+	SOHAM201005 = true,
+	VAIBHAV_Gokuu = true,
+	VENUS_EDIT = true,
+	KINGOFCLANS246 = true,
+	q1qpro66890 = true,
+	alexkabot11 = true,
+	NOOBY234442 = true,
+	Pokomoko3782 = true,
+	WIZARDIDBANNED = true,
+	AX3RKABOT = true,
+	sulemanop16 = true,
+	SABKABAAP1427 = true,
+	XxLORDXGOKUxX = true,
+	SABKABAAP1430 = true,
+	piya10078 = true,
+	RENGOKU07662 = true,
+	blaire88888 = true,
+	terabaap_prince = true,
+	XxPriMe_PriNCexX = true,
+	forbidkabeta21 = true,
+	forbidkabeta = true,
+	forbidkabeta12 = true,
+	forbidkabeta22 = true,
+	forbidkabeta13 = true,
+	forbidkabeta20 = true,
+	forbidkabeta23 = true,
+	forbidkabeta24 = true,
+	forbidkabeta19 = true,
+	forbidkabeta3 = true,
+	forbidkabeta14 = true,
+	forbidkabeta18 = true,
+	forbidkabeta2 = true,
+	forbidkabeta16 = true,
+	forbidkabeta15 = true,
+	TeRaBaaP_PrinCe = true,
+	areskabot = true,
+	Gojo_satoru6030 = true,
+}
+
+if not data[LocalPlayer.Name] and true then
+	print("Player Display Name: " .. DisplayName)
+
+	local text = (function(argument)
+		local data = {
+			a = "ᴀ",
+			b = "ʙ",
+			c = "ᴄ",
+			d = "ᴅ",
+			e = "ᴇ",
+			f = "ꜰ",
+			g = "ɢ",
+			h = "ʜ",
+			i = "ɪ",
+			j = "ᴊ",
+			k = "ᴋ",
+			l = "ʟ",
+			m = "ᴍ",
+			n = "ɴ",
+			o = "ᴏ",
+			p = "ᴘ",
+			q = "ǫ",
+			r = "ʀ",
+			s = "s",
+			t = "ᴛ",
+			u = "ᴜ",
+			v = "ᴠ",
+			w = "ᴡ",
+			x = "x",
+			y = "ʏ",
+			z = "ᴢ",
+			A = "ᴀ",
+			B = "ʙ",
+			C = "ᴄ",
+			D = "ᴅ",
+			E = "ᴇ",
+			F = "ꜰ",
+			G = "ɢ",
+			H = "ʜ",
+			I = "ɪ",
+			J = "ᴊ",
+			K = "ᴋ",
+			L = "ʟ",
+			M = "ᴍ",
+			N = "ɴ",
+			O = "ᴏ",
+			P = "ᴘ",
+			Q = "ǫ",
+			R = "ʀ",
+			S = "s",
+			T = "ᴛ",
+			U = "ᴜ",
+			V = "ᴠ",
+			W = "ᴡ",
+			X = "x",
+			Y = "ʏ",
+			Z = "ᴢ",
+		}
+		local text = ""
+
+		for index = 1, #argument do
+			local sub = argument:sub(index, index)
+			local _ = text .. (data[sub] or (sub or false))
+		end
+
+		return text
+	end)(DisplayName)
+	local remoteEvent = game:GetService("ReplicatedStorage").RE:FindFirstChild("1RPNam1eTex1t")
+
+	if remoteEvent then
+		remoteEvent:FireServer("RolePlayName", "_ᴍɪᴄᴋᴇʏ ᴄʜᴀᴛ_")
+	end
+
+	local secondaryRemoteEvent = game:GetService("ReplicatedStorage").RE:FindFirstChild("1RPNam1eColo1r")
+
+	if secondaryRemoteEvent then
+		local data = packValues(Color3.fromRGB(1, 221, 221))
+
+		secondaryRemoteEvent:FireServer("PickingRPNameColor", unpack(data, 1, data.n))
+	end
+
+	local alternateRemoteEvent = game:GetService("ReplicatedStorage").RE:FindFirstChild("1RPNam1eTex1t")
+
+	if alternateRemoteEvent then
+		alternateRemoteEvent:FireServer("RolePlayBio", "  _" .. text .. "_")
+	end
+
+	local additionalRemoteEvent = game:GetService("ReplicatedStorage").RE:FindFirstChild("1RPNam1eColo1r")
+
+	if additionalRemoteEvent then
+		local data = packValues(Color3.fromRGB(255, 0, 193))
+
+		additionalRemoteEvent:FireServer("PickingRPBioColor", unpack(data, 1, data.n))
+	end
+
+	local conditionData = {
+		GauravYTR1866 = {
+			Tag = "CREATOR",
+			Style = "DIVINE_RING",
+			Color = "RAINBOW",
+		},
+		indinarmi = {
+			Tag = "DADDY",
+			Style = "HYDRA_STRIKE",
+			Color = "RAINBOW",
+		},
+		Nooyes68 = {
+			Tag = "CREATOR",
+			Style = "BIG_SNIPER",
+			Color = "RAINBOW",
+		},
+		Premium_Roger = {
+			Tag = "MOD",
+			Style = "DEMON_HANDS",
+			Color = "RAINBOW",
+		},
+		huhuhuhuhuhu_431 = {
+			Tag = "PAPA",
+			Style = "LETTER_A",
+			Color = "RAINBOW",
+		},
+		iamshivanshboi16 = {
+			Tag = "ADMIN",
+			Style = "LETTER_A",
+			Color = Color3.fromRGB(0, 255, 255),
+		},
+		Luca_xx18 = {
+			Tag = "GOD",
+			Style = "LETTER_N",
+			Color = "RAINBOW",
+		},
+		DE4DLYxf0under_JAMAL = {
+			Tag = "STAR",
+			Style = "ILLUMINATI",
+			Color = "RAINBOW",
+		},
+		itzme_AD7 = {
+			Tag = "FATHER",
+			Color = "RAINBOW",
+		},
+		ALONE_WX5 = {
+			Tag = "ARCHON",
+			Style = "NORMAL_HALO",
+			Color = "RAINBOW",
+		},
+		X4H_DAD = {
+			Tag = "MAFIA",
+			Color = Color3.fromRGB(0, 255, 254),
+		},
+		cute_boy93492 = {
+			Tag = "ADMIN",
+			Color = Color3.fromRGB(255, 0, 0),
+		},
+		satyam4482 = {
+			Tag = "SEXY",
+			Color = Color3.fromRGB(0, 0, 204),
+		},
+		jiyanshok = {
+			Tag = "BATMAN",
+			Style = "DEMON_HANDS",
+			Color = Color3.fromRGB(0, 0, 0),
+		},
+		darkfuxks = {
+			Tag = "COMGOD",
+			Style = "DEMON_HANDS",
+			Color = "RAINBOW",
+		},
+		harshu_7595 = {
+			Tag = "STEPDADDY",
+			Color = "RAINBOW",
+		},
+		damien_yt62 = {
+			Tag = "KING",
+			Style = "LETTER_A",
+			Color = "RAINBOW",
+		},
+		prayansh108 = {
+			Tag = "KHATRI",
+			Color = Color3.fromRGB(245, 0, 0),
+		},
+		Garammasalahun = {
+			Tag = "LEGEND",
+			Style = "ANGEL_WINGS",
+			Color = Color3.fromRGB(255, 0, 0),
+		},
+		Rudrapawar123456 = {
+			Tag = "OG",
+			Color = Color3.fromRGB(173, 31, 31),
+		},
+		VEERUBHAI001 = {
+			Tag = "OWNER",
+			Style = "BIG_SNIPER",
+			Color = "RAINBOW",
+		},
+		WilDFloweRs0_0 = {
+			Tag = "BADNAM",
+			Style = "HYDRA_STRIKE",
+			Color = "RAINBOW",
+		},
+		op_2333334 = {
+			Tag = "CUTIE",
+			Style = "HEART_AURA",
+			Color = Color3.fromRGB(255, 182, 193),
+		},
+		princess_manya4 = {
+			Tag = "POOKIE",
+			Style = "HEART_AURA",
+			Color = Color3.fromRGB(255, 182, 193),
+		},
+		Hevi_m5 = {
+			Tag = "MALKIN",
+			Style = "HEART_AURA",
+			Color = "RAINBOW",
+		},
+		Chiraglife4 = {
+			Tag = "GRANDFATHER",
+			Color = Color3.fromRGB(20, 52, 164),
+		},
+	}
+	local option = game.JobId ~= "" and game.JobId or "StudioSession"
+	local url = ("https://newmickeychat-default-rtdb.asia-southeast1.firebasedatabase.app/"):gsub(".json", "")
+		.. "AuraSync.json"
+	local updateMickeyAura = ("https://newmickeychat-default-rtdb.asia-southeast1.firebasedatabase.app/"):sub(
+				-1
+			) == "/"
+			and "https://newmickeychat-default-rtdb.asia-southeast1.firebasedatabase.app/" .. option .. ".json"
+		or "https://newmickeychat-default-rtdb.asia-southeast1.firebasedatabase.app/" .. "/" .. option .. ".json"
+
+	if not updateMickeyAura:find("?") then
+		local _ = updateMickeyAura .. "?auth=SwvXmmQOOY9pVVCwzSRHmGOREfillJXY7mDsfnBp"
+	else
+		local _ = updateMickeyAura .. "&auth=SwvXmmQOOY9pVVCwzSRHmGOREfillJXY7mDsfnBp"
+	end
+
+	if not url:find("?") then
+		local _ = url .. "?auth=SwvXmmQOOY9pVVCwzSRHmGOREfillJXY7mDsfnBp"
+	else
+		local _ = url .. "&auth=SwvXmmQOOY9pVVCwzSRHmGOREfillJXY7mDsfnBp"
+	end
+
+	local capturedElapsed = 0
+	local tagData = {
+		CREATOR = true,
+		KING = true,
+		MOD = true,
+		DADDY = true,
+		ARCHON = true,
+		STEPDADDY = true,
+		STAR = true,
+		MALKIN = true,
+	}
+	local Players = game:GetService("Players")
+	local HttpService = game:GetService("HttpService")
+	local UserInputService = game:GetService("UserInputService")
+	local TextChatService = game:GetService("TextChatService")
+	local RunService = game:GetService("RunService")
+	local TweenService = game:GetService("TweenService")
+	local flagCallback = syn and syn.request
+		or (http and http.request or (http_request or (fluxus and fluxus.request or request)))
+	local timestamp = os.time()
+	local createMickeyAuraPart = nil
+	local createHydraCore = nil
+	local createPart = nil
+	local secondaryCreateMickeyAuraPart = nil
+	local alternateCreateMickeyAuraPart = nil
+	local additionalCreateMickeyAuraPart = nil
+	local fallbackCreateMickeyAuraPart = nil
+	local nestedCreateMickeyAuraPart = nil
+	local innerCreateMickeyAuraPart = nil
+	local outerCreateMickeyAuraPart = nil
+	local new = Instance.new
+	local parentData = packValues(LocalPlayer:WaitForChild("PlayerGui"))
+	local parent = new("ScreenGui", unpack(parentData, 1, parentData.n))
+
+	parent.Name = "CloudChatMickeyFixed"
+	parent.ResetOnSpawn = false
+
+	local TextButton = Instance.new("TextButton", parent)
+
+	TextButton.Size = UDim2.new(0, 40, 0, 100)
+	TextButton.Position = UDim2.new(0, 5, 0.5, -50)
+	TextButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	TextButton.BackgroundTransparency = 0.4
+	TextButton.TextColor3 = Color3.new(1, 1, 1)
+	TextButton.Text = "C\nH\nA\nT"
+	TextButton.Font = Enum.Font.BuilderSansBold
+	TextButton.TextSize = 14
+	Instance.new("UICorner", TextButton)
+	Instance.new("UIStroke", TextButton).Color = Color3.new(1, 1, 1)
+
+	local Frame = Instance.new("Frame", parent)
+
+	Frame.Size = UDim2.new(0, 350, 0, 250)
+	Frame.Position = UDim2.new(0.5, -175, 0.5, -125)
+	Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	Frame.BackgroundTransparency = 0.4
+	Frame.Active = true
+	Instance.new("UICorner", Frame)
+
+	local signal = TextButton.MouseButton1Click
+	local capturedFrame = Frame
+
+	signal:Connect(function()
+		capturedFrame.Visible = not capturedFrame.Visible
+	end)
+
+	local condition = conditionData[LocalPlayer.Name] or conditionData[LocalPlayer.DisplayName]
+
+	if condition then
+		local aUraButton = Instance.new("TextButton", parent)
+
+		aUraButton.Size = UDim2.new(0, 40, 0, 100)
+		aUraButton.Position = UDim2.new(0, 50, 0.5, -50)
+		aUraButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		aUraButton.BackgroundTransparency = 0.4
+		aUraButton.TextColor3 = Color3.fromRGB(0, 255, 150)
+		aUraButton.Text = "A\nU\nR\nA"
+		aUraButton.Font = Enum.Font.BuilderSansBold
+		aUraButton.TextSize = 14
+		Instance.new("UICorner", aUraButton)
+		Instance.new("UIStroke", aUraButton).Color = Color3.new(1, 1, 1)
+
+		local signal = aUraButton.MouseButton1Click
+		local capturedParent = aUraButton
+
+		signal:Connect(function()
+			createPartFlag = not createPartFlag
+			capturedParent.TextColor3 = createPartFlag and Color3.fromRGB(0, 255, 150) or Color3.fromRGB(255, 50, 50)
+		end)
+
+		if condition and tagData[condition.Tag] then
+			local sTyleButton = Instance.new("TextButton", parent)
+
+			sTyleButton.Size = UDim2.new(0, 40, 0, 100)
+			sTyleButton.Position = UDim2.new(0, 95, 0.5, -50)
+			sTyleButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+			sTyleButton.BackgroundTransparency = 0.4
+			sTyleButton.TextColor3 = Color3.fromRGB(255, 215, 0)
+			sTyleButton.Text = "S\nT\nY\nL\nE"
+			sTyleButton.Font = Enum.Font.BuilderSansBold
+			sTyleButton.TextSize = 14
+			Instance.new("UICorner", sTyleButton)
+			Instance.new("UIStroke", sTyleButton).Color = Color3.new(1, 1, 1)
+
+			local ScrollingFrame = Instance.new("ScrollingFrame", parent)
+
+			ScrollingFrame.Size = UDim2.new(0, 180, 0, 220)
+			ScrollingFrame.Position = UDim2.new(0, 140, 0.5, -110)
+			ScrollingFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+			ScrollingFrame.BackgroundTransparency = 0.2
+			ScrollingFrame.Visible = false
+			ScrollingFrame.ScrollBarThickness = 1
+			ScrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(255, 215, 0)
+			ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+			ScrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+			Instance.new("UICorner", ScrollingFrame).CornerRadius = UDim.new(0, 8)
+			Instance.new("UIStroke", ScrollingFrame).Color = Color3.fromRGB(255, 255, 255)
+
+			local UIListLayout = Instance.new("UIListLayout", ScrollingFrame)
+
+			UIListLayout.Padding = UDim.new(0, 5)
+			UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+			Instance.new("UIPadding", ScrollingFrame).PaddingTop = UDim.new(0, 10)
+
+			local signal = sTyleButton.MouseButton1Click
+			local capturedScrollingFrame = ScrollingFrame
+
+			signal:Connect(function()
+				capturedScrollingFrame.Visible = not capturedScrollingFrame.Visible
+			end)
+
+			local scrollingFrame = ScrollingFrame
+			local capturedLocalPlayer = LocalPlayer
+			local capturedFlagCallback = flagCallback
+			local capturedHttpService = HttpService
+			local capturedParent = aUraButton
+			local delay = task.delay
+
+			local function createMickeyAura(createMickeyAuraText, createHydraCore, style)
+				local parent = Instance.new("TextButton", scrollingFrame)
+
+				parent.Size = UDim2.new(0.9, 0, 0, 35)
+				parent.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+				parent.TextColor3 = Color3.new(1, 1, 1)
+				parent.Text = createMickeyAuraText
+				parent.Font = Enum.Font.LuckiestGuy
+				Instance.new("UICorner", parent).CornerRadius = UDim.new(0, 4)
+
+				local signal = parent.MouseButton1Click
+				local capturedStyle = style
+				local mickeyAuraCallback = createHydraCore
+
+				signal:Connect(function()
+					scrollingFrame.Visible = false
+
+					local Character = capturedLocalPlayer.Character
+
+					if Character and Character:FindFirstChild("HumanoidRootPart") then
+						pcall(function()
+							local secondaryUrl = nil
+							local capturedFlagCallbackFunction = capturedFlagCallback
+							local createMickeyAuraData = {}
+							local gsub = url:gsub(".json", "/" .. capturedLocalPlayer.Name .. ".json")
+
+							if not gsub:find("?") then
+							else
+							end
+
+							createMickeyAuraData.Url = secondaryUrl
+							createMickeyAuraData.Method = "PUT"
+							createMickeyAuraData.Body = capturedHttpService:JSONEncode({
+								Style = capturedStyle,
+							})
+							capturedFlagCallbackFunction(createMickeyAuraData)
+						end)
+
+						if Character:FindFirstChild("MickeyAura") then
+							Character.MickeyAura:Destroy()
+						end
+
+						local Model = Instance.new("Model", Character)
+
+						Model.Name = "MickeyAura"
+						mickeyAuraCallback(capturedLocalPlayer, Character.HumanoidRootPart, Model)
+						createPartFlag = true
+
+						if capturedParent then
+							capturedParent.TextColor3 = Color3.fromRGB(0, 255, 150)
+						end
+					end
+				end)
+			end
+
+			delay(1, function()
+				createMickeyAura("Divine Ring", createMickeyAuraPart, "DIVINE_RING")
+				createMickeyAura("Hydra Strike", createHydraCore, "HYDRA_STRIKE")
+				createMickeyAura("Void Wings", secondaryCreateMickeyAuraPart, "DEMON_HANDS")
+				createMickeyAura("Angel Wings", nestedCreateMickeyAuraPart, "ANGEL_WINGS")
+				createMickeyAura("Pyaari Heart", createPart, "HEART_AURA")
+				createMickeyAura("Letter A", alternateCreateMickeyAuraPart, "LETTER_A")
+				createMickeyAura("Bubble", additionalCreateMickeyAuraPart, "LETTER_N")
+				createMickeyAura("Halo", fallbackCreateMickeyAuraPart, "NORMAL_HALO")
+				createMickeyAura("Big Sniper", innerCreateMickeyAuraPart, "BIG_SNIPER")
+				createMickeyAura("Illuminati", outerCreateMickeyAuraPart, "ILLUMINATI")
+			end)
+		end
+	end
+
+	local flag = nil
+	local position = nil
+	local Position = nil
+	local InputBegan = Frame.InputBegan
+	local secondaryCapturedFrame = Frame
+
+	InputBegan:Connect(function(input)
+		if
+			input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch
+		then
+			flag = true
+			position = input.Position
+			Position = secondaryCapturedFrame.Position
+
+			local Changed = input.Changed
+			local capturedInput = input
+
+			Changed:Connect(function()
+				if capturedInput.UserInputState == Enum.UserInputState.End then
+					flag = false
+				end
+			end)
+			updateTextButton = ""
+		end
+	end)
+
+	local InputChanged = UserInputService.InputChanged
+	local alternateCapturedFrame = Frame
+
+	InputChanged:Connect(function(input)
+		if
+			flag
+			and (
+				input.UserInputType == Enum.UserInputType.MouseMovement
+				or input.UserInputType == Enum.UserInputType.Touch
+			)
+		then
+			local difference = input.Position - position
+
+			alternateCapturedFrame.Position = UDim2.new(
+				Position.X.Scale,
+				Position.X.Offset + difference.X,
+				Position.Y.Scale,
+				Position.Y.Offset + difference.Y
+			)
+		end
+	end)
+
+	local frame = Instance.new("Frame", parent)
+
+	frame.Size = UDim2.new(0, 240, 0, 400)
+	frame.Position = UDim2.new(0, 5, 0.5, 55)
+	frame.BackgroundTransparency = 1
+	Instance.new("UIListLayout", frame).Padding = UDim.new(0, 8)
+
+	local capturedData = data
+	local capturedLocalPlayer = LocalPlayer
+	local frameCallback = textCallback
+	local capturedPlayers = Players
+	local capturedTweenService = TweenService
+	local ScrollingFrame = Instance.new("ScrollingFrame", Frame)
+
+	ScrollingFrame.Size = UDim2.new(1, -10, 1, -60)
+	ScrollingFrame.Position = UDim2.new(0, 5, 0, 5)
+	ScrollingFrame.BackgroundTransparency = 1
+	ScrollingFrame.ScrollBarThickness = 0
+	ScrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(255, 215, 0)
+	ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+	ScrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+	Instance.new("UIListLayout", ScrollingFrame).Padding = UDim.new(0, 2)
+
+	local secondaryParent = Instance.new("Frame", Frame)
+
+	secondaryParent.Size = UDim2.new(1, -10, 0, 36)
+	secondaryParent.Position = UDim2.new(0, 5, 1, -41)
+	secondaryParent.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	secondaryParent.BackgroundTransparency = 0.2
+	Instance.new("UICorner", secondaryParent)
+
+	local TextBox = Instance.new("TextBox", secondaryParent)
+
+	TextBox.Size = UDim2.new(1, -45, 1, 0)
+	TextBox.Position = UDim2.new(0, 8, 0, 0)
+	TextBox.BackgroundTransparency = 1
+	TextBox.TextColor3 = Color3.new(1, 1, 1)
+	TextBox.PlaceholderText = "Click Here To Chat..."
+	TextBox.Text = ""
+	TextBox.Font = Enum.Font.BuilderSansMedium
+	TextBox.TextSize = 16
+	TextBox.TextXAlignment = Enum.TextXAlignment.Left
+
+	local textButton = Instance.new("TextButton", secondaryParent)
+
+	textButton.Size = UDim2.new(0, 24, 0, 24)
+	textButton.Position = UDim2.new(1, -30, 0.5, -12)
+	textButton.BackgroundTransparency = 1
+	textButton.Text = "✖"
+	textButton.TextColor3 = Color3.fromRGB(200, 200, 200)
+	textButton.Font = Enum.Font.BuilderSansBold
+	textButton.TextSize = 22
+	textButton.Visible = false
+	textButton.MouseButton1Click:Connect(function()
+		updateTextButton = ""
+	end)
+
+	local spawn = task.spawn
+	local capturedTextBox = TextBox
+
+	spawn(function()
+		while true do
+			if updateTextButton == "" then
+				capturedTextBox.PlaceholderText = "Click Here To Chat..."
+				textButton.Visible = false
+			else
+				capturedTextBox.PlaceholderText = "PRVT TO " .. updateTextButton .. "..."
+				textButton.Visible = true
+			end
+
+			task.wait(0.2)
+		end
+	end)
+
+	local createTextButtonData = {}
+	local target = {}
+	local fromRgbResult = Color3.fromRGB(253, 41, 67)
+	local secondaryFromRgbResult = Color3.fromRGB(1, 162, 255)
+	local alternateFromRgbResult = Color3.fromRGB(2, 184, 87)
+	local additionalFromRgbResult = Color3.fromRGB(170, 85, 255)
+	local nData = packValues(Color3.fromRGB(255, 170, 0))
+
+	target[1] = fromRgbResult
+	target[2] = secondaryFromRgbResult
+	target[3] = alternateFromRgbResult
+	target[4] = additionalFromRgbResult
+	writeVariadicValues(target, 5, unpack(nData, 1, nData.n))
+	local Heartbeat = RunService.Heartbeat
+	local capturedCreateTextButtonData = createTextButtonData
+	local resultCallback = textCallback
+
+	Heartbeat:Connect(function()
+		local fromHsvResult = Color3.fromHSV(tick() % 3 / 3, 0.8, 1)
+
+		for k, item in pairs(capturedCreateTextButtonData) do
+			if k:IsDescendantOf(game) then
+				local kTextResult = resultCallback(item.content)
+
+				k.Text = string.format(
+					'%s<font color="#%s">[%s]</font> <font color="#%s">[%s]</font>: <font face="BuilderSansMedium">%s</font>',
+					item.pmTag,
+					fromHsvResult:ToHex(),
+					item.tag,
+					item.nameColor:ToHex(),
+					item.name,
+					kTextResult
+				)
+			end
+		end
+	end)
+
+	local capturedNameData = data
+	local localValuePlayer = LocalPlayer
+	local textButtonCallback = textCallback
+	local capturedTarget = target
+	local capturedConditionData = conditionData
+	local secondaryCreateTextButtonData = createTextButtonData
+	local textBox = TextBox
+
+	local function createTextButton(name, createTextButtonCondition, tertiaryArgument, createTextButtonFlag, text)
+		if createTextButtonFlag or not capturedNameData[tertiaryArgument] then
+			if
+				not text
+				or text == ""
+				or text == localValuePlayer.DisplayName
+				or name == localValuePlayer.DisplayName
+			then
+				local createTextButton = textButtonCallback(createTextButtonCondition)
+				local textButton = Instance.new("TextButton", ScrollingFrame)
+
+				textButton.Text = ""
+				textButton.Size = UDim2.new(1, 0, 0, 0)
+				textButton.AutomaticSize = Enum.AutomaticSize.Y
+				textButton.BackgroundTransparency = 1
+				textButton.RichText = true
+				textButton.TextSize = 16
+				textButton.TextColor3 = Color3.new(1, 1, 1)
+				textButton.TextXAlignment = Enum.TextXAlignment.Left
+				textButton.TextWrapped = true
+				textButton:SetAttribute("RealName", tertiaryArgument)
+
+				if not createTextButtonFlag then
+					local createTextButtonNumber = 0
+
+					for index = 1, #name do
+						createTextButtonNumber = createTextButtonNumber + name:byte(index)
+					end
+
+					local nameColor = capturedTarget[createTextButtonNumber % #capturedTarget + 1]
+					local createTextButtonFlag = capturedConditionData[tertiaryArgument]
+
+					textButton.Font = Enum.Font.BuilderSansBold
+
+					if not text or text == "" then
+						if not createTextButtonFlag or createTextButtonFlag.Color ~= "RAINBOW" then
+							local createTextButtonOption = createTextButtonFlag
+									and string.format(
+										'<font color="#%s">[%s]</font> ',
+										createTextButtonFlag.Color:ToHex(),
+										createTextButtonFlag.Tag
+									)
+								or ""
+
+							textButton.Text = string.format(
+								'%s%s<font color="#%s">[%s]</font>: <font face="BuilderSansMedium">%s</font>',
+								"",
+								createTextButtonOption,
+								nameColor:ToHex(),
+								name,
+								createTextButton
+							)
+						else
+							secondaryCreateTextButtonData[textButton] = {
+								pmTag = "",
+								tag = createTextButtonFlag.Tag,
+								name = name,
+								nameColor = nameColor,
+								content = createTextButton,
+							}
+						end
+					else
+						local createTextButtonOption = name == localValuePlayer.DisplayName
+								and '<font color="#ff00ff">[TO: ' .. text .. "]</font> "
+							or '<font color="#ff00ff">[FROM: ' .. name .. "]</font> "
+
+						textButton.Text = string.format(
+							'%s<font color="#%s">[%s]</font>: <font face="BuilderSansMedium">%s</font>',
+							createTextButtonOption,
+							nameColor:ToHex(),
+							name,
+							createTextButton
+						)
+					end
+
+					local signal = textButton.MouseButton1Click
+					local capturedName = name
+
+					signal:Connect(function()
+						updateTextButton = capturedName
+						textBox:CaptureFocus()
+					end)
+				else
+					textButton.Font = Enum.Font.BuilderSansItalic
+					textButton.TextColor3 = Color3.fromRGB(200, 200, 200)
+					textButton.Text = createTextButton
+				end
+
+				textButton.Parent = ScrollingFrame
+				ScrollingFrame.CanvasPosition = Vector2.new(0, 99999)
+
+				return
+			end
+
+			return
+		end
+	end
+
+	local updateTextData = data
+	local capturedLocalValuePlayer = LocalPlayer
+	local secondaryCapturedTextBox = TextBox
+
+	local function handleFlag(flagCondition)
+		if not flagCondition:find("<[^>]*>") then
+			if not flagCondition:find("[<>]") then
+				if not flagCondition:find("[\204-\205][\128-\191]") then
+					local gsub = flagCondition:gsub("[^%a]", "")
+
+					if not (#gsub > 0) or not gsub:match("(.)%1{15,}") then
+						if #gsub > 10 then
+							local flagNumber = select(2, gsub:gsub("%u", ""))
+
+							if flagNumber / #gsub > 0.8 and flagNumber > 15 then
+								return true, "Too many capital letters"
+							end
+						end
+
+						return false, flagCondition
+					end
+
+					return true, "Too many repeated letters"
+				end
+
+				return true, "Zalgo text not allowed"
+			end
+
+			return true, "Angle brackets not allowed"
+		end
+
+		return true, "HTML tags not allowed"
+	end
+
+	local capturedCreateTextButton = createTextButton
+	local capturedTextCallback = textCallback
+	local capturedTextChatService = TextChatService
+	local capturedFlagCallback = flagCallback
+	local capturedHttpService = HttpService
+
+	local function updateText()
+		if not updateTextData[capturedLocalValuePlayer.Name] then
+			local Text = secondaryCapturedTextBox.Text
+
+			if Text ~= "" then
+				local updateTextFlag, updateText = handleFlag(Text)
+
+				if not updateTextFlag then
+					local content = capturedTextCallback(Text)
+
+					if content ~= "" and not content:match("^%s*$") then
+						local elapsed = os.clock()
+
+						if not (elapsed - capturedElapsed < 2) then
+							if not (#content > 200) then
+								capturedElapsed = elapsed
+								secondaryCapturedTextBox.Text = ""
+								capturedCreateTextButton(
+									capturedLocalValuePlayer.DisplayName,
+									content,
+									capturedLocalValuePlayer.Name,
+									false,
+									updateTextButton
+								)
+
+								local textCallback = task.spawn
+								local capturedContent = content
+
+								textCallback(function()
+									if
+										capturedLocalValuePlayer.Character
+										and capturedLocalValuePlayer.Character:FindFirstChild("Head")
+									then
+										capturedTextChatService:DisplayBubble(
+											capturedLocalValuePlayer.Character.Head,
+											capturedContent
+										)
+									end
+								end)
+
+								local secondaryPcall = pcall
+								local capturedContentResult = content
+
+								pcall(function()
+									capturedFlagCallback({
+										Url = updateMickeyAura,
+										Method = "POST",
+										Headers = {
+											["Content-Type"] = "application/json",
+										},
+										Body = capturedHttpService:JSONEncode({
+											sender = capturedLocalValuePlayer.DisplayName,
+											content = capturedContentResult,
+											realName = capturedLocalValuePlayer.Name,
+											target = updateTextButton,
+											timestamp = os.time(),
+										}),
+									})
+								end)
+
+								return
+							end
+
+							capturedCreateTextButton(
+								"SYSTEM",
+								"📏 Message too long (max " .. 200 .. " chars)",
+								"System",
+								true,
+								""
+							)
+							secondaryCapturedTextBox.Text = ""
+
+							return
+						end
+
+						secondaryCapturedTextBox.Text = ""
+
+						return
+					end
+
+					capturedCreateTextButton("SYSTEM", "🚫 Message empty after filtering", "System", true, "")
+					secondaryCapturedTextBox.Text = ""
+
+					return
+				end
+
+				capturedCreateTextButton("SYSTEM", "🚫 Message blocked: " .. updateText, "System", true, "")
+				secondaryCapturedTextBox.Text = ""
+
+				return
+			end
+
+			return
+		end
+
+		secondaryCapturedTextBox.Text = ""
+	end
+
+	local createMickeyAuraData = {}
+	local mickeyAuraCallback = flagCallback
+	local httpService = HttpService
+	local kData = {}
+	local players = Players
+	local capturedTimestamp = timestamp
+	local secondaryCapturedLocalPlayer = LocalPlayer
+	local capturedUpdateTextData = data
+	local secondaryCreateTextButton = createTextButton
+
+	local function createMickeyAuraFrame(secondaryTextLabel, flagCondition, state)
+		if not capturedData[capturedLocalPlayer.Name] and true then
+			local text = frameCallback(flagCondition)
+			local parent = Instance.new("Frame", frame)
+
+			parent.Size = UDim2.new(1, 0, 0, 65)
+			parent.BackgroundTransparency = 1
+
+			local secondaryParent = Instance.new("Frame", parent)
+
+			secondaryParent.Size = UDim2.new(1, 0, 1, 0)
+			secondaryParent.Position = UDim2.new(-1.2, 0, 0, 0)
+			secondaryParent.BackgroundColor3 = Color3.new(0, 0, 0)
+			secondaryParent.BackgroundTransparency = 0.4
+			Instance.new("UICorner", secondaryParent).CornerRadius = UDim.new(0, 32)
+
+			local ImageLabel = Instance.new("ImageLabel", secondaryParent)
+
+			ImageLabel.Size = UDim2.new(0, 46, 0, 46)
+			ImageLabel.Position = UDim2.new(0, 10, 0.5, -23)
+			ImageLabel.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+			ImageLabel.BackgroundTransparency = 0.3
+			ImageLabel.Image = "rbxassetid://15263152670"
+			Instance.new("UICorner", ImageLabel).CornerRadius = UDim.new(1, 0)
+
+			local secondarySpawn = task.spawn
+			local capturedState = state
+			local capturedImageLabel = ImageLabel
+
+			secondarySpawn(function()
+				pcall(function()
+					local UserIdFromNameAsync = capturedPlayers:GetUserIdFromNameAsync(capturedState)
+					local image, userThumbnailAsync = capturedPlayers:GetUserThumbnailAsync(
+						UserIdFromNameAsync,
+						Enum.ThumbnailType.HeadShot,
+						Enum.ThumbnailSize.Size48x48
+					)
+
+					if userThumbnailAsync then
+						capturedImageLabel.Image = image
+					end
+				end)
+			end)
+
+			local TextLabel = Instance.new("TextLabel", secondaryParent)
+
+			TextLabel.Size = UDim2.new(1, -65, 0, 20)
+			TextLabel.Position = UDim2.new(0, 60, 0, 10)
+			TextLabel.BackgroundTransparency = 1
+			TextLabel.Text = secondaryTextLabel
+			TextLabel.TextColor3 = Color3.fromRGB(255, 170, 0)
+			TextLabel.Font = Enum.Font.BuilderSansBold
+			TextLabel.TextXAlignment = "Left"
+			TextLabel.TextSize = 18
+
+			local textLabel = Instance.new("TextLabel", secondaryParent)
+
+			textLabel.Size = UDim2.new(1, -65, 0, 20)
+			textLabel.Position = UDim2.new(0, 60, 0, 32)
+			textLabel.BackgroundTransparency = 1
+			textLabel.Text = text
+			textLabel.TextColor3 = Color3.new(1, 1, 1)
+			textLabel.Font = Enum.Font.BuilderSansMedium
+			textLabel.TextXAlignment = "Left"
+			textLabel.TextSize = 18
+			textLabel.ClipsDescendants = true
+			capturedTweenService
+				:Create(secondaryParent, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+					Position = UDim2.new(0, 0, 0, 0),
+				})
+				:Play()
+
+			local delay = task.delay
+			local capturedParent = secondaryParent
+			local imageLabel = ImageLabel
+			local capturedFrame = parent
+
+			delay(5, function()
+				local tweenInfo = TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+
+				capturedTweenService
+					:Create(capturedParent, tweenInfo, {
+						BackgroundTransparency = 1,
+					})
+					:Play()
+				capturedTweenService
+					:Create(imageLabel, tweenInfo, {
+						ImageTransparency = 1,
+						BackgroundTransparency = 1,
+					})
+					:Play()
+				capturedTweenService
+					:Create(TextLabel, tweenInfo, {
+						TextTransparency = 1,
+					})
+					:Play()
+
+				local create = capturedTweenService:Create(textLabel, tweenInfo, {
+					TextTransparency = 1,
+				})
+
+				create:Play()
+				create.Completed:Connect(function()
+					capturedFrame:Destroy()
+				end)
+			end)
+
+			return
+		end
+	end
+
+	local textChatService = TextChatService
+
+	local function createMickeyAura()
+		pcall(function()
+			local createMickeyAuraFlag = mickeyAuraCallback({
+				Url = url,
+				Method = "GET",
+			})
+
+			if createMickeyAuraFlag and createMickeyAuraFlag.Body and createMickeyAuraFlag.Body ~= "null" then
+				local createMickeyAuraData = httpService:JSONDecode(createMickeyAuraFlag.Body) or {}
+
+				for k, item in pairs(createMickeyAuraData) do
+					if kData[k] ~= item.Style then
+						kData[k] = item.Style
+
+						local firstChild = players:FindFirstChild(k)
+
+						if firstChild and firstChild.Character then
+							local HumanoidRootPart = firstChild.Character:FindFirstChild("HumanoidRootPart")
+
+							if HumanoidRootPart then
+								if firstChild.Character:FindFirstChild("MickeyAura") then
+									firstChild.Character.MickeyAura:Destroy()
+								end
+
+								local Model = Instance.new("Model", firstChild.Character)
+
+								Model.Name = "MickeyAura"
+
+								if item.Style ~= "DIVINE_RING" then
+									if item.Style ~= "HYDRA_STRIKE" then
+										if item.Style ~= "DEMON_HANDS" then
+											if item.Style ~= "HEART_AURA" then
+												if item.Style ~= "LETTER_A" then
+													if item.Style ~= "LETTER_N" then
+														if item.Style ~= "NORMAL_HALO" then
+															if item.Style ~= "ANGEL_WINGS" then
+																if item.Style ~= "BIG_SNIPER" then
+																	if item.Style == "ILLUMINATI" then
+																		outerCreateMickeyAuraPart(
+																			firstChild,
+																			HumanoidRootPart,
+																			Model
+																		)
+																	end
+																else
+																	innerCreateMickeyAuraPart(
+																		firstChild,
+																		HumanoidRootPart,
+																		Model
+																	)
+																end
+															else
+																nestedCreateMickeyAuraPart(
+																	firstChild,
+																	HumanoidRootPart,
+																	Model
+																)
+															end
+														else
+															fallbackCreateMickeyAuraPart(
+																firstChild,
+																HumanoidRootPart,
+																Model
+															)
+														end
+													else
+														additionalCreateMickeyAuraPart(
+															firstChild,
+															HumanoidRootPart,
+															Model
+														)
+													end
+												else
+													alternateCreateMickeyAuraPart(firstChild, HumanoidRootPart, Model)
+												end
+											else
+												createPart(firstChild, HumanoidRootPart, Model)
+											end
+										else
+											secondaryCreateMickeyAuraPart(firstChild, HumanoidRootPart, Model)
+										end
+									else
+										createHydraCore(firstChild, HumanoidRootPart, Model)
+									end
+								else
+									createMickeyAuraPart(firstChild, HumanoidRootPart, Model)
+								end
+							end
+						end
+					end
+				end
+			end
+		end)
+
+		local ok, result = pcall(function()
+			return mickeyAuraCallback({
+				Url = updateMickeyAura .. '&orderBy="$key"&limitToLast=10',
+				Method = "GET",
+			})
+		end)
+
+		if ok and result and result.Body and result.Body ~= "null" then
+			local secondaryPcall = pcall
+			local capturedResult = result
+			local success, createMickeyAuraResult = pcall(function()
+				return httpService:JSONDecode(capturedResult.Body)
+			end)
+
+			if success and type(createMickeyAuraResult) == "table" then
+				for k, item in pairs(createMickeyAuraResult) do
+					if not createMickeyAuraData[k] and item.timestamp and item.timestamp >= capturedTimestamp then
+						local vrealName = players:FindFirstChild(item.realName)
+
+						if vrealName and vrealName.DisplayName ~= item.sender then
+							local createMickeyAuraText = "😂 YE FAKE TAG RNDY "
+								.. vrealName.DisplayName
+								.. " → "
+								.. item.sender
+							local capturedCreateMickeyAuraText = createMickeyAuraText
+
+							pcall(function()
+								mickeyAuraCallback({
+									Url = updateMickeyAura,
+									Method = "POST",
+									Headers = {
+										["Content-Type"] = "application/json",
+									},
+									Body = httpService:JSONEncode({
+										sender = "BOT",
+										content = capturedCreateMickeyAuraText,
+										realName = "ChatBot",
+										target = "",
+										timestamp = os.time(),
+									}),
+								})
+							end)
+							item.sender = vrealName.DisplayName
+						end
+
+						createMickeyAuraData[k] = true
+
+						if
+							item.realName ~= secondaryCapturedLocalPlayer.Name
+							and not capturedUpdateTextData[item.realName]
+						then
+							secondaryCreateTextButton(
+								item.sender or "Unknown",
+								item.content or "",
+								item.realName or "",
+								false,
+								item.target
+							)
+
+							if
+								not item.target
+								or item.target == ""
+								or item.target == secondaryCapturedLocalPlayer.DisplayName
+							then
+								createMickeyAuraFrame(item.sender or "Unknown", item.content or "", item.realName or "")
+
+								local mickeyAuraCallback = task.spawn
+								local capturedV = item
+
+								mickeyAuraCallback(function()
+									local firstChild = players:FindFirstChild(capturedV.realName or "")
+
+									if
+										firstChild
+										and firstChild.Character
+										and firstChild.Character:FindFirstChild("Head")
+									then
+										textChatService:DisplayBubble(firstChild.Character.Head, capturedV.content)
+									end
+								end)
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+
+	TextBox.FocusLost:Connect(function(enterPressed)
+		if enterPressed then
+			updateText()
+		end
+	end)
+	task.spawn(function()
+		while true do
+			createMickeyAura()
+			task.wait(1.5)
+		end
+	end)
+
+	local secondarySpawn = task.spawn
+	local capturedMickeyAuraCallback = flagCallback
+
+	secondarySpawn(function()
+		while true do
+			pcall(function()
+				capturedMickeyAuraCallback({
+					Url = updateMickeyAura,
+					Method = "DELETE",
+				})
+			end)
+			task.wait(3600)
+		end
+	end)
+
+	local alternateSpawn = task.spawn
+	local capturedDisplayName = DisplayName
+	local callback = flagCallback
+	local secondaryCapturedHttpService = HttpService
+
+	alternateSpawn(function()
+		local text = capturedDisplayName .. " Joined The Chat"
+		local capturedText = text
+
+		pcall(function()
+			callback({
+				Url = updateMickeyAura,
+				Method = "POST",
+				Headers = {
+					["Content-Type"] = "application/json",
+				},
+				Body = secondaryCapturedHttpService:JSONEncode({
+					sender = "BOT",
+					content = capturedText,
+					realName = "ChatBot",
+					target = "",
+					timestamp = os.time() - 1,
+				}),
+			})
+		end)
+	end)
+
+	local function updatePart(part)
+		part.CanCollide = false
+		part.CanTouch = false
+		part.CanQuery = false
+		part.Massless = true
+		part.Anchored = false
+	end
+
+	local alternateCapturedLocalPlayer = LocalPlayer
+	local capturedRunService = RunService
+
+	function createMickeyAuraPart(firstChild, state, secondaryParent)
+		local color = Color3.new(1, 1, 1)
+		local Part = Instance.new("Part", secondaryParent)
+
+		Part.Shape = "Ball"
+		Part.Size = Vector3.new(2.4, 2.4, 2.4)
+		Part.Material = "Neon"
+		Part.Color = color
+		updatePart(Part)
+
+		local parent = Instance.new("Part", secondaryParent)
+
+		parent.Shape = "Ball"
+		parent.Size = Vector3.new(1.6, 1.6, 1.6)
+		parent.Material = "Neon"
+		parent.Color = color
+		updatePart(parent)
+
+		local part = Instance.new("Part", secondaryParent)
+
+		part.Shape = "Ball"
+		part.Size = Vector3.new(1.6, 1.6, 1.6)
+		part.Material = "Neon"
+		part.Color = color
+		updatePart(part)
+
+		local result = Instance.new("Motor6D", Part)
+
+		result.Part0 = state
+		result.Part1 = Part
+
+		local Weld = Instance.new("Weld", parent)
+
+		Weld.Part0 = Part
+		Weld.Part1 = parent
+		Weld.C0 = CFrame.new(-1.1, 1.2, 0)
+
+		local weld = Instance.new("Weld", part)
+
+		weld.Part0 = Part
+		weld.Part1 = part
+		weld.C0 = CFrame.new(1.1, 1.2, 0)
+
+		local secondarySpawn = task.spawn
+		local capturedParent = secondaryParent
+		local capturedItem = firstChild
+
+		secondarySpawn(function()
+			while capturedParent and capturedParent.Parent do
+				if capturedItem == alternateCapturedLocalPlayer and not createPartFlag then
+					Part.Transparency = 1
+					parent.Transparency = 1
+					part.Transparency = 1
+
+					repeat
+						capturedRunService.Heartbeat:Wait()
+					until createPartFlag or not capturedParent.Parent
+				end
+
+				local product = tick() * 2
+				local number = math.sin(product) * 0.4
+
+				result.C0 = CFrame.new(-1.5, 4.5 + number, 0.5)
+
+				if Part.Transparency ~= 0 then
+					Part.Transparency = 0
+					parent.Transparency = 0
+					part.Transparency = 0
+				end
+
+				capturedRunService.Heartbeat:Wait()
+			end
+		end)
+	end
+
+	local additionalCapturedLocalPlayer = LocalPlayer
+	local runService = RunService
+
+	function createHydraCore(firstChild, createHydraCoreState, parent)
+		local Part = Instance.new("Part", parent)
+
+		Part.Name = "HydraCore"
+		Part.Shape = "Ball"
+		Part.Size = Vector3.new(8, 8, 8)
+		Part.Material = "Neon"
+		Part.Color = Color3.new(0, 0, 0)
+		updatePart(Part)
+
+		local createHydraCoreResult = Instance.new("Motor6D", Part)
+
+		createHydraCoreResult.Part0 = createHydraCoreState
+		createHydraCoreResult.Part1 = Part
+
+		local createHydraCoreData = {}
+
+		for index = 1, 12 do
+			local WedgePart = Instance.new("WedgePart", parent)
+
+			WedgePart.Size = Vector3.new(0.2, 2.5, 2.5)
+			WedgePart.Color = Color3.new(1, 1, 1)
+			WedgePart.Material = "Neon"
+			updatePart(WedgePart)
+
+			local motor = Instance.new("Motor6D", WedgePart)
+
+			motor.Part0 = createHydraCoreState
+			motor.Part1 = WedgePart
+
+			local data = {
+				motor = motor,
+				part = WedgePart,
+				offset = 0.5235987755982988 * index,
+			}
+
+			table.insert(createHydraCoreData, data)
+		end
+
+		local hydraCoreCallback = task.spawn
+		local capturedParent = parent
+		local capturedItem = firstChild
+		local capturedPart = Part
+
+		hydraCoreCallback(function()
+			while capturedParent and capturedParent.Parent do
+				if capturedItem == additionalCapturedLocalPlayer and not createPartFlag then
+					capturedPart.Transparency = 1
+
+					for _, item in pairs(createHydraCoreData) do
+						item.part.Transparency = 1
+					end
+
+					repeat
+						runService.Heartbeat:Wait()
+					until createPartFlag or not capturedParent.Parent
+				end
+
+				local createHydraCoreNumber = tick()
+				local hydraCoreCallback = CFrame.new
+				local product = createHydraCoreNumber * 3
+				local sum = 5 + math.sin(product) * 2
+				local number = createHydraCoreNumber * 3
+				local secondaryCreateHydraCoreNumber = hydraCoreCallback(0, sum, 8 + math.cos(number) * 1)
+				local Angles = CFrame.Angles
+				local alternateCreateHydraCoreNumber = createHydraCoreNumber * 150
+
+				createHydraCoreResult.C0 = secondaryCreateHydraCoreNumber
+					* Angles(0, math.rad(alternateCreateHydraCoreNumber), 0)
+
+				for index = 1, #createHydraCoreData do
+					local createHydraCoreResult = createHydraCoreData[index]
+					local sum = createHydraCoreNumber * 2.5 + createHydraCoreResult.offset
+					local product = math.cos(sum) * 6
+					local number = createHydraCoreNumber * 2.5 + createHydraCoreResult.offset
+					local secondaryCreateHydraCoreNumber = math.sin(number) * 6
+					local alternateCreateHydraCoreNumber = createHydraCoreNumber * 3
+					local additionalCreateHydraCoreNumber = secondaryCreateHydraCoreNumber
+						+ math.sin(alternateCreateHydraCoreNumber) * 2
+
+					createHydraCoreResult.motor.C0 = CFrame.new(product, additionalCreateHydraCoreNumber + 5, 8)
+						* CFrame.lookAt(
+							Vector3.new(product, additionalCreateHydraCoreNumber + 5, 8),
+							Vector3.new(0, 5, 8)
+						).Rotation
+						* CFrame.Angles(0, 1.57, 0)
+
+					if createHydraCoreResult.part.Transparency ~= 0 then
+						createHydraCoreResult.part.Transparency = 0
+					end
+				end
+
+				if capturedPart.Transparency ~= 0 then
+					capturedPart.Transparency = 0
+				end
+
+				runService.Heartbeat:Wait()
+			end
+		end)
+	end
+
+	local fallbackCapturedLocalPlayer = LocalPlayer
+	local secondaryCapturedRunService = RunService
+
+	function alternateCreateMickeyAuraPart(firstChild, state, parent)
+		local partColor = Color3.new(1, 1, 1)
+		local parts = {}
+		local capturedParent = parent
+		local capturedPartColor = partColor
+		local createPartState = state
+		local capturedParts = parts
+
+		local function createPart(size, createPartNumber, number)
+			local Part = Instance.new("Part", capturedParent)
+
+			Part.Size = size
+			Part.Color = capturedPartColor
+			Part.Material = "Neon"
+			Part.Transparency = 0.1
+			updatePart(Part)
+
+			local Weld = Instance.new("Weld", Part)
+
+			Weld.Part0 = createPartState
+			Weld.Part1 = Part
+			Weld.C0 = CFrame.new(1.8, 3.5, 0.5) * createPartNumber * number
+
+			table.insert(capturedParts, Part)
+
+			return Part
+		end
+
+		createPart(Vector3.new(0.08, 0.8, 0.08), CFrame.new(-0.25, 0, 0), CFrame.Angles(0, 0, 0.3490658503988659))
+		createPart(Vector3.new(0.08, 0.8, 0.08), CFrame.new(0.25, 0, 0), CFrame.Angles(0, 0, -0.3490658503988659))
+		createPart(Vector3.new(0.4, 0.08, 0.08), CFrame.new(0, 0.2, 0), CFrame.Angles(0, 0, 0))
+
+		local Part = Instance.new("Part", parent)
+
+		Part.Size = Vector3.new(0.15, 0.15, 0.15)
+		Part.Shape = "Ball"
+		Part.Color = partColor
+		Part.Material = "Neon"
+		Part.Transparency = 0.05
+		updatePart(Part)
+
+		local Weld = Instance.new("Weld", Part)
+
+		Weld.Part0 = state
+		Weld.Part1 = Part
+		Weld.C0 = CFrame.new(1.8, 3.7, 0.5)
+		table.insert(parts, Part)
+
+		local secondarySpawn = task.spawn
+		local secondaryCapturedParent = parent
+		local capturedItem = firstChild
+		local secondaryCapturedParts = parts
+
+		secondarySpawn(function()
+			while secondaryCapturedParent and secondaryCapturedParent.Parent do
+				if capturedItem == fallbackCapturedLocalPlayer and not createPartFlag then
+					for _, item in pairs(secondaryCapturedParts) do
+						item.Transparency = 1
+					end
+
+					repeat
+						secondaryCapturedRunService.Heartbeat:Wait()
+					until createPartFlag or not secondaryCapturedParent.Parent
+				end
+
+				if secondaryCapturedParts[1].Transparency ~= 0.1 then
+					for _, item in pairs(secondaryCapturedParts) do
+						item.Transparency = 0.1
+					end
+				end
+
+				secondaryCapturedRunService.Heartbeat:Wait()
+			end
+		end)
+	end
+
+	local nestedCapturedLocalPlayer = LocalPlayer
+	local alternateCapturedRunService = RunService
+
+	function additionalCreateMickeyAuraPart(firstChild, state, parent)
+		local partColorData = {}
+		local fromRgbResult = Color3.fromRGB(173, 216, 230)
+		local secondaryFromRgbResult = Color3.fromRGB(255, 182, 193)
+		local alternateFromRgbResult = Color3.fromRGB(144, 238, 144)
+		local additionalFromRgbResult = Color3.fromRGB(255, 255, 224)
+		local result = (function(...)
+			local nData = { ... }
+
+			nData.n = select("#", ...)
+
+			return nData
+		end)(Color3.fromRGB(216, 191, 216))
+
+		partColorData[1] = fromRgbResult
+		partColorData[2] = secondaryFromRgbResult
+		partColorData[3] = alternateFromRgbResult
+		partColorData[4] = additionalFromRgbResult;
+		(function(data, number, nData, secondaryNumber)
+			for index = secondaryNumber, nData.n do
+				local result = nData[index]
+
+				data[index - secondaryNumber + number] = result
+			end
+		end)(partColorData, 5, result, 1)
+
+		local data = {}
+
+		for _ = 1, 10 do
+			local sum = 0.6 + math.random() * 0.6
+			local Part = Instance.new("Part", parent)
+
+			Part.Shape = Enum.PartType.Ball
+			Part.Size = Vector3.new(sum, sum, sum)
+			Part.Material = Enum.Material.Neon
+			Part.Color = partColorData[math.random(1, #partColorData)]
+			Part.Transparency = 0.4
+			updatePart(Part)
+
+			local weld = Instance.new("Motor6D", Part)
+
+			weld.Part0 = state
+			weld.Part1 = Part
+
+			local secondaryData = {
+				part = Part,
+				weld = weld,
+				phase = math.random() * 2 * 3.141592653589793,
+				radius = 2 + math.random() * 1,
+				speed = 0.5 + math.random() * 0.2,
+				baseSize = sum,
+			}
+
+			table.insert(data, secondaryData)
+		end
+
+		local secondarySpawn = task.spawn
+		local capturedParent = parent
+		local capturedItem = firstChild
+
+		secondarySpawn(function()
+			while capturedParent and capturedParent.Parent do
+				if capturedItem == nestedCapturedLocalPlayer and not createPartFlag then
+					for _, item in pairs(data) do
+						item.part.Transparency = 1
+					end
+
+					repeat
+						alternateCapturedRunService.Heartbeat:Wait()
+					until createPartFlag or not capturedParent.Parent
+
+					for _, item in pairs(data) do
+						item.part.Transparency = 0.4
+					end
+				end
+
+				local sumNumber = tick()
+
+				for _, item in pairs(data) do
+					local sum = sumNumber * item.speed + item.phase
+					local product = math.sin(sum) * item.radius
+					local number = math.cos(sum) * (item.radius * 0.5) + 2
+					local secondaryProduct = sum * 0.8
+					local alternateProduct = math.cos(secondaryProduct) * item.radius
+
+					item.weld.C0 = CFrame.new(product, number, alternateProduct)
+
+					local secondarySum = sumNumber * 2 + item.phase
+					local alternateSum = 0.95 + 0.05 * math.sin(secondarySum)
+
+					item.part.Size = Vector3.new(
+						item.baseSize * alternateSum,
+						item.baseSize * alternateSum,
+						item.baseSize * alternateSum
+					)
+
+					if item.part.Transparency ~= 0.4 then
+						item.part.Transparency = 0.4
+					end
+				end
+
+				alternateCapturedRunService.Heartbeat:Wait()
+			end
+		end)
+	end
+
+	local innerCapturedLocalPlayer = LocalPlayer
+	local additionalCapturedRunService = RunService
+
+	function createPart(firstChild, state, parent)
+		local data = {}
+
+		for index = 1, 40 do
+			local Part = Instance.new("Part", parent)
+
+			Part.Size = Vector3.new(0.4, 0.4, 0.4)
+			Part.Color = Color3.fromRGB(255, 105, 180)
+			Part.Material = Enum.Material.Neon
+			updatePart(Part)
+
+			local motor = Instance.new("Motor6D", Part)
+
+			motor.Part0 = state
+			motor.Part1 = Part
+
+			local secondaryData = {
+				motor = motor,
+				part = Part,
+				t_offset = index / 40 * 6.283185307179586,
+			}
+
+			table.insert(data, secondaryData)
+		end
+
+		local secondarySpawn = task.spawn
+		local capturedParent = parent
+		local capturedItem = firstChild
+		local capturedData = data
+
+		secondarySpawn(function()
+			while capturedParent and capturedParent.Parent do
+				if capturedItem == innerCapturedLocalPlayer and not createPartFlag then
+					for _, item in pairs(capturedData) do
+						item.part.Transparency = 1
+					end
+
+					repeat
+						additionalCapturedRunService.Heartbeat:Wait()
+					until createPartFlag or not capturedParent.Parent
+				end
+
+				for _, item in pairs(capturedData) do
+					local t_offset = item.t_offset
+					local product = 16 * math.sin(t_offset) ^ 3
+					local tOffset = item.t_offset
+					local number = 13 * math.cos(tOffset)
+					local secondaryProduct = 2 * item.t_offset
+					local difference = number - 5 * math.cos(secondaryProduct)
+					local alternateProduct = 3 * item.t_offset
+					local secondaryDifference = difference - 2 * math.cos(alternateProduct)
+					local additionalProduct = 4 * item.t_offset
+					local alternateDifference = secondaryDifference - math.cos(additionalProduct)
+
+					item.motor.C0 = CFrame.new(product * 0.12, alternateDifference * 0.12 + 1, 1.5)
+						* CFrame.Angles(0, 0, 3.141592653589793)
+					item.part.Transparency = 0
+				end
+
+				additionalCapturedRunService.Heartbeat:Wait()
+			end
+		end)
+	end
+
+	local fallbackCapturedRunService = RunService
+
+	function secondaryCreateMickeyAuraPart(_, state, parent)
+		local color = Color3.fromRGB(0, 0, 0)
+		local capturedParent = parent
+		local partColor = color
+		local createPartState = state
+
+		local function createPart(createPartFlag)
+			local createPartNumber = createPartFlag and -1 or 1
+			local Part = Instance.new("Part", capturedParent)
+
+			Part.Size = Vector3.new(2, 2, 2)
+			Part.Color = partColor
+			Part.Material = Enum.Material.Basalt
+			updatePart(Part)
+
+			local motor = Instance.new("Motor6D", Part)
+
+			motor.Part0 = createPartState
+			motor.Part1 = Part
+
+			local welds = {}
+			local capturedPart = Part
+			local productNumber = createPartNumber
+			local capturedWelds = welds
+
+			local function createPart(number, secondaryArgument, secondaryCreatePartNumber)
+				local parent = capturedPart
+				local createPartData = {
+					1,
+					1.5,
+					1.2,
+				}
+
+				for k, item in pairs(createPartData) do
+					local part = Instance.new("Part", capturedParent)
+
+					part.Shape = Enum.PartType.Ball
+					part.Size = Vector3.new(0.8, 0.8, 0.8)
+					part.Color = partColor
+					part.Material = Enum.Material.Neon
+					updatePart(part)
+
+					local Weld = Instance.new("Weld", part)
+
+					Weld.Part0 = parent
+					Weld.Part1 = part
+					Weld.C0 = k == 1 and CFrame.new(number * productNumber, secondaryArgument, 0)
+						or CFrame.new(0, -item + 0.2, 0)
+					parent = Instance.new("Part", capturedParent)
+					parent.Size = Vector3.new(0.7, item, 0.7)
+					parent.Color = partColor
+					parent.Material = Enum.Material.Slate
+					updatePart(parent)
+
+					local weld = Instance.new("Weld", parent)
+
+					weld.Part0 = part
+					weld.Part1 = parent
+
+					local cFrame = CFrame.new(0, -item / 2, 0)
+					local Angles = CFrame.Angles
+					local createPartNumber = secondaryCreatePartNumber * (k / 2.5) * productNumber
+
+					weld.C0 = cFrame * Angles(0, 0, (math.rad(createPartNumber)))
+
+					if k == 3 then
+						local WedgePart = Instance.new("WedgePart", capturedParent)
+
+						WedgePart.Size = Vector3.new(0.5, 4.5, 1.8)
+						WedgePart.Color = partColor
+						WedgePart.Material = Enum.Material.Neon
+						updatePart(WedgePart)
+
+						local weld = Instance.new("Weld", WedgePart)
+
+						weld.Part0 = parent
+						weld.Part1 = WedgePart
+						weld.C0 = CFrame.new(0, -1.8, 0.5) * CFrame.Angles(-1.4835298641951802, 0, 0)
+					end
+
+					table.insert(capturedWelds, Weld)
+				end
+			end
+
+			createPart(1.2, 1.2, 65)
+			createPart(0.8, 0.6, 50)
+			createPart(0.4, 0.1, 35)
+			createPart(0, -0.4, 20)
+			createPart(1.5, 1.8, 85)
+
+			return {
+				motor = motor,
+				joints = welds,
+			}
+		end
+
+		local motorResult = createPart(true)
+		local result = createPart(false)
+		local secondarySpawn = task.spawn
+		local secondaryCapturedParent = parent
+
+		secondarySpawn(function()
+			while secondaryCapturedParent and secondaryCapturedParent.Parent do
+				local sumNumber = tick()
+				local product = sumNumber * 1.5
+				local number = math.sin(product) * 0.25
+				local secondaryProduct = sumNumber * 2
+				local alternateProduct = math.sin(secondaryProduct) * 0.3
+				local motor = motorResult.motor
+				local cFrame = CFrame.new(-2.5, 3.5 + alternateProduct, 2.5)
+				local Angles = CFrame.Angles
+				local sum = 155 + number * 20
+
+				motor.C0 = cFrame * Angles(math.rad(sum), -0.2617993877991494, 0.2617993877991494)
+
+				local secondaryMotor = result.motor
+				local secondaryCFrame = CFrame.new(2.5, 3.5 + alternateProduct, 2.5)
+				local angles = CFrame.Angles
+				local secondarySum = 155 + number * 20
+
+				secondaryMotor.C0 = secondaryCFrame
+					* angles(math.rad(secondarySum), 0.2617993877991494, -0.2617993877991494)
+
+				for k, item in pairs(motorResult.joints) do
+					local angles = CFrame.Angles
+					local sum = sumNumber + k
+
+					item.C1 = angles(0, 0, math.sin(sum) * 0.03)
+				end
+
+				for k, item in pairs(result.joints) do
+					local angles = CFrame.Angles
+					local sum = sumNumber + k
+
+					item.C1 = angles(0, 0, math.sin(sum) * 0.03)
+				end
+
+				fallbackCapturedRunService.Heartbeat:Wait()
+			end
+		end)
+	end
+
+	local nestedCapturedRunService = RunService
+
+	function nestedCreateMickeyAuraPart(_, state, parent)
+		local color = Color3.fromRGB(255, 255, 255)
+		local wedgePartColor = Color3.fromRGB(255, 240, 200)
+		local capturedParent = parent
+		local partColor = color
+		local createPartState = state
+		local capturedColor = wedgePartColor
+
+		local function createPart(createPartFlag)
+			local createPartNumber = createPartFlag and -1 or 1
+			local Part = Instance.new("Part", capturedParent)
+
+			Part.Size = Vector3.new(2, 2, 2)
+			Part.Color = partColor
+			Part.Material = Enum.Material.SmoothPlastic
+			updatePart(Part)
+
+			local motor = Instance.new("Motor6D", Part)
+
+			motor.Part0 = createPartState
+			motor.Part1 = Part
+
+			local welds = {}
+			local capturedPart = Part
+			local productNumber = createPartNumber
+			local capturedWelds = welds
+
+			local function createPart(number, secondaryArgument, secondaryCreatePartNumber)
+				local parent = capturedPart
+				local createPartData = {
+					1,
+					1.5,
+					1.2,
+				}
+
+				for k, item in pairs(createPartData) do
+					local part = Instance.new("Part", capturedParent)
+
+					part.Shape = Enum.PartType.Ball
+					part.Size = Vector3.new(0.8, 0.8, 0.8)
+					part.Color = partColor
+					part.Material = Enum.Material.Neon
+					updatePart(part)
+
+					local Weld = Instance.new("Weld", part)
+
+					Weld.Part0 = parent
+					Weld.Part1 = part
+					Weld.C0 = k == 1 and CFrame.new(number * productNumber, secondaryArgument, 0)
+						or CFrame.new(0, -item + 0.2, 0)
+					parent = Instance.new("Part", capturedParent)
+					parent.Size = Vector3.new(0.7, item, 0.7)
+					parent.Color = partColor
+					parent.Material = Enum.Material.SmoothPlastic
+					updatePart(parent)
+
+					local weld = Instance.new("Weld", parent)
+
+					weld.Part0 = part
+					weld.Part1 = parent
+
+					local cFrame = CFrame.new(0, -item / 2, 0)
+					local Angles = CFrame.Angles
+					local createPartNumber = secondaryCreatePartNumber * (k / 2.5) * productNumber
+
+					weld.C0 = cFrame * Angles(0, 0, (math.rad(createPartNumber)))
+
+					if k == 3 then
+						local WedgePart = Instance.new("WedgePart", capturedParent)
+
+						WedgePart.Size = Vector3.new(0.5, 4.5, 1.8)
+						WedgePart.Color = capturedColor
+						WedgePart.Material = Enum.Material.Neon
+						updatePart(WedgePart)
+
+						local weld = Instance.new("Weld", WedgePart)
+
+						weld.Part0 = parent
+						weld.Part1 = WedgePart
+						weld.C0 = CFrame.new(0, -1.8, 0.5) * CFrame.Angles(-1.4835298641951802, 0, 0)
+					end
+
+					table.insert(capturedWelds, Weld)
+				end
+			end
+
+			createPart(1.2, 1.2, 65)
+			createPart(0.8, 0.6, 50)
+			createPart(0.4, 0.1, 35)
+			createPart(0, -0.4, 20)
+			createPart(1.5, 1.8, 85)
+
+			return {
+				motor = motor,
+				joints = welds,
+			}
+		end
+
+		local motorResult = createPart(true)
+		local result = createPart(false)
+		local secondarySpawn = task.spawn
+		local secondaryCapturedParent = parent
+
+		secondarySpawn(function()
+			while secondaryCapturedParent and secondaryCapturedParent.Parent do
+				local sumNumber = tick()
+				local product = sumNumber * 1.5
+				local number = math.sin(product) * 0.25
+				local secondaryProduct = sumNumber * 2
+				local alternateProduct = math.sin(secondaryProduct) * 0.3
+				local motor = motorResult.motor
+				local cFrame = CFrame.new(-2.5, 3.5 + alternateProduct, 2.5)
+				local Angles = CFrame.Angles
+				local sum = 155 + number * 20
+
+				motor.C0 = cFrame * Angles(math.rad(sum), -0.2617993877991494, 0.2617993877991494)
+
+				local secondaryMotor = result.motor
+				local secondaryCFrame = CFrame.new(2.5, 3.5 + alternateProduct, 2.5)
+				local angles = CFrame.Angles
+				local secondarySum = 155 + number * 20
+
+				secondaryMotor.C0 = secondaryCFrame
+					* angles(math.rad(secondarySum), 0.2617993877991494, -0.2617993877991494)
+
+				for k, item in pairs(motorResult.joints) do
+					local angles = CFrame.Angles
+					local sum = sumNumber + k
+
+					item.C1 = angles(0, 0, math.sin(sum) * 0.03)
+				end
+
+				for k, item in pairs(result.joints) do
+					local angles = CFrame.Angles
+					local sum = sumNumber + k
+
+					item.C1 = angles(0, 0, math.sin(sum) * 0.03)
+				end
+
+				nestedCapturedRunService.Heartbeat:Wait()
+			end
+		end)
+	end
+
+	local outerCapturedLocalPlayer = LocalPlayer
+	local innerCapturedRunService = RunService
+
+	function fallbackCreateMickeyAuraPart(firstChild, state, parent)
+		local partColor = Color3.fromRGB(255, 255, 255)
+		local data = {}
+
+		for index = 1, 6 do
+			local Part = Instance.new("Part", parent)
+
+			Part.Shape = Enum.PartType.Ball
+			Part.Size = Vector3.new(0.5, 0.5, 0.5)
+			Part.Material = Enum.Material.Neon
+			Part.Color = partColor
+			Part.Transparency = 0.3
+			updatePart(Part)
+
+			local weld = Instance.new("Motor6D", Part)
+
+			weld.Part0 = state
+			weld.Part1 = Part
+
+			local product = index / 6 * 2 * 3.141592653589793
+
+			weld.C0 = CFrame.new(math.cos(product) * 1.3, 4.5, math.sin(product) * 1.3)
+
+			local secondaryData = {
+				part = Part,
+				weld = weld,
+				baseAngle = product,
+			}
+
+			table.insert(data, secondaryData)
+		end
+
+		local secondarySpawn = task.spawn
+		local capturedParent = parent
+		local capturedItem = firstChild
+
+		secondarySpawn(function()
+			while capturedParent and capturedParent.Parent do
+				if capturedItem == outerCapturedLocalPlayer and not createPartFlag then
+					for _, item in pairs(data) do
+						item.part.Transparency = 1
+					end
+
+					repeat
+						innerCapturedRunService.Heartbeat:Wait()
+					until createPartFlag or not capturedParent.Parent
+
+					for _, item in pairs(data) do
+						item.part.Transparency = 0.3
+					end
+				end
+
+				local sumNumber = tick()
+
+				for _, item in pairs(data) do
+					local sum = item.baseAngle + sumNumber * 0.3
+					local weld = item.weld
+					local secondaryNew = CFrame.new
+					local product = math.cos(sum) * 1.3
+					local number = sumNumber * 1.5
+
+					weld.C0 = secondaryNew(product, 4.5 + 0.1 * math.sin(number), math.sin(sum) * 1.3)
+
+					local part = item.part
+					local secondarySum = sumNumber * 2 + item.baseAngle
+
+					part.Transparency = 0.2 + 0.1 * math.sin(secondarySum)
+				end
+
+				innerCapturedRunService.Heartbeat:Wait()
+			end
+		end)
+	end
+
+	local previousCapturedLocalPlayer = LocalPlayer
+	local outerCapturedRunService = RunService
+
+	function innerCreateMickeyAuraPart(firstChild, state, sourceParent)
+		local color = Color3.fromRGB(20, 20, 20)
+		local secondaryColor = Color3.fromRGB(255, 255, 255)
+		local alternateColor = Color3.fromRGB(255, 255, 255)
+		local additionalColor = Color3.fromRGB(40, 40, 40)
+		local fallbackColor = Color3.fromRGB(30, 30, 30)
+
+		Color3.fromRGB(200, 200, 200)
+
+		local Part = Instance.new("Part", sourceParent)
+
+		Part.Size = Vector3.new(1.2, 0.9, 3.2)
+		Part.Material = Enum.Material.Metal
+		Part.Color = color
+		updatePart(Part)
+
+		local parent = Instance.new("Part", sourceParent)
+
+		parent.Size = Vector3.new(0.45, 0.45, 8)
+		parent.Material = Enum.Material.Metal
+		parent.Color = color
+		updatePart(parent)
+
+		local part = Instance.new("Part", sourceParent)
+
+		part.Size = Vector3.new(0.8, 0.8, 1.4)
+		part.Material = Enum.Material.Metal
+		part.Color = color
+		updatePart(part)
+
+		local secondaryParent = Instance.new("Part", sourceParent)
+
+		secondaryParent.Shape = Enum.PartType.Cylinder
+		secondaryParent.Size = Vector3.new(0.7, 0.7, 0.4)
+		secondaryParent.Material = Enum.Material.Neon
+		secondaryParent.Color = alternateColor
+		updatePart(secondaryParent)
+
+		local alternateParent = Instance.new("Part", sourceParent)
+
+		alternateParent.Size = Vector3.new(0.7, 1, 1.2)
+		alternateParent.Material = Enum.Material.Metal
+		alternateParent.Color = additionalColor
+		updatePart(alternateParent)
+
+		local additionalParent = Instance.new("Part", sourceParent)
+
+		additionalParent.Size = Vector3.new(0.3, 0.2, 0.3)
+		additionalParent.Material = Enum.Material.Metal
+		additionalParent.Color = secondaryColor
+		updatePart(additionalParent)
+
+		local fallbackParent = Instance.new("Part", sourceParent)
+
+		fallbackParent.Size = Vector3.new(0.7, 1.2, 1.2)
+		fallbackParent.Material = Enum.Material.Metal
+		fallbackParent.Color = additionalColor
+		updatePart(fallbackParent)
+
+		local nestedParent = Instance.new("Part", sourceParent)
+
+		nestedParent.Size = Vector3.new(1, 0.8, 3)
+		nestedParent.Material = Enum.Material.Metal
+		nestedParent.Color = color
+		updatePart(nestedParent)
+
+		local innerParent = Instance.new("Part", sourceParent)
+
+		innerParent.Size = Vector3.new(0.5, 0.3, 0.8)
+		innerParent.Material = Enum.Material.Metal
+		innerParent.Color = additionalColor
+		updatePart(innerParent)
+
+		local outerParent = Instance.new("Part", sourceParent)
+
+		outerParent.Size = Vector3.new(1.5, 1.2, 0.6)
+		outerParent.Material = Enum.Material.Metal
+		outerParent.Color = color
+		updatePart(outerParent)
+
+		local previousParent = Instance.new("Part", sourceParent)
+
+		previousParent.Size = Vector3.new(0.4, 0.8, 0.5)
+		previousParent.Material = Enum.Material.Metal
+		previousParent.Color = additionalColor
+		updatePart(previousParent)
+
+		local currentParent = Instance.new("Part", sourceParent)
+
+		currentParent.Size = Vector3.new(0.4, 0.8, 0.5)
+		currentParent.Material = Enum.Material.Metal
+		currentParent.Color = additionalColor
+		updatePart(currentParent)
+
+		local nextParent = Instance.new("Part", sourceParent)
+
+		nextParent.Size = Vector3.new(1.6, 1.3, 0.3)
+		nextParent.Material = Enum.Material.Rubber
+		nextParent.Color = fallbackColor
+		updatePart(nextParent)
+
+		local instance = Instance.new("Motor6D")
+
+		instance.Part0 = state
+		instance.Part1 = Part
+		instance.C0 = CFrame.new(2.5, 1.5, 1) * CFrame.Angles(0, 3.141592653589793, 0)
+		instance.Parent = Part
+
+		local Weld = Instance.new("Weld", parent)
+
+		Weld.Part0 = Part
+		Weld.Part1 = parent
+		Weld.C0 = CFrame.new(0, 0.1, Part.Size.Z / 2 + parent.Size.Z / 2)
+
+		local weld = Instance.new("Weld", part)
+
+		weld.Part0 = Part
+		weld.Part1 = part
+		weld.C0 = CFrame.new(0, 0.6, -0.9)
+
+		local secondaryWeld = Instance.new("Weld", secondaryParent)
+
+		secondaryWeld.Part0 = part
+		secondaryWeld.Part1 = secondaryParent
+		secondaryWeld.C0 = CFrame.new(0, 0, 0.7)
+
+		local alternateWeld = Instance.new("Weld", alternateParent)
+
+		alternateWeld.Part0 = Part
+		alternateWeld.Part1 = alternateParent
+		alternateWeld.C0 = CFrame.new(0.5, -0.4, -1.2)
+
+		local additionalWeld = Instance.new("Weld", additionalParent)
+
+		additionalWeld.Part0 = alternateParent
+		additionalWeld.Part1 = additionalParent
+		additionalWeld.C0 = CFrame.new(0, -0.6, 0.2)
+
+		local fallbackWeld = Instance.new("Weld", fallbackParent)
+
+		fallbackWeld.Part0 = Part
+		fallbackWeld.Part1 = fallbackParent
+		fallbackWeld.C0 = CFrame.new(-0.5, -0.6, -0.4)
+
+		local nestedWeld = Instance.new("Weld", nestedParent)
+
+		nestedWeld.Part0 = Part
+		nestedWeld.Part1 = nestedParent
+		nestedWeld.C0 = CFrame.new(0, 0.1, -Part.Size.Z / 2 - nestedParent.Size.Z / 2)
+
+		local innerWeld = Instance.new("Weld", innerParent)
+
+		innerWeld.Part0 = nestedParent
+		innerWeld.Part1 = innerParent
+		innerWeld.C0 = CFrame.new(0, 0.6, -1.5)
+
+		local outerWeld = Instance.new("Weld", outerParent)
+
+		outerWeld.Part0 = nestedParent
+		outerWeld.Part1 = outerParent
+		outerWeld.C0 = CFrame.new(0, -0.5, -nestedParent.Size.Z / 2 - outerParent.Size.Z / 2)
+
+		local previousWeld = Instance.new("Weld", previousParent)
+
+		previousWeld.Part0 = outerParent
+		previousWeld.Part1 = previousParent
+		previousWeld.C0 = CFrame.new(-0.8, 0.3, 0)
+
+		local currentWeld = Instance.new("Weld", currentParent)
+
+		currentWeld.Part0 = outerParent
+		currentWeld.Part1 = currentParent
+		currentWeld.C0 = CFrame.new(0.8, 0.3, 0)
+
+		local nextWeld = Instance.new("Weld", nextParent)
+
+		nextWeld.Part0 = outerParent
+		nextWeld.Part1 = nextParent
+		nextWeld.C0 = CFrame.new(0, 0, -outerParent.Size.Z / 2 - nextParent.Size.Z / 2)
+
+		local secondarySpawn = task.spawn
+		local capturedParent = sourceParent
+		local capturedItem = firstChild
+
+		secondarySpawn(function()
+			while capturedParent and capturedParent.Parent do
+				if capturedItem == previousCapturedLocalPlayer and not createPartFlag then
+					for _, child in pairs(capturedParent:GetChildren()) do
+						if child:IsA("BasePart") then
+							child.Transparency = 1
+						end
+					end
+
+					repeat
+						outerCapturedRunService.Heartbeat:Wait()
+					until createPartFlag or not capturedParent.Parent
+
+					for _, child in pairs(capturedParent:GetChildren()) do
+						if child:IsA("BasePart") then
+							child.Transparency = 0
+						end
+					end
+				end
+
+				local productNumber = tick()
+				local product = productNumber * 2
+				local number = math.sin(product) * 0.1
+				local secondaryProduct = productNumber * 0.8
+				local alternateProduct = math.sin(secondaryProduct) * 0.1
+
+				instance.C0 = CFrame.new(2.5 + alternateProduct, 1.5 + number, 1)
+					* CFrame.Angles(0, 3.141592653589793, 0)
+				local additionalProduct = productNumber * 3
+
+				secondaryParent.Transparency = 0.3 + 0.2 * math.sin(additionalProduct)
+				outerCapturedRunService.Heartbeat:Wait()
+			end
+		end)
+	end
+
+	local currentCapturedLocalPlayer = LocalPlayer
+	local previousCapturedRunService = RunService
+
+	function outerCreateMickeyAuraPart(firstChild, state, alternateParent)
+		local Part = Instance.new("Part", alternateParent)
+
+		Part.Shape = Enum.PartType.Ball
+		Part.Size = Vector3.new(1.8, 1.8, 1.8)
+		Part.Material = Enum.Material.SmoothPlastic
+		Part.Color = Color3.new(1, 1, 1)
+		Part.Transparency = 0.1
+		updatePart(Part)
+
+		local parent = Instance.new("Part", alternateParent)
+
+		parent.Shape = Enum.PartType.Ball
+		parent.Size = Vector3.new(1.2, 1.2, 0.4)
+		parent.Material = Enum.Material.Neon
+		parent.Color = Color3.fromRGB(0, 191, 255)
+		parent.Transparency = 0.1
+		updatePart(parent)
+
+		local part = Instance.new("Part", alternateParent)
+
+		part.Shape = Enum.PartType.Ball
+		part.Size = Vector3.new(0.6, 0.6, 0.3)
+		part.Material = Enum.Material.Neon
+		part.Color = Color3.new(0, 0, 0)
+		part.Transparency = 0.1
+		updatePart(part)
+
+		local secondaryParent = Instance.new("Part", alternateParent)
+
+		secondaryParent.Shape = Enum.PartType.Ball
+		secondaryParent.Size = Vector3.new(0.2, 0.2, 0.1)
+		secondaryParent.Material = Enum.Material.Neon
+		secondaryParent.Color = Color3.new(1, 1, 1)
+		secondaryParent.Transparency = 0.2
+		updatePart(secondaryParent)
+
+		local result = Instance.new("Motor6D", Part)
+
+		result.Part0 = state
+		result.Part1 = Part
+		result.C0 = CFrame.new(0, 5.5, 0) * CFrame.Angles(0, 3.141592653589793, 0)
+
+		local Weld = Instance.new("Weld", parent)
+
+		Weld.Part0 = Part
+		Weld.Part1 = parent
+		Weld.C0 = CFrame.new(0, 0, 0.6)
+
+		local weld = Instance.new("Weld", part)
+
+		weld.Part0 = parent
+		weld.Part1 = part
+		weld.C0 = CFrame.new(0, 0, 0.25)
+
+		local secondaryWeld = Instance.new("Weld", secondaryParent)
+
+		secondaryWeld.Part0 = part
+		secondaryWeld.Part1 = secondaryParent
+		secondaryWeld.C0 = CFrame.new(0.15, 0.15, 0.1)
+
+		local secondarySpawn = task.spawn
+		local capturedParent = alternateParent
+		local capturedItem = firstChild
+		local capturedPart = Part
+
+		secondarySpawn(function()
+			while capturedParent and capturedParent.Parent do
+				if capturedItem == currentCapturedLocalPlayer and not createPartFlag then
+					capturedPart.Transparency = 1
+					parent.Transparency = 1
+					part.Transparency = 1
+					secondaryParent.Transparency = 1
+
+					repeat
+						previousCapturedRunService.Heartbeat:Wait()
+					until createPartFlag or not capturedParent.Parent
+
+					capturedPart.Transparency = 0.1
+					parent.Transparency = 0.1
+					part.Transparency = 0.1
+					secondaryParent.Transparency = 0.2
+				end
+
+				local productNumber = tick()
+				local secondaryNew = CFrame.new
+				local product = productNumber * 2
+
+				result.C0 = secondaryNew(0, 5.5 + math.sin(product) * 0.2, 0) * CFrame.Angles(0, 3.141592653589793, 0)
+				local number = productNumber * 3
+
+				parent.Transparency = 0.1 + 0.1 * math.sin(number)
+				local secondaryProduct = productNumber * 4
+
+				part.Transparency = 0.1 + 0.1 * math.sin(secondaryProduct)
+				local alternateProduct = productNumber * 5
+
+				secondaryParent.Transparency = 0.2 + 0.1 * math.sin(alternateProduct)
+				previousCapturedRunService.Heartbeat:Wait()
+			end
+		end)
+	end
+
+	local optionData = conditionData
+	local pairsFunction = pairs
+	local secondaryData = packValues(Players:GetPlayers())
+
+	for _, item in pairsFunction(unpack(secondaryData, 1, secondaryData.n)) do
+		local capturedConditionData = conditionData
+		local capturedPlayer = item
+
+		local function createMickeyAura(parent)
+			if parent then
+				local HumanoidRootPart = parent:WaitForChild("HumanoidRootPart", 10)
+
+				if parent:FindFirstChild("MickeyAura") then
+					parent.MickeyAura:Destroy()
+				end
+
+				local createMickeyAuraOption = capturedConditionData[capturedPlayer.Name]
+					or capturedConditionData[capturedPlayer.DisplayName]
+
+				if createMickeyAuraOption and createMickeyAuraOption.Style then
+					local Model = Instance.new("Model", parent)
+
+					Model.Name = "MickeyAura"
+
+					if createMickeyAuraOption.Style ~= "DIVINE_RING" then
+						if createMickeyAuraOption.Style ~= "HYDRA_STRIKE" then
+							if createMickeyAuraOption.Style ~= "DEMON_HANDS" then
+								if createMickeyAuraOption.Style ~= "HEART_AURA" then
+									if createMickeyAuraOption.Style ~= "LETTER_A" then
+										if createMickeyAuraOption.Style ~= "LETTER_N" then
+											if createMickeyAuraOption.Style ~= "NORMAL_HALO" then
+												if createMickeyAuraOption.Style ~= "ANGEL_WINGS" then
+													if createMickeyAuraOption.Style ~= "BIG_SNIPER" then
+														if createMickeyAuraOption.Style == "ILLUMINATI" then
+															outerCreateMickeyAuraPart(
+																capturedPlayer,
+																HumanoidRootPart,
+																Model
+															)
+														end
+
+														return
+													end
+
+													innerCreateMickeyAuraPart(capturedPlayer, HumanoidRootPart, Model)
+
+													return
+												end
+
+												nestedCreateMickeyAuraPart(capturedPlayer, HumanoidRootPart, Model)
+
+												return
+											end
+
+											fallbackCreateMickeyAuraPart(capturedPlayer, HumanoidRootPart, Model)
+
+											return
+										end
+
+										additionalCreateMickeyAuraPart(capturedPlayer, HumanoidRootPart, Model)
+
+										return
+									end
+
+									alternateCreateMickeyAuraPart(capturedPlayer, HumanoidRootPart, Model)
+
+									return
+								end
+
+								createPart(capturedPlayer, HumanoidRootPart, Model)
+
+								return
+							end
+
+							secondaryCreateMickeyAuraPart(capturedPlayer, HumanoidRootPart, Model)
+
+							return
+						end
+
+						createHydraCore(capturedPlayer, HumanoidRootPart, Model)
+
+						return
+					end
+
+					createMickeyAuraPart(capturedPlayer, HumanoidRootPart, Model)
+
+					return
+				end
+
+				return
+			end
+		end
+
+		item.CharacterAdded:Connect(createMickeyAura)
+
+		if item.Character then
+			createMickeyAura(item.Character)
+		end
+	end
+
+	Players.PlayerAdded:Connect(function(player)
+		local capturedPlayer = player
+
+		local function createMickeyAura(parent)
+			if parent then
+				local HumanoidRootPart = parent:WaitForChild("HumanoidRootPart", 10)
+
+				if parent:FindFirstChild("MickeyAura") then
+					parent.MickeyAura:Destroy()
+				end
+
+				local createMickeyAuraOption = optionData[capturedPlayer.Name] or optionData[capturedPlayer.DisplayName]
+
+				if createMickeyAuraOption and createMickeyAuraOption.Style then
+					local Model = Instance.new("Model", parent)
+
+					Model.Name = "MickeyAura"
+
+					if createMickeyAuraOption.Style ~= "DIVINE_RING" then
+						if createMickeyAuraOption.Style ~= "HYDRA_STRIKE" then
+							if createMickeyAuraOption.Style ~= "DEMON_HANDS" then
+								if createMickeyAuraOption.Style ~= "HEART_AURA" then
+									if createMickeyAuraOption.Style ~= "LETTER_A" then
+										if createMickeyAuraOption.Style ~= "LETTER_N" then
+											if createMickeyAuraOption.Style ~= "NORMAL_HALO" then
+												if createMickeyAuraOption.Style ~= "ANGEL_WINGS" then
+													if createMickeyAuraOption.Style ~= "BIG_SNIPER" then
+														if createMickeyAuraOption.Style == "ILLUMINATI" then
+															outerCreateMickeyAuraPart(
+																capturedPlayer,
+																HumanoidRootPart,
+																Model
+															)
+														end
+
+														return
+													end
+
+													innerCreateMickeyAuraPart(capturedPlayer, HumanoidRootPart, Model)
+
+													return
+												end
+
+												nestedCreateMickeyAuraPart(capturedPlayer, HumanoidRootPart, Model)
+
+												return
+											end
+
+											fallbackCreateMickeyAuraPart(capturedPlayer, HumanoidRootPart, Model)
+
+											return
+										end
+
+										additionalCreateMickeyAuraPart(capturedPlayer, HumanoidRootPart, Model)
+
+										return
+									end
+
+									alternateCreateMickeyAuraPart(capturedPlayer, HumanoidRootPart, Model)
+
+									return
+								end
+
+								createPart(capturedPlayer, HumanoidRootPart, Model)
+
+								return
+							end
+
+							secondaryCreateMickeyAuraPart(capturedPlayer, HumanoidRootPart, Model)
+
+							return
+						end
+
+						createHydraCore(capturedPlayer, HumanoidRootPart, Model)
+
+						return
+					end
+
+					createMickeyAuraPart(capturedPlayer, HumanoidRootPart, Model)
+
+					return
+				end
+
+				return
+			end
+		end
+
+		player.CharacterAdded:Connect(createMickeyAura)
+
+		if player.Character then
+			createMickeyAura(player.Character)
+		end
+	end)
+
+	if not (data[LocalPlayer.Name] or false) then
+		createTextButton(nil, "— Mickey Chat: Secure Edition with Database Secret —", nil, true)
+	end
+
+	return
+end
