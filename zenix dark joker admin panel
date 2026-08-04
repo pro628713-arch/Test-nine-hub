@@ -1,1 +1,1742 @@
 
+-- =====================================================
+-- ZENIX DARK JOKER MASTER ADMIN ENGINE (TOGGLE UPDATED)
+-- BASE URL: https://zenix-dark-joker-1-default-rtdb.firebaseio.com
+-- =====================================================
+
+local Players = game:GetService("Players")
+local TextChatService = game:GetService("TextChatService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
+local TweenService = game:GetService("TweenService")
+local TeleportService = game:GetService("TeleportService")
+local Lighting = game:GetService("Lighting")
+local PathfindingService = game:GetService("PathfindingService")
+local StarterPack = game:GetService("StarterPack")
+local Debris = game:GetService("Debris")
+
+local LocalPlayer = Players.LocalPlayer
+local BASE_API_URL = "https://zenix-dark-joker-1-default-rtdb.firebaseio.com"
+local FIREBASE_URL = BASE_API_URL .. "/.json"
+local httpRequest = (syn and syn.request) or (http and http.request) or request or http_request
+
+-- =====================================================
+-- وظيفة إرسال رسائل في الشات (شكلية)
+-- =====================================================
+local function sendFakeChatMessage(msg)
+    pcall(function()
+        if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+            local generalChannel = TextChatService.TextChannels:FindFirstChild("RBXGeneral")
+            if generalChannel then
+                generalChannel:SendAsync(msg)
+            end
+        else
+            local chatEvents = ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents")
+            if chatEvents and chatEvents:FindFirstChild("SayMessageRequest") then
+                chatEvents.SayMessageRequest:FireServer(msg, "All")
+            end
+        end
+    end)
+end
+
+-- =====================================================
+-- 1. تحميل مكتبة WindUI
+-- =====================================================
+local WindUI = nil
+for _, url in ipairs({
+    "https://tree-hub.vercel.app/api/UI/WindUI",
+    "https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"
+}) do
+    local success, result = pcall(function() return loadstring(game:HttpGet(url))() end)
+    if success and type(result) == "table" then WindUI = result; break end
+end
+
+if not WindUI then
+    pcall(function() 
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "Zenix Dark Joker Error", 
+            Text = "فشل تحميل مكتبة WindUI", 
+            Duration = 5
+        }) 
+    end)
+    return
+end
+
+-- =====================================================
+-- 2. إعداد رتب الأدمن والتاجات
+-- =====================================================
+local RankData = {
+    Developers = { ["Go2mohamed"] = true, ["Go2yousef"] = true },
+    Admins = { ["joo77xb"] = true },
+    Assistants = { ["CRAZY_TPS2"] = true, ["qert6154"] = true },
+    ImportantMembers = {
+        ["roggfdtc22"] = true, ["Rohim38206"] = true, ["m7mad9113"] = true,
+        ["im_rawab"] = true, ["saraaaal279"] = true, ["youssef3423samyt"] = true
+    }
+}
+
+local DeveloperTitles = {
+    ["Go2mohamed"] = "المطور زينكس 1",
+    ["Go2yousef"] = "المطور زينكس الحساب 2"
+}
+
+-- =====================================================
+-- 3. متغيرات نظام الباك رومز الذكي
+-- =====================================================
+local BackroomsMainLoop = nil
+local BackroomsMonsters, OccupiedPositions = {}, {}
+local ExitCFrame = nil
+local BackroomsSound = nil
+local CurrentCC, CurrentBlur = nil, nil
+
+-- =====================================================
+-- 4. وظائف الإشعارات والمؤثرات
+-- =====================================================
+local function showEffectNotification(text, color)
+    local pGui = LocalPlayer:FindFirstChild("PlayerGui")
+    if not pGui then return end
+    local sg = Instance.new("ScreenGui", pGui)
+    sg.Name = "ItemEffectGui"
+    sg.ResetOnSpawn = false
+    
+    local frame = Instance.new("Frame", sg)
+    frame.Size, frame.Position = UDim2.new(0, 250, 0, 45), UDim2.new(0.5, -125, 0.75, 0)
+    frame.BackgroundColor3, frame.BackgroundTransparency, frame.BorderSizePixel = Color3.fromRGB(15, 15, 20), 0.2, 0
+    Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
+    
+    local stroke = Instance.new("UIStroke", frame)
+    stroke.Color, stroke.Thickness = color or Color3.fromRGB(255, 0, 75), 2
+    
+    local label = Instance.new("TextLabel", frame)
+    label.Size, label.BackgroundTransparency, label.Text = UDim2.new(1, 0, 1, 0), 1, text
+    label.TextColor3, label.TextSize, label.Font = color or Color3.fromRGB(255, 255, 255), 14, Enum.Font.SourceSansBold
+    
+    task.spawn(function()
+        for i = 0, 1, 0.1 do frame.Position = UDim2.new(0.5, -125, 0.75 - (i * 0.02), 0) task.wait(0.01) end
+        task.wait(1.5)
+        for i = 0, 1, 0.1 do frame.BackgroundTransparency, label.TextTransparency, stroke.Transparency = 0.2 + (i * 0.8), i, i task.wait(0.01) end
+        sg:Destroy()
+    end)
+end
+
+-- =====================================================
+-- 5. نظافة ومسح الباك رومز
+-- =====================================================
+local function cleanupBackrooms()
+    if BackroomsMainLoop then 
+        task.cancel(BackroomsMainLoop)
+        BackroomsMainLoop = nil 
+    end
+    
+    if BackroomsSound then 
+        pcall(function() BackroomsSound:Stop(); BackroomsSound:Destroy() end)
+        BackroomsSound = nil 
+    end
+
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("Sound") and (obj.Name == "BackroomsMusic" or obj.SoundId == "rbxassetid://122201260821898") then
+            pcall(function() obj:Stop(); obj:Destroy() end)
+        end
+    end
+    
+    if workspace:FindFirstChild("BackroomsSystem") then 
+        workspace.BackroomsSystem:Destroy() 
+    end
+    
+    if LocalPlayer.Character then
+        if LocalPlayer.Character:FindFirstChild("Humanoid") then LocalPlayer.Character.Humanoid.WalkSpeed = 16 end
+        if LocalPlayer.Character:FindFirstChild("Flashlight") then LocalPlayer.Character.Flashlight:Destroy() end
+    end
+    if LocalPlayer.Backpack:FindFirstChild("Flashlight") then LocalPlayer.Backpack.Flashlight:Destroy() end
+
+    LocalPlayer.CameraMode = Enum.CameraMode.Classic
+
+    if CurrentCC then CurrentCC:Destroy(); CurrentCC = nil end
+    if CurrentBlur then CurrentBlur:Destroy(); CurrentBlur = nil end
+
+    BackroomsMonsters, OccupiedPositions, ExitCFrame = {}, {}, nil
+end
+
+local function getRandomPos(startPos, gridRadius, tileSize, minDistFromStart)
+    minDistFromStart = minDistFromStart or 0
+    for _ = 1, 80 do
+        local rx, rz = math.random(-gridRadius + 3, gridRadius - 3), math.random(-gridRadius + 3, gridRadius - 3)
+        local candidate = Vector3.new(startPos.X + (rx * tileSize), startPos.Y + 3, startPos.Z + (rz * tileSize))
+        if (candidate - startPos).Magnitude >= minDistFromStart then
+            local valid = true
+            for _, pos in ipairs(OccupiedPositions) do
+                if (pos - candidate).Magnitude < 35 then valid = false break end
+            end
+            if valid then table.insert(OccupiedPositions, candidate) return candidate end
+        end
+    end
+    local pos = Vector3.new(startPos.X + (math.random(-gridRadius + 3, gridRadius - 3) * tileSize), startPos.Y + 3, startPos.Z + (math.random(-gridRadius + 3, gridRadius - 3) * tileSize))
+    table.insert(OccupiedPositions, pos)
+    return pos
+end
+
+local function spawnScatteredItem(folder, startPos, gridRadius, tileSize, sourceObject, name, actionText, effectFunc)
+    if not sourceObject then return end
+    local pos = getRandomPos(startPos, gridRadius, tileSize, 15)
+    local clone = sourceObject:Clone()
+    clone.Name = name .. "Ground"
+    
+    local primary = clone:IsA("Model") and (clone.PrimaryPart or clone:FindFirstChildWhichIsA("BasePart")) or (clone:IsA("BasePart") and clone)
+    if primary then
+        if clone:IsA("Model") then
+            clone:SetPrimaryPartCFrame(CFrame.new(pos.X, startPos.Y + 1, pos.Z))
+        else
+            clone.CFrame = CFrame.new(pos.X, startPos.Y + 1, pos.Z)
+            clone.Anchored = true
+            clone.CanCollide = false
+        end
+
+        local promptPart = clone:IsA("Model") and (clone.PrimaryPart or clone:FindFirstChildWhichIsA("BasePart")) or clone
+        local prompt = Instance.new("ProximityPrompt", promptPart)
+        prompt.ObjectText, prompt.ActionText, prompt.HoldDuration, prompt.MaxActivationDistance = name, actionText, 0.1, 9
+
+        prompt.Triggered:Connect(function(player)
+            clone:Destroy()
+            local tool = Instance.new("Tool")
+            tool.Name, tool.RequiresHandle, tool.CanBeDropped = name, true, true
+            
+            local handle = promptPart:Clone()
+            handle.Name = "Handle"
+            handle.Anchored, handle.CanCollide, handle.Transparency = false, false, 0
+            handle.Parent = tool
+
+            tool.Activated:Connect(function()
+                if player.Character and player.Character:FindFirstChild("Humanoid") then
+                    effectFunc(player, tool)
+                end
+            end)
+            tool.Parent = player.Backpack
+        end)
+        clone.Parent = folder
+    end
+end
+
+local function spawnMonsters(folder, startPos, gridRadius, tileSize)
+    local sourceMonster = workspace:FindFirstChild("Backrooms monster")
+    for i = 1, 3 do
+        local mPos = getRandomPos(startPos, gridRadius, tileSize, 90 + (i * 35))
+        if sourceMonster then
+            local monster = sourceMonster:Clone()
+            monster.Name = "BackroomsMonster_"..i
+            
+            pcall(function()
+                if monster:IsA("Model") then
+                    for _, d in ipairs(monster:GetDescendants()) do
+                        if d:IsA("BasePart") then d.Size = d.Size * 0.9 end
+                    end
+                end
+            end)
+
+            local root = monster:FindFirstChild("HumanoidRootPart") or monster:FindFirstChildWhichIsA("BasePart")
+            if root then
+                if monster:IsA("Model") then
+                    monster:SetPrimaryPartCFrame(CFrame.new(mPos + Vector3.new(0, 5, 0)))
+                else
+                    root.CFrame = CFrame.new(mPos + Vector3.new(0, 5, 0))
+                end
+            end
+            monster.Parent = folder
+            table.insert(BackroomsMonsters, {Model = monster, Body = root, LastHit = 0, NextPathTick = 0, Waypoints = {}, CurrentWaypointIndex = 1})
+        end
+    end
+end
+
+local function buildEntireBackroomsMode()
+    cleanupBackrooms()
+    
+    local starterFlashlight = StarterPack:FindFirstChild("Flashlight")
+    if starterFlashlight then
+        starterFlashlight:Clone().Parent = LocalPlayer.Backpack
+    end
+    LocalPlayer.CameraMode = Enum.CameraMode.LockFirstPerson
+
+    CurrentCC = Instance.new("ColorCorrectionEffect")
+    CurrentCC.TintColor = Color3.fromRGB(255, 245, 190)
+    CurrentCC.Saturation = -0.1
+    CurrentCC.Contrast = 0.1
+    CurrentCC.Parent = Lighting
+
+    CurrentBlur = Instance.new("BlurEffect")
+    CurrentBlur.Size, CurrentBlur.Parent = 0, Lighting
+    task.spawn(function()
+        while CurrentBlur and CurrentBlur.Parent do
+            for i = 0, 6 do if not CurrentBlur or not CurrentBlur.Parent then break end CurrentBlur.Size = i task.wait(0.08) end
+            for i = 6, 0, -1 do if not CurrentBlur or not CurrentBlur.Parent then break end CurrentBlur.Size = i task.wait(0.08) end
+        end
+    end)
+
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then LocalPlayer.Character.Humanoid.WalkSpeed = 28 end
+
+    local startPos = Vector3.new(0, 500, 0)
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        startPos = Vector3.new(LocalPlayer.Character.HumanoidRootPart.Position.X, 500, LocalPlayer.Character.HumanoidRootPart.Position.Z)
+    end
+
+    local folder = Instance.new("Folder", workspace)
+    folder.Name = "BackroomsSystem"
+
+    BackroomsSound = Instance.new("Sound")
+    BackroomsSound.Name = "BackroomsMusic"
+    BackroomsSound.SoundId = "rbxassetid://122201260821898"
+    BackroomsSound.Looped = true
+    BackroomsSound.Volume = 0.8
+    BackroomsSound.Parent = folder
+    BackroomsSound:Play()
+
+    local tileSize, gridRadius, wallHeight = 26, 26, 16
+    local wallColor = Color3.fromRGB(235, 215, 130)
+    local floorColor = Color3.fromRGB(185, 165, 100)
+    local roofColor = Color3.fromRGB(215, 205, 165)
+    local outerBound = (gridRadius + 1) * tileSize
+
+    local function createPart(size, pos, color, mat, parent)
+        local p = Instance.new("Part", parent)
+        p.Size, p.Position, p.Color, p.Material, p.Anchored = size, pos, color, mat, true
+        return p
+    end
+
+    createPart(Vector3.new(outerBound * 2, 1, outerBound * 2), startPos, floorColor, Enum.Material.Fabric, folder)
+    createPart(Vector3.new(outerBound * 2, 1, outerBound * 2), startPos + Vector3.new(0, wallHeight, 0), roofColor, Enum.Material.SmoothPlastic, folder)
+
+    createPart(Vector3.new(outerBound * 2, wallHeight, 2), startPos + Vector3.new(0, wallHeight/2, -outerBound), wallColor, Enum.Material.SmoothPlastic, folder)
+    createPart(Vector3.new(outerBound * 2, wallHeight, 2), startPos + Vector3.new(0, wallHeight/2, outerBound), wallColor, Enum.Material.SmoothPlastic, folder)
+    createPart(Vector3.new(2, wallHeight, outerBound * 2), startPos + Vector3.new(-outerBound, wallHeight/2, 0), wallColor, Enum.Material.SmoothPlastic, folder)
+    createPart(Vector3.new(2, wallHeight, outerBound * 2), startPos + Vector3.new(outerBound, wallHeight/2, 0), wallColor, Enum.Material.SmoothPlastic, folder)
+
+    for x = -gridRadius, gridRadius do
+        for z = -gridRadius, gridRadius do
+            local posX, posZ = startPos.X + (x * tileSize), startPos.Z + (z * tileSize)
+            if (x + z) % 3 == 0 then
+                local light = createPart(Vector3.new(6, 0.2, 3), Vector3.new(posX, startPos.Y + wallHeight - 0.2, posZ), Color3.fromRGB(255, 255, 210), Enum.Material.Neon, folder)
+                local pt = Instance.new("PointLight", light)
+                pt.Brightness, pt.Range, pt.Color = 1.8, 28, Color3.fromRGB(255, 240, 180)
+            end
+            local seed = math.abs(math.sin(x * 15.123 + z * 47.891 + math.cos(x * z) * 0.5) * 43758.5453) % 1
+            if seed > 0.38 then
+                createPart(Vector3.new(tileSize, wallHeight, 1.4), Vector3.new(posX, startPos.Y + (wallHeight/2), posZ - (tileSize/2)), wallColor, Enum.Material.SmoothPlastic, folder)
+            end
+            if seed < 0.42 then
+                createPart(Vector3.new(1.4, wallHeight, tileSize), Vector3.new(posX - (tileSize/2), startPos.Y + (wallHeight/2), posZ), wallColor, Enum.Material.SmoothPlastic, folder)
+            end
+        end
+    end
+
+    local doorY = startPos.Y + 5
+    local exitWallPos = Vector3.new(startPos.X + outerBound - 1.2, doorY, startPos.Z + (gridRadius - 2) * tileSize)
+    createPart(Vector3.new(0.6, 10, 6), exitWallPos, Color3.fromRGB(50, 35, 25), Enum.Material.Wood, folder)
+    local exitDoor = createPart(Vector3.new(0.7, 9.2, 5.2), exitWallPos - Vector3.new(0.1, 0, 0), Color3.fromRGB(255, 255, 255), Enum.Material.Neon, folder)
+    ExitCFrame = CFrame.new(exitWallPos - Vector3.new(5, 0, 0))
+
+    local exitPrompt = Instance.new("ProximityPrompt", exitDoor)
+    exitPrompt.ObjectText, exitPrompt.ActionText, exitPrompt.HoldDuration, exitPrompt.MaxActivationDistance = "باب الخروج", "الهروب وإيقاف الموسيقى", 0.5, 9
+
+    local function escape()
+        cleanupBackrooms()
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            local spawnPoint = workspace:FindFirstChildOfClass("SpawnLocation")
+            LocalPlayer.Character.HumanoidRootPart.CFrame = spawnPoint and (spawnPoint.CFrame + Vector3.new(0, 3, 0)) or CFrame.new(0, 5, 0)
+        end
+        showEffectNotification("🌀 تم الهروب وإيقاف الموسيقى بنجاح!", Color3.fromRGB(0, 255, 150))
+    end
+
+    exitPrompt.Triggered:Connect(escape)
+    exitDoor.Touched:Connect(function(hit)
+        if LocalPlayer.Character and hit:IsDescendantOf(LocalPlayer.Character) then escape() end
+    end)
+
+    spawnMonsters(folder, startPos, gridRadius, tileSize)
+
+    local medkitSource = workspace:FindFirstChild("Medkit")
+    local bandageSource = workspace:FindFirstChild("Bandage")
+    local energySource = workspace:FindFirstChild("Nước tăng lực monster energy")
+
+    for _ = 1, 6 do spawnScatteredItem(folder, startPos, gridRadius, tileSize, medkitSource, "Medkit", "أخذ Medkit (+100 صحة)", function(p, t)
+        local hum = p.Character.Humanoid
+        hum.Health = math.min(hum.MaxHealth, hum.Health + 100)
+        showEffectNotification("➕ استخدمت Medkit (+100 صحة)!", Color3.fromRGB(0, 255, 100))
+        t:Destroy()
+    end) end
+
+    for _ = 1, 6 do spawnScatteredItem(folder, startPos, gridRadius, tileSize, bandageSource, "Bandage", "أخذ Bandage (+30 صحة)", function(p, t)
+        local hum = p.Character.Humanoid
+        hum.Health = math.min(hum.MaxHealth, hum.Health + 30)
+        showEffectNotification("🩹 استخدمت Bandage (+30 صحة)!", Color3.fromRGB(255, 200, 100))
+        t:Destroy()
+    end) end
+
+    for _ = 1, 5 do spawnScatteredItem(folder, startPos, gridRadius, tileSize, energySource, "Monster Energy", "أخذ مشروب الطاقة (+12 سرعة)", function(p, t)
+        local hum = p.Character.Humanoid
+        hum.WalkSpeed = hum.WalkSpeed + 12
+        showEffectNotification("⚡ شربت Monster Energy (+12 سرعة)!", Color3.fromRGB(50, 150, 255))
+        t:Destroy()
+    end) end
+
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(startPos + Vector3.new(0, 4, 0))
+    end
+
+    BackroomsMainLoop = task.spawn(function()
+        while task.wait(0.05) do
+            local char = LocalPlayer.Character
+            if char and char:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("Humanoid") then
+                local hrp, hum = char.HumanoidRootPart, char.Humanoid
+                local pPos = hrp.Position
+
+                for _, mData in ipairs(BackroomsMonsters) do
+                    if mData.Body and mData.Body.Parent then
+                        local mBody = mData.Body
+                        local mPos = mBody.Position
+                        local dist = (pPos - mPos).Magnitude
+
+                        if dist <= 150 then
+                            if tick() >= mData.NextPathTick then
+                                mData.NextPathTick = tick() + 0.9
+                                local path = PathfindingService:CreatePath({AgentRadius = 3, AgentHeight = 10})
+                                local success = pcall(function() path:ComputeAsync(mPos, pPos) end)
+                                if success and path.Status == Enum.PathStatus.Success then
+                                    mData.Waypoints = path:GetWaypoints()
+                                    mData.CurrentWaypointIndex = 2
+                                end
+                            end
+
+                            if mData.Waypoints and #mData.Waypoints >= mData.CurrentWaypointIndex then
+                                local targetWP = mData.Waypoints[mData.CurrentWaypointIndex].Position
+                                if (Vector3.new(targetWP.X, mPos.Y, targetWP.Z) - mPos).Magnitude < 4 then
+                                    mData.CurrentWaypointIndex = mData.CurrentWaypointIndex + 1
+                                end
+                                if mData.Waypoints[mData.CurrentWaypointIndex] then
+                                    local nextTarget = mData.Waypoints[mData.CurrentWaypointIndex].Position
+                                    local moveDir = (Vector3.new(nextTarget.X, mPos.Y, nextTarget.Z) - mPos).Unit
+                                    local step = moveDir * (22 * 0.05)
+                                    if mData.Model:IsA("Model") then
+                                        mData.Model:SetPrimaryPartCFrame(CFrame.new(mPos + step, Vector3.new(nextTarget.X, mPos.Y, nextTarget.Z)))
+                                    else
+                                        mBody.CFrame = CFrame.new(mPos + step, Vector3.new(nextTarget.X, mPos.Y, nextTarget.Z))
+                                    end
+                                end
+                            else
+                                local dir = (pPos - mPos).Unit
+                                local step = dir * (22 * 0.05)
+                                if mData.Model:IsA("Model") then
+                                    mData.Model:SetPrimaryPartCFrame(CFrame.new(mPos + step, Vector3.new(pPos.X, mPos.Y, pPos.Z)))
+                                else
+                                    mBody.CFrame = CFrame.new(mPos + step, Vector3.new(pPos.X, mPos.Y, pPos.Z))
+                                end
+                            end
+
+                            if dist <= 8 and tick() - mData.LastHit >= 1.2 then
+                                mData.LastHit = tick()
+                                hum.Health = math.max(0, hum.Health - 40)
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end)
+end
+
+-- =====================================================
+-- 6. محرك سيف الرعد (Asset ID: 52045984)
+-- =====================================================
+local function giveThunderSword(targetPlayer)
+    local p = targetPlayer or LocalPlayer
+    if not p or not p:FindFirstChild("Backpack") then return end
+
+    local backpack = p:WaitForChild("Backpack")
+    
+    if backpack:FindFirstChild("سيف الرعد") or (p.Character and p.Character:FindFirstChild("سيف الرعد")) then
+        return
+    end
+
+    local assetId = 52045984
+
+    local function loadAsset(id)
+        local success, objects = pcall(function()
+            return game:GetObjects("rbxassetid://" .. id)
+        end)
+        if not success or #objects == 0 then return nil end
+        return objects
+    end
+
+    local objects = loadAsset(assetId)
+    if not objects then return end
+
+    local tool = nil
+    for _, obj in ipairs(objects) do
+        if obj:IsA("Tool") then tool = obj; break end
+    end
+
+    if not tool then
+        for _, obj in ipairs(objects) do
+            local found = obj:FindFirstChildWhichIsA("Tool", true)
+            if found then tool = found; break end
+        end
+    end
+
+    if not tool then return end
+
+    local handle = tool:FindFirstChild("Handle")
+    if not handle then
+        for _, v in ipairs(tool:GetDescendants()) do
+            if v:IsA("BasePart") then
+                handle = v
+                handle.Name = "Handle"
+                break
+            end
+        end
+    end
+
+    tool.Name = "سيف الرعد"
+    tool.CanBeDropped = false
+    tool.RequiresHandle = true
+
+    for _, v in ipairs(tool:GetDescendants()) do
+        if v:IsA("Script") or v:IsA("LocalScript") then v:Destroy() end
+    end
+
+    local equipSound = Instance.new("Sound")
+    equipSound.Name = "ThunderEquip"
+    equipSound.SoundId = "rbxassetid://12222025"
+    equipSound.Volume = 1.5
+    equipSound.Parent = handle
+
+    local hitSound = Instance.new("Sound")
+    hitSound.Name = "ThunderHit"
+    hitSound.SoundId = "rbxassetid://12222124"
+    hitSound.Volume = 1.5
+    hitSound.Parent = handle
+
+    local a0 = Instance.new("Attachment") a0.Name="A0" a0.Position=Vector3.new(0,0.8,0) a0.Parent=handle
+    local a1 = Instance.new("Attachment") a1.Name="A1" a1.Position=Vector3.new(0,-0.8,0) a1.Parent=handle
+    local trail = Instance.new("Trail") trail.Attachment0=a0 trail.Attachment1=a1
+    trail.Color = ColorSequence.new(Color3.fromRGB(150,200,255))
+    trail.Transparency = NumberSequence.new(0,1)
+    trail.Lifetime = 0.2
+    trail.Enabled = false
+    trail.Parent = handle
+
+    local SINGLE_ANIM = "rbxassetid://522635514"
+    local cooldown = false
+
+    tool.Equipped:Connect(function() equipSound:Play() end)
+    tool.Unequipped:Connect(function() trail.Enabled = false end)
+
+    tool.Activated:Connect(function()
+        if cooldown then return end
+        cooldown = true
+
+        local char = p.Character
+        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+        local hum = char and char:FindFirstChildOfClass("Humanoid")
+        if not hrp or not hum then cooldown = false return end
+
+        trail.Enabled = true
+        hitSound:Play()
+
+        if hum:FindFirstChild("Animator") then
+            local anim = Instance.new("Animation")
+            anim.AnimationId = SINGLE_ANIM
+            local track = hum.Animator:LoadAnimation(anim)
+            track.Looped = false
+            track.Priority = Enum.AnimationPriority.Action
+            track:Play(0.05, 1, 1.1)
+        end
+
+        local params = RaycastParams.new()
+        params.FilterDescendantsInstances = {char}
+        params.FilterType = Enum.RaycastFilterType.Exclude
+        local result = workspace:Raycast(hrp.Position + Vector3.new(0,1,0), hrp.CFrame.LookVector * 5, params)
+        
+        if result then
+            local model = result.Instance.Parent
+            local targetHum = model:FindFirstChildOfClass("Humanoid")
+            if not targetHum then
+                targetHum = model.Parent:FindFirstChildOfClass("Humanoid")
+            end
+            if targetHum and targetHum.Parent ~= char then
+                local att = Instance.new("Attachment")
+                att.WorldPosition = result.Position
+                att.Parent = workspace.Terrain
+                local particle = Instance.new("ParticleEmitter")
+                particle.Texture = "rbxassetid://6101261905"
+                particle.Lifetime = NumberRange.new(0.2, 0.3)
+                particle.Rate = 0
+                particle.Speed = NumberRange.new(8, 10)
+                particle.SpreadAngle = Vector2.new(180,180)
+                particle.Size = NumberSequence.new(0.3, 0)
+                particle.Color = ColorSequence.new(Color3.fromRGB(255, 120, 120))
+                particle.Parent = att
+                particle:Emit(6)
+                Debris:AddItem(att, 1)
+
+                targetHum.Health = math.max(0, targetHum.Health - 20)
+            end
+        end
+
+        task.wait(0.2)
+        trail.Enabled = false
+        task.wait(0.3)
+        cooldown = false
+    end)
+
+    tool.Parent = backpack
+end
+
+local function removeThunderSword(targetPlayer)
+    local p = targetPlayer or LocalPlayer
+    if not p then return end
+    if p.Backpack:FindFirstChild("سيف الرعد") then
+        p.Backpack["سيف الرعد"]:Destroy()
+    end
+    if p.Character and p.Character:FindFirstChild("سيف الرعد") then
+        p.Character["سيف الرعد"]:Destroy()
+    end
+end
+
+-- =====================================================
+-- 7. محرك سجن الحديقة وسجن البيت
+-- =====================================================
+
+-- 1. سجن البيت (jailhouse)
+local HouseModel = nil
+local function loadHouse(targetPlayer)
+    local p = targetPlayer or LocalPlayer
+    if not p then return end
+
+    if HouseModel then
+        HouseModel:Destroy()
+        HouseModel = nil
+    end
+
+    local assetId = 345888391
+    local success, objects = pcall(function()
+        return game:GetObjects("rbxassetid://" .. assetId)
+    end)
+
+    if not success or #objects == 0 then
+        WindUI:Notify({ Title = "خطأ", Content = "فشل تحميل مجسم البيت!", Duration = 3 })
+        return
+    end
+
+    local model = Instance.new("Model")
+    model.Name = "ZenixHouse_" .. p.Name
+    for _, obj in ipairs(objects) do
+        obj.Parent = model
+    end
+    model.Parent = workspace
+
+    local primaryPart = model.PrimaryPart
+    if not primaryPart then
+        for _, obj in ipairs(model:GetDescendants()) do
+            if obj:IsA("BasePart") then
+                primaryPart = obj
+                model.PrimaryPart = primaryPart
+                break
+            end
+        end
+    end
+
+    if not primaryPart then
+        model:Destroy()
+        return
+    end
+
+    local targetCFrame = CFrame.new(0, 500, 0)
+    model:SetPrimaryPartCFrame(targetCFrame)
+    HouseModel = model
+
+    local doorPart = nil
+    for _, obj in ipairs(model:GetDescendants()) do
+        if obj:IsA("BasePart") then
+            local nameLower = obj.Name:lower()
+            if nameLower:find("door") or nameLower:find("entrance") or nameLower:find("gate") or nameLower:find("main") then
+                doorPart = obj
+                break
+            end
+        end
+    end
+
+    if not doorPart then
+        local parts = {}
+        for _, obj in ipairs(model:GetDescendants()) do
+            if obj:IsA("BasePart") then
+                table.insert(parts, obj)
+            end
+        end
+        if #parts > 0 then
+            local center = model:GetPivot().Position
+            local minDist = math.huge
+            for _, part in ipairs(parts) do
+                local dist = (part.Position - center).Magnitude
+                if dist < minDist then
+                    minDist = dist
+                    doorPart = part
+                end
+            end
+        end
+    end
+
+    local char = p.Character
+    if char and char:FindFirstChild("HumanoidRootPart") then
+        if doorPart then
+            local forwardOffset = doorPart.CFrame.LookVector * 3
+            char.HumanoidRootPart.CFrame = doorPart.CFrame + forwardOffset + Vector3.new(0, 2, 0)
+        else
+            char.HumanoidRootPart.CFrame = CFrame.new(0, 503, 0)
+        end
+    end
+
+    if p == LocalPlayer then
+        LocalPlayer.CameraMode = Enum.CameraMode.LockFirstPerson
+    end
+
+    showEffectNotification("🏠 تم سجن اللاعب داخل البيت!", Color3.fromRGB(255, 170, 0))
+end
+
+local function unloadHouse()
+    if HouseModel then
+        HouseModel:Destroy()
+        HouseModel = nil
+    end
+    if LocalPlayer then
+        LocalPlayer.CameraMode = Enum.CameraMode.Classic
+    end
+end
+
+-- 2. سجن الحديقة (Asset ID: 11359728337)
+local GardenModel = nil
+local function loadGarden(targetPlayer)
+    local p = targetPlayer or LocalPlayer
+    if not p then return end
+
+    if GardenModel then
+        GardenModel:Destroy()
+        GardenModel = nil
+    end
+
+    local assetId = 11359728337
+    local success, objects = pcall(function()
+        return game:GetObjects("rbxassetid://" .. assetId)
+    end)
+
+    if not success or #objects == 0 then
+        WindUI:Notify({ Title = "خطأ", Content = "فشل تحميل مجسم الحديقة!", Duration = 3 })
+        return
+    end
+
+    local model = Instance.new("Model")
+    model.Name = "ZenixGarden_" .. p.Name
+    for _, obj in ipairs(objects) do
+        obj.Parent = model
+    end
+    model.Parent = workspace
+
+    local primaryPart = model.PrimaryPart
+    if not primaryPart then
+        for _, obj in ipairs(model:GetDescendants()) do
+            if obj:IsA("BasePart") then
+                primaryPart = obj
+                model.PrimaryPart = primaryPart
+                break
+            end
+        end
+    end
+
+    if not primaryPart then
+        model:Destroy()
+        return
+    end
+
+    local targetCFrame = CFrame.new(0, 500, 0)
+    model:SetPrimaryPartCFrame(targetCFrame)
+    GardenModel = model
+
+    local spawnPart = nil
+    for _, obj in ipairs(model:GetDescendants()) do
+        if obj:IsA("BasePart") and obj.Name:lower():find("spawn") then
+            spawnPart = obj
+            break
+        end
+    end
+    if not spawnPart then
+        local parts = {}
+        for _, obj in ipairs(model:GetDescendants()) do
+            if obj:IsA("BasePart") then
+                table.insert(parts, obj)
+            end
+        end
+        if #parts > 0 then
+            local center = model:GetPivot().Position
+            local minDist = math.huge
+            for _, part in ipairs(parts) do
+                local dist = (part.Position - center).Magnitude
+                if dist < minDist then
+                    minDist = dist
+                    spawnPart = part
+                end
+            end
+        end
+    end
+
+    if p == LocalPlayer then
+        LocalPlayer.CameraMode = Enum.CameraMode.LockFirstPerson
+    end
+
+    local char = p.Character
+    if char and char:FindFirstChild("HumanoidRootPart") then
+        if spawnPart then
+            char.HumanoidRootPart.CFrame = spawnPart.CFrame + Vector3.new(0, 3, 0)
+        else
+            char.HumanoidRootPart.CFrame = CFrame.new(0, 503, 0)
+        end
+    end
+
+    showEffectNotification("🏡 تم بناء الحديقة وسجن اللاعب داخلها!", Color3.fromRGB(0, 255, 120))
+end
+
+local function unloadGarden()
+    if GardenModel then
+        GardenModel:Destroy()
+        GardenModel = nil
+    end
+    if LocalPlayer then
+        LocalPlayer.CameraMode = Enum.CameraMode.Classic
+    end
+end
+
+-- =====================================================
+-- 8. مخطط الأوامر
+-- =====================================================
+local CommandsSchema = {
+    kill = { endpoint = "/api/admin/kill", method = "POST", payload = {} },
+    kick = { endpoint = "/api/admin/kick", method = "POST", payload = { reason = "تم طردك بواسطة zenix" } },
+    freeze = { endpoint = "/api/admin/freeze", method = "POST", payload = { enabled = true } },
+    unfreeze = { endpoint = "/api/admin/unfreeze", method = "POST", payload = { enabled = false } },
+    jail = { endpoint = "/api/admin/jail", method = "POST", payload = { enabled = true } },
+    unjail = { endpoint = "/api/admin/unjail", method = "POST", payload = { enabled = false } },
+    jailmansion = { endpoint = "/api/admin/jailmansion", method = "POST", payload = { enabled = true } },
+    jailhouse = { endpoint = "/api/admin/jailhouse", method = "POST", payload = { enabled = true } },
+    jailcage = { endpoint = "/api/admin/jailcage", method = "POST", payload = { enabled = true } },
+    blind = { endpoint = "/api/admin/blind", method = "POST", payload = { enabled = true } },
+    strip = { endpoint = "/api/admin/strip", method = "POST", payload = {} },
+    unstrip = { endpoint = "/api/admin/unstrip", method = "POST", payload = {} },
+    cleartools = { endpoint = "/api/admin/cleartools", method = "POST", payload = {} },
+    restoretools = { endpoint = "/api/admin/restoretools", method = "POST", payload = {} },
+    addhealth = { endpoint = "/api/admin/addhealth", method = "POST", payload = { value = 100 } },
+    godmode = { endpoint = "/api/admin/godmode", method = "POST", payload = { enabled = true } },
+    givebandage = { endpoint = "/api/admin/givebandage", method = "POST", payload = {} },
+    givesword = { endpoint = "/api/admin/givesword", method = "POST", payload = {} },
+    fire = { endpoint = "/api/admin/fire", method = "POST", payload = { fire_size = 8 } },
+    unfire = { endpoint = "/api/admin/unfire", method = "POST", payload = { enabled = false } },
+    bring = { endpoint = "/api/admin/bring", method = "POST", payload = {} },
+    speed9999 = { endpoint = "/api/admin/speed9999", method = "POST", payload = { value = 9999 } },
+    jump9999 = { endpoint = "/api/admin/jump9999", method = "POST", payload = { value = 9999 } },
+    autojump = { endpoint = "/api/admin/autojump", method = "POST", payload = { enabled = true } },
+    fling = { endpoint = "/api/admin/fling", method = "POST", payload = { power = 500 } },
+    sky = { endpoint = "/api/admin/sky", method = "POST", payload = {} },
+    underground = { endpoint = "/api/admin/underground", method = "POST", payload = {} },
+    stopsky = { endpoint = "/api/admin/stopsky", method = "POST", payload = { enabled = true } },
+    backrooms = { endpoint = "/api/admin/backrooms", method = "POST", payload = {} },
+    legback = { endpoint = "/api/admin/legback", method = "POST", payload = { enabled = true } },
+    legface = { endpoint = "/api/admin/legface", method = "POST", payload = { enabled = true } },
+    walkto = { endpoint = "/api/admin/walkto", method = "POST", payload = { enabled = true } },
+    spin200 = { endpoint = "/api/admin/spin200", method = "POST", payload = { speed = 200 } },
+    infjump = { endpoint = "/api/admin/infjump", method = "POST", payload = { enabled = true } },
+    sit = { endpoint = "/api/admin/sit", method = "POST", payload = {} },
+    loopsit = { endpoint = "/api/admin/loopsit", method = "POST", payload = { enabled = true } },
+    global_message = { endpoint = "/api/admin/global_message", method = "POST", payload = {} }
+}
+
+local TargetPlayer = ""
+local GlobalMessageText = ""
+local LastGlobalMsgID = ""
+local ActiveLoops = {
+    LoopKill = {}, LoopSit = {}, LoopFire = {}, LoopExplode = {}, Jail = {}, Spin = {}, GodMode = {}, AutoJump = {}, InfJump = {}
+}
+local ActiveJails = {}
+local ToggleStates = {}
+
+-- =====================================================
+-- 9. واجهة المتصلين أعلى اليمين (Active Users GUI)
+-- =====================================================
+local pGui = LocalPlayer:WaitForChild("PlayerGui")
+local oldGui = pGui:FindFirstChild("ZenixActiveUsersGui")
+if oldGui then oldGui:Destroy() end
+
+local sgActive = Instance.new("ScreenGui", pGui)
+sgActive.Name = "ZenixActiveUsersGui"
+sgActive.ResetOnSpawn = false
+
+local topBtn = Instance.new("TextButton", sgActive)
+topBtn.Size = UDim2.new(0, 140, 0, 32)
+topBtn.Position = UDim2.new(1, -150, 0, 12)
+topBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
+topBtn.Text = "🟢 المتصلين: 0"
+topBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+topBtn.Font = Enum.Font.GothamBold
+topBtn.TextSize = 13
+topBtn.AutoButtonColor = true
+
+local btnCorner = Instance.new("UICorner", topBtn)
+btnCorner.CornerRadius = UDim.new(0, 8)
+
+local btnStroke = Instance.new("UIStroke", topBtn)
+btnStroke.Color = Color3.fromRGB(255, 0, 75)
+btnStroke.Thickness = 1.5
+
+local popFrame = Instance.new("Frame", sgActive)
+popFrame.Size = UDim2.new(0, 220, 0, 200)
+popFrame.Position = UDim2.new(1, -230, 0, 50)
+popFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
+popFrame.BackgroundTransparency = 0.1
+popFrame.Visible = false
+
+local popCorner = Instance.new("UICorner", popFrame)
+popCorner.CornerRadius = UDim.new(0, 8)
+
+local popStroke = Instance.new("UIStroke", popFrame)
+popStroke.Color = Color3.fromRGB(255, 0, 75)
+popStroke.Thickness = 1
+
+local popTitle = Instance.new("TextLabel", popFrame)
+popTitle.Size = UDim2.new(1, 0, 0, 28)
+popTitle.BackgroundTransparency = 1
+popTitle.Text = "اللاعبون النشطون (Zenix)"
+popTitle.TextColor3 = Color3.fromRGB(255, 50, 90)
+popTitle.Font = Enum.Font.GothamBold
+popTitle.TextSize = 12
+
+local scroll = Instance.new("ScrollingFrame", popFrame)
+scroll.Size = UDim2.new(1, -10, 1, -35)
+scroll.Position = UDim2.new(0, 5, 0, 30)
+scroll.BackgroundTransparency = 1
+scroll.BorderSizePixel = 0
+scroll.ScrollBarThickness = 4
+
+local uiList = Instance.new("UIListLayout", scroll)
+uiList.Padding = UDim.new(0, 4)
+uiList.SortOrder = Enum.SortOrder.LayoutOrder
+
+topBtn.MouseButton1Click:Connect(function()
+    popFrame.Visible = not popFrame.Visible
+end)
+
+local function updateTopRightUI(usersData)
+    topBtn.Text = "🟢 المتصلين: " .. tostring(#usersData)
+    
+    for _, child in ipairs(scroll:GetChildren()) do
+        if child:IsA("Frame") or child:IsA("TextLabel") then child:Destroy() end
+    end
+    
+    if #usersData == 0 then
+        local lbl = Instance.new("TextLabel", scroll)
+        lbl.Size = UDim2.new(1, 0, 0, 20)
+        lbl.BackgroundTransparency = 1
+        lbl.Text = "لا يوجد متصلين"
+        lbl.TextColor3 = Color3.fromRGB(150, 150, 150)
+        lbl.Font = Enum.Font.Gotham
+        lbl.TextSize = 11
+    else
+        for _, uData in ipairs(usersData) do
+            local itemFrame = Instance.new("Frame", scroll)
+            itemFrame.Size = UDim2.new(1, 0, 0, 28)
+            itemFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+            
+            local itemCorner = Instance.new("UICorner", itemFrame)
+            itemCorner.CornerRadius = UDim.new(0, 4)
+
+            local nameLbl = Instance.new("TextLabel", itemFrame)
+            nameLbl.Size = UDim2.new(1, -55, 1, 0)
+            nameLbl.Position = UDim2.new(0, 6, 0, 0)
+            nameLbl.BackgroundTransparency = 1
+            nameLbl.Text = uData.name
+            nameLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+            nameLbl.Font = Enum.Font.GothamMedium
+            nameLbl.TextSize = 11
+            nameLbl.TextXAlignment = Enum.TextXAlignment.Left
+
+            local joinBtn = Instance.new("TextButton", itemFrame)
+            joinBtn.Size = UDim2.new(0, 45, 0, 20)
+            joinBtn.Position = UDim2.new(1, -48, 0, 4)
+            joinBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 90)
+            joinBtn.Text = "Join"
+            joinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            joinBtn.Font = Enum.Font.GothamBold
+            joinBtn.TextSize = 10
+            
+            local jCorner = Instance.new("UICorner", joinBtn)
+            jCorner.CornerRadius = UDim.new(0, 4)
+
+            joinBtn.MouseButton1Click:Connect(function()
+                if uData.job_id == game.JobId then
+                    WindUI:Notify({Title = "تنبيه", Content = "أنت بالفعل في نفس السيرفر!", Duration = 2})
+                elseif uData.job_id and uData.job_id ~= "" and uData.place_id and uData.place_id ~= 0 then
+                    WindUI:Notify({Title = "جاري الانتقال", Content = "جاري الانضمام إلى سيرفر " .. uData.name, Duration = 3})
+                    TeleportService:TeleportToPlaceInstance(uData.place_id, uData.job_id, LocalPlayer)
+                else
+                    WindUI:Notify({Title = "خطأ", Content = "تعذر الحصول على Job ID الخاص باللاعب", Duration = 3})
+                end
+            end)
+        end
+    end
+    scroll.CanvasSize = UDim2.new(0, 0, 0, uiList.AbsoluteContentSize.Y)
+end
+
+-- =====================================================
+-- 10. نبضة الحياة + تاجات الأدمن + البانر المتحرك
+-- =====================================================
+local function sendHeartbeat()
+    if not httpRequest then return end
+    pcall(function()
+        httpRequest({
+            Url = FIREBASE_URL,
+            Method = "PATCH",
+            Headers = {["Content-Type"] = "application/json"},
+            Body = HttpService:JSONEncode({
+                active_users = {
+                    [LocalPlayer.Name] = {
+                        last_seen = os.time(),
+                        job_id = game.JobId,
+                        place_id = game.PlaceId
+                    }
+                }
+            })
+        })
+    end)
+end
+
+local function applyAdminTag(player)
+    if not player or not player.Character then return end
+
+    local Title, Color = nil, nil
+    if RankData.Developers[player.Name] then
+        Title = DeveloperTitles[player.Name] or "المطور"
+        Color = Color3.fromRGB(255, 0, 0)
+    elseif RankData.Admins[player.Name] then
+        Title = "ادمن"
+        Color = Color3.fromRGB(255, 215, 0)
+    elseif RankData.Assistants[player.Name] then
+        Title = "مساعد"
+        Color = Color3.fromRGB(110, 0, 160)
+    elseif RankData.ImportantMembers[player.Name] then
+        Title = "عضو مهم"
+        Color = Color3.fromRGB(0, 200, 255)
+    else
+        Title = "Zenix Admin"
+        Color = Color3.fromRGB(255, 0, 75)
+    end
+
+    local head = player.Character:FindFirstChild("Head")
+    if not head then return end
+
+    local existing = player.Character:FindFirstChild("ZenixAdminTag")
+    if existing then existing:Destroy() end
+
+    local bg = Instance.new("BillboardGui")
+    bg.Name = "ZenixAdminTag"
+    bg.Adornee = head
+    bg.Parent = player.Character
+    bg.Size = UDim2.new(6, 0, 2.5, 0)
+    bg.StudsOffset = Vector3.new(0, 3.5, 0)
+    bg.AlwaysOnTop = true
+
+    local fr = Instance.new("Frame", bg)
+    fr.Size = UDim2.new(1, 0, 1, 0)
+    fr.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    fr.BackgroundTransparency = 0.2
+    fr.BorderSizePixel = 0
+    Instance.new("UICorner", fr).CornerRadius = UDim.new(0, 12)
+
+    local st = Instance.new("UIStroke", fr)
+    st.Thickness = 2.5
+    st.Color = Color
+
+    local tl = Instance.new("TextLabel", fr)
+    tl.Size = UDim2.new(1, 0, 0.45, 0)
+    tl.Position = UDim2.new(0, 0, 0.1, 0)
+    tl.BackgroundTransparency = 1
+    tl.Text = "★ " .. Title .. " ★"
+    tl.TextColor3 = Color
+    tl.Font = Enum.Font.GothamBold
+    tl.TextScaled = true
+
+    local sl = Instance.new("TextLabel", fr)
+    sl.Size = UDim2.new(0.9, 0, 0.3, 0)
+    sl.Position = UDim2.new(0.05, 0, 0.55, 0)
+    sl.BackgroundTransparency = 1
+    sl.Text = "Zenix dark joker"
+    sl.TextColor3 = Color3.fromRGB(255, 255, 255)
+    sl.Font = Enum.Font.GothamBold
+    sl.TextScaled = true
+end
+
+local function showTopGlobalMessage(msgText, titleText)
+    local pGuiContainer = LocalPlayer:FindFirstChild("PlayerGui")
+    if not pGuiContainer then return end
+
+    local old = pGuiContainer:FindFirstChild("ZenixGlobalMsgGui")
+    if old then old:Destroy() end
+
+    local sg = Instance.new("ScreenGui", pGuiContainer)
+    sg.Name = "ZenixGlobalMsgGui"
+    sg.ResetOnSpawn = false
+    sg.DisplayOrder = 9999
+
+    local frame = Instance.new("Frame", sg)
+    frame.Size = UDim2.new(0, 420, 0, 70)
+    frame.Position = UDim2.new(0.5, -210, 0, -80)
+    frame.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
+    frame.BackgroundTransparency = 0.1
+    frame.BorderSizePixel = 0
+
+    local corner = Instance.new("UICorner", frame)
+    corner.CornerRadius = UDim.new(0, 10)
+
+    local stroke = Instance.new("UIStroke", frame)
+    stroke.Color = Color3.fromRGB(255, 0, 75)
+    stroke.Thickness = 2
+
+    local titleLbl = Instance.new("TextLabel", frame)
+    titleLbl.Size = UDim2.new(1, -20, 0, 22)
+    titleLbl.Position = UDim2.new(0, 10, 0, 8)
+    titleLbl.BackgroundTransparency = 1
+    titleLbl.Text = titleText or "📢 ZENIX ADMIN MESSAGE"
+    titleLbl.TextColor3 = Color3.fromRGB(255, 50, 90)
+    titleLbl.TextSize = 14
+    titleLbl.Font = Enum.Font.GothamBold
+
+    local msgLbl = Instance.new("TextLabel", frame)
+    msgLbl.Size = UDim2.new(1, -20, 0, 30)
+    msgLbl.Position = UDim2.new(0, 10, 0, 32)
+    msgLbl.BackgroundTransparency = 1
+    msgLbl.Text = msgText or ""
+    msgLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+    msgLbl.TextSize = 15
+    msgLbl.Font = Enum.Font.GothamMedium
+
+    frame:TweenPosition(UDim2.new(0.5, -210, 0, 20), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, 0.4, true)
+
+    task.delay(4, function()
+        local fadeInfo = TweenInfo.new(1, Enum.EasingStyle.Linear)
+        TweenService:Create(frame, fadeInfo, {BackgroundTransparency = 1}):Play()
+        TweenService:Create(stroke, fadeInfo, {Transparency = 1}):Play()
+        TweenService:Create(titleLbl, fadeInfo, {TextTransparency = 1}):Play()
+        TweenService:Create(msgLbl, fadeInfo, {TextTransparency = 1}):Play()
+        task.wait(1.1)
+        sg:Destroy()
+    end)
+end
+
+-- =====================================================
+-- 11. تنفيذ الأوامر المستلمة الشامل
+-- =====================================================
+local function executeCommand(action, targetName, params)
+    if not action then return end
+    params = params or {}
+    action = string.lower(action)
+
+    if action == "global_message" then
+        local msgId = params.msg_id or (params.message .. tostring(os.time()))
+        if msgId ~= LastGlobalMsgID then
+            LastGlobalMsgID = msgId
+            showTopGlobalMessage(params.message, params.title)
+        end
+        return
+    end
+
+    if not targetName or targetName == "" then return end
+    local targetPlayer = Players:FindFirstChild(targetName)
+    local isSelf = (targetName == LocalPlayer.Name)
+
+    if action == "givesword" then
+        local p = targetPlayer or LocalPlayer
+        if params.enabled == false then
+            removeThunderSword(p)
+        else
+            giveThunderSword(p)
+        end
+
+    elseif action == "jailmansion" then
+        local p = targetPlayer or LocalPlayer
+        if params.enabled == false then
+            unloadGarden()
+        else
+            loadGarden(p)
+        end
+
+    elseif action == "jailhouse" then
+        local p = targetPlayer or LocalPlayer
+        if params.enabled == false then
+            unloadHouse()
+        else
+            loadHouse(p)
+        end
+
+    elseif action == "backrooms" and isSelf then
+        if params.enabled == false then
+            cleanupBackrooms()
+        else
+            buildEntireBackroomsMode()
+        end
+    elseif action == "kick" and isSelf then
+        LocalPlayer:Kick(params.reason or "تم طردك بواسطة zenix")
+    elseif action == "kill" then
+        if params.enabled ~= nil then
+            ActiveLoops.LoopKill[targetName] = params.enabled
+        else
+            if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                targetPlayer.Character:FindFirstChildOfClass("Humanoid").Health = 0
+            end
+        end
+    elseif action == "loopsit" or action == "loop_sit" then
+        ActiveLoops.LoopSit[targetName] = (params.enabled ~= false)
+    elseif action == "sit" then
+        if params.enabled == false then
+            if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                targetPlayer.Character:FindFirstChildOfClass("Humanoid").Sit = false
+            end
+        else
+            if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                targetPlayer.Character:FindFirstChildOfClass("Humanoid").Sit = true
+            end
+        end
+    elseif action == "fire" then
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            local hrp = targetPlayer.Character.HumanoidRootPart
+            if params.enabled == false then
+                local fire = hrp:FindFirstChild("ZenixFire")
+                if fire then fire:Destroy() end
+            else
+                if not hrp:FindFirstChild("ZenixFire") then
+                    local fire = Instance.new("Fire", hrp)
+                    fire.Name = "ZenixFire"
+                    fire.Size = params.fire_size or 8
+                end
+            end
+        end
+    elseif action == "unfire" then
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            local fire = targetPlayer.Character.HumanoidRootPart:FindFirstChild("ZenixFire")
+            if fire then fire:Destroy() end
+        end
+    elseif action == "jail" or action == "jailcage" then
+        local state = (params.enabled ~= false)
+        ActiveLoops.Jail[targetName] = state
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            local hrp = targetPlayer.Character.HumanoidRootPart
+            if state then
+                if not ActiveJails[targetName] then
+                    local center = hrp.Position
+                    local jailModel = Instance.new("Model", workspace)
+                    jailModel.Name = "ZenixJail_" .. targetName
+                    ActiveJails[targetName] = {Model = jailModel, Center = center}
+
+                    local barColor = Color3.fromRGB(35, 35, 40)
+                    local barMat = Enum.Material.Metal
+                    local sizeX, sizeZ, height = 7, 7, 8
+                    local halfX, halfZ = sizeX / 2, sizeZ / 2
+
+                    local floor = Instance.new("Part", jailModel)
+                    floor.Size = Vector3.new(sizeX + 1, 0.5, sizeZ + 1)
+                    floor.CFrame = CFrame.new(center - Vector3.new(0, height/2, 0))
+                    floor.Anchored = true
+                    floor.Color = barColor
+                    floor.Material = Enum.Material.DiamondPlate
+
+                    local roof = Instance.new("Part", jailModel)
+                    roof.Size = Vector3.new(sizeX + 1, 0.5, sizeZ + 1)
+                    roof.CFrame = CFrame.new(center + Vector3.new(0, height/2, 0))
+                    roof.Anchored = true
+                    roof.Color = barColor
+                    roof.Material = Enum.Material.DiamondPlate
+
+                    local function createBar(pos)
+                        local bar = Instance.new("Part", jailModel)
+                        bar.Size = Vector3.new(0.3, height, 0.3)
+                        bar.CFrame = CFrame.new(pos)
+                        bar.Anchored = true
+                        bar.Color = barColor
+                        bar.Material = barMat
+                    end
+
+                    local step = 1.1
+                    for x = -halfX, halfX, step do
+                        createBar(center + Vector3.new(x, 0, halfZ))
+                        createBar(center + Vector3.new(x, 0, -halfZ))
+                    end
+                    for z = -halfZ, halfZ, step do
+                        createBar(center + Vector3.new(halfX, 0, z))
+                        createBar(center + Vector3.new(-halfX, 0, z))
+                    end
+                end
+            else
+                if ActiveJails[targetName] then
+                    ActiveJails[targetName].Model:Destroy()
+                    ActiveJails[targetName] = nil
+                end
+            end
+        end
+    elseif action == "unjail" then
+        ActiveLoops.Jail[targetName] = false
+        if ActiveJails[targetName] then
+            ActiveJails[targetName].Model:Destroy()
+            ActiveJails[targetName] = nil
+        end
+        unloadHouse()
+        unloadGarden()
+    elseif action == "freeze" then
+        if targetPlayer and targetPlayer.Character then
+            for _, part in ipairs(targetPlayer.Character:GetDescendants()) do
+                if part:IsA("BasePart") then part.Anchored = (params.enabled ~= false) end
+            end
+        end
+    elseif action == "unfreeze" then
+        if targetPlayer and targetPlayer.Character then
+            for _, part in ipairs(targetPlayer.Character:GetDescendants()) do
+                if part:IsA("BasePart") then part.Anchored = false end
+            end
+        end
+    elseif action == "strip" or action == "cleartools" then
+        if targetPlayer and targetPlayer.Backpack then
+            targetPlayer.Backpack:ClearAllChildren()
+        end
+    elseif action == "unstrip" or action == "restoretools" then
+        if targetPlayer then StarterPack:Clone().Parent = targetPlayer.Backpack end
+    elseif action == "addhealth" then
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChildOfClass("Humanoid") then
+            local hum = targetPlayer.Character:FindFirstChildOfClass("Humanoid")
+            hum.Health = math.min(hum.MaxHealth, hum.Health + (params.value or 100))
+        end
+    elseif action == "godmode" then
+        ActiveLoops.GodMode[targetName] = (params.enabled ~= false)
+    elseif action == "givebandage" then
+        if targetPlayer and targetPlayer.Backpack then
+            if params.enabled == false then
+                if targetPlayer.Backpack:FindFirstChild("Bandage") then
+                    targetPlayer.Backpack.Bandage:Destroy()
+                end
+            else
+                local b = Instance.new("Tool")
+                b.Name = "Bandage"
+                b.Parent = targetPlayer.Backpack
+            end
+        end
+    elseif action == "speed9999" then
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChildOfClass("Humanoid") then
+            local targetSpeed = (params.enabled == false) and 16 or (params.value or 9999)
+            targetPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = targetSpeed
+        end
+    elseif action == "jump9999" then
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChildOfClass("Humanoid") then
+            local targetJump = (params.enabled == false) and 50 or (params.value or 9999)
+            targetPlayer.Character:FindFirstChildOfClass("Humanoid").JumpPower = targetJump
+        end
+    elseif action == "autojump" then
+        ActiveLoops.AutoJump[targetName] = (params.enabled ~= false)
+    elseif action == "infjump" then
+        ActiveLoops.InfJump[targetName] = (params.enabled ~= false)
+    elseif action == "fling" then
+        if params.enabled ~= false then
+            if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                local hrp = targetPlayer.Character.HumanoidRootPart
+                local pwr = params.power or 500
+                hrp.Velocity = Vector3.new(math.random(-pwr, pwr), pwr * 10, math.random(-pwr, pwr))
+                hrp.RotVelocity = Vector3.new(9999, 9999, 9999)
+            end
+        end
+    elseif action == "bring" then
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            targetPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(2, 0, 0)
+        end
+    elseif action == "spin200" or action == "spin" then
+        ActiveLoops.Spin[targetName] = (params.enabled ~= false)
+    elseif action == "blind" and isSelf then
+        local pGuiBlind = LocalPlayer:FindFirstChild("PlayerGui")
+        if pGuiBlind then
+            local existing = pGuiBlind:FindFirstChild("ZenixBlindGui")
+            if params.enabled ~= false then
+                if not existing then
+                    local sg = Instance.new("ScreenGui", pGuiBlind)
+                    sg.Name = "ZenixBlindGui"
+                    sg.ResetOnSpawn = false
+                    local f = Instance.new("Frame", sg)
+                    f.Size = UDim2.new(1, 0, 1, 0)
+                    f.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                end
+            else
+                if existing then existing:Destroy() end
+            end
+        end
+    elseif action == "sky" then
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            if params.enabled == false then
+                targetPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+            else
+                targetPlayer.Character.HumanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0, 5000, 0)
+            end
+        end
+    elseif action == "underground" then
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            if params.enabled == false then
+                targetPlayer.Character.HumanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0, 200, 0)
+            else
+                targetPlayer.Character.HumanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame - Vector3.new(0, 200, 0)
+            end
+        end
+    elseif action == "stopsky" then
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            targetPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+        end
+    elseif action == "legback" or action == "legface" then
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            targetPlayer.Character.HumanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(180), 0)
+        end
+    elseif action == "walkto" then
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChildOfClass("Humanoid") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            targetPlayer.Character:FindFirstChildOfClass("Humanoid"):MoveTo(LocalPlayer.Character.HumanoidRootPart.Position)
+        end
+    end
+end
+
+-- =====================================================
+-- 12. محرك الإرسال عبر API مع حذف البيانات من Firebase وإرسال شات شكلي
+-- =====================================================
+local function clearFirebaseCommand(endpoint)
+    if not httpRequest then return end
+    pcall(function()
+        httpRequest({
+            Url = BASE_API_URL .. endpoint .. ".json",
+            Method = "DELETE"
+        })
+    end)
+end
+
+local function sendAPICommand(action, customParams)
+    if TargetPlayer == "" and action ~= "global_message" then
+        WindUI:Notify({ Title = "تنبيه", Content = "يرجى اختيار لاعب مستهدف أولاً!", Duration = 3 })
+        return
+    end
+
+    local schema = CommandsSchema[action]
+    if not schema then return end
+
+    local payloadData = {}
+    if schema.payload then
+        for k, v in pairs(schema.payload) do payloadData[k] = v end
+    end
+    if customParams then
+        for k, v in pairs(customParams) do payloadData[k] = v end
+    end
+    payloadData.target = (action == "global_message") and "All" or TargetPlayer
+    payloadData.timestamp = os.time()
+
+    -- إرسال رسالة وهمية في الشات العام (شكلية فقط)
+    if action ~= "global_message" and payloadData.target ~= "" then
+        sendFakeChatMessage("/" .. action .. " " .. payloadData.target)
+    end
+
+    local singleCommandObject = {
+        action = action,
+        endpoint = schema.endpoint,
+        method = schema.method,
+        payload = payloadData
+    }
+
+    local rootRequestBody = {
+        api_version = "2.1",
+        commands_schema = { singleCommandObject },
+        sender = LocalPlayer.Name,
+        timestamp = os.time()
+    }
+
+    if httpRequest then
+        pcall(function()
+            httpRequest({
+                Url = BASE_API_URL .. schema.endpoint .. ".json",
+                Method = "PATCH",
+                Headers = {["Content-Type"] = "application/json"},
+                Body = HttpService:JSONEncode(singleCommandObject)
+            })
+        end)
+
+        pcall(function()
+            httpRequest({
+                Url = BASE_API_URL .. "/.json",
+                Method = "PATCH",
+                Headers = {["Content-Type"] = "application/json"},
+                Body = HttpService:JSONEncode(rootRequestBody)
+            })
+        end)
+    end
+
+    -- تنفيذ الأمر محلياً
+    executeCommand(action, payloadData.target, payloadData)
+
+    -- مسح الأمر من Firebase فوراً لمنع التكرار (Spam)
+    task.delay(0.5, function()
+        clearFirebaseCommand(schema.endpoint)
+    end)
+
+    WindUI:Notify({
+        Title = "تم الإرسال بنجاح",
+        Content = "الأمر: " .. action .. " | الهدف: " .. payloadData.target,
+        Duration = 2
+    })
+end
+
+-- =====================================================
+-- 13. خيوط المزامنة واللوبات مع مسح الأوامر المستلمة
+-- =====================================================
+local LastProcessedTimestamp = 0
+
+task.spawn(function()
+    while true do
+        sendHeartbeat()
+        task.wait(5)
+    end
+end)
+
+task.spawn(function()
+    while task.wait(2) do
+        local success, response = pcall(function() return game:HttpGet(FIREBASE_URL) end)
+        if success and response then
+            local parseSuccess, data = pcall(function() return HttpService:JSONDecode(response) end)
+            if parseSuccess and data then
+                if data.timestamp and data.timestamp > LastProcessedTimestamp then
+                    LastProcessedTimestamp = data.timestamp
+                    if data.commands_schema then
+                        for _, cmd in ipairs(data.commands_schema) do
+                            if cmd.action and cmd.payload then
+                                executeCommand(cmd.action, cmd.payload.target, cmd.payload)
+                                if cmd.endpoint then
+                                    clearFirebaseCommand(cmd.endpoint)
+                                end
+                            end
+                        end
+                        -- مسح الجذر بعد المعالجة
+                        if httpRequest then
+                            pcall(function()
+                                httpRequest({
+                                    Url = BASE_API_URL .. "/commands_schema.json",
+                                    Method = "DELETE"
+                                })
+                            end)
+                        end
+                    end
+                end
+
+                if data.active_users then
+                    local activeList = {}
+                    local currentTime = os.time()
+                    for adminName, uData in pairs(data.active_users) do
+                        local lastTime, jId, pId = 0, "", 0
+                        if type(uData) == "table" then
+                            lastTime = uData.last_seen or 0
+                            jId = uData.job_id or ""
+                            pId = uData.place_id or 0
+                        elseif type(uData) == "number" then
+                            lastTime = uData
+                        end
+
+                        if (currentTime - lastTime) <= 15 then
+                            table.insert(activeList, { name = adminName, job_id = jId, place_id = pId })
+                            local adminPlayer = Players:FindFirstChild(adminName)
+                            if adminPlayer then applyAdminTag(adminPlayer) end
+                        end
+                    end
+                    updateTopRightUI(activeList)
+                end
+            end
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.2) do
+        for name, enabled in pairs(ActiveLoops.LoopKill) do
+            if enabled then
+                executeCommand("kill", name)
+            end
+        end
+        for name, enabled in pairs(ActiveLoops.LoopSit) do if enabled then executeCommand("sit", name, {enabled = true}) end end
+        for name, enabled in pairs(ActiveLoops.Spin) do
+            if enabled then
+                local p = Players:FindFirstChild(name)
+                if p and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                    p.Character.HumanoidRootPart.CFrame = p.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(25), 0)
+                end
+            end
+        end
+        for name, enabled in pairs(ActiveLoops.GodMode) do
+            if enabled then
+                local p = Players:FindFirstChild(name)
+                if p and p.Character and p.Character:FindFirstChildOfClass("Humanoid") then
+                    p.Character:FindFirstChildOfClass("Humanoid").Health = p.Character:FindFirstChildOfClass("Humanoid").MaxHealth
+                end
+            end
+        end
+        for name, enabled in pairs(ActiveLoops.AutoJump) do
+            if enabled then
+                local p = Players:FindFirstChild(name)
+                if p and p.Character and p.Character:FindFirstChildOfClass("Humanoid") then
+                    p.Character:FindFirstChildOfClass("Humanoid").Jump = true
+                end
+            end
+        end
+        for name, data in pairs(ActiveJails) do
+            if ActiveLoops.Jail[name] then
+                local p = Players:FindFirstChild(name)
+                if p and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                    if (p.Character.HumanoidRootPart.Position - data.Center).Magnitude > 3.2 then
+                        p.Character.HumanoidRootPart.CFrame = CFrame.new(data.Center)
+                    end
+                end
+            end
+        end
+    end
+end)
+
+-- =====================================================
+-- 14. واجهة WindUI
+-- =====================================================
+local Window = WindUI:CreateWindow({
+    Title = "ZENIX DARK JOKER MASTER ENGINE",
+    Icon = "shield-alert",
+    Author = "Zenix Integrated Engine v12.3",
+    Folder = "ZenixMasterConfig",
+    Size = UDim2.fromOffset(640, 580),
+    Resizable = true,
+})
+
+local function getPlayerNames()
+    local list = {}
+    for _, p in ipairs(Players:GetPlayers()) do table.insert(list, p.Name) end
+    return list
+end
+
+-- 1. تبويب الرئيسية
+local MainTab = Window:Tab({ Title = "👑 الرئيسية والرسائل", Icon = "grid" })
+
+MainTab:Input({
+    Title = "نص الرسالة العامة (Global Message)",
+    Desc = "اكتب الرسالة التي تظهر أعلى الشاشة للجميع",
+    Placeholder = "اكتب رسالتك هنا...",
+    Callback = function(txt) GlobalMessageText = txt end
+})
+
+MainTab:Button({
+    Title = "📢 بث رسالة عامة (Broadcast Global Message)",
+    Callback = function()
+        if GlobalMessageText ~= "" then
+            local randomId = tostring(os.time()) .. "_" .. tostring(math.random(1000, 9999))
+            sendAPICommand("global_message", {
+                message = GlobalMessageText,
+                msg_id = randomId,
+                title = "📢 ZENIX ADMIN MESSAGE"
+            })
+        end
+    end
+})
+
+local PlayerDropdown = MainTab:Dropdown({
+    Title = "اختر اللاعب المستهدف",
+    Values = getPlayerNames(),
+    Callback = function(val) TargetPlayer = val end
+})
+
+MainTab:Button({
+    Title = "🔄 تحديث قائمة اللاعبين",
+    Callback = function()
+        if PlayerDropdown and PlayerDropdown.SetValues then
+            PlayerDropdown:SetValues(getPlayerNames())
+        end
+    end
+})
+
+-- 2. تبويب الإدارة والعقاب
+local AdminTab = Window:Tab({ Title = "⚡ الإدارة والعقاب", Icon = "user-x" })
+
+AdminTab:Section({ Title = "🔒 أوامر السجن والتقييد (Jail Commands)" })
+AdminTab:Toggle({ Title = "🔒 jail", Callback = function(state) sendAPICommand(state and "jail" or "unjail", {enabled = state}) end })
+AdminTab:Toggle({ Title = "🏡 سجن حديقة (jailmansion)", Callback = function(state) sendAPICommand("jailmansion", {enabled = state}) end })
+AdminTab:Toggle({ Title = "🏠 jailhouse", Callback = function(state) sendAPICommand("jailhouse", {enabled = state}) end })
+
+AdminTab:Section({ Title = "💀 أوامر التحكم المباشر" })
+AdminTab:Toggle({ Title = "💀 kill (Loop Kill)", Callback = function(state) sendAPICommand("kill", {enabled = state}) end })
+AdminTab:Button({ Title = "👢 kick", Callback = function() sendAPICommand("kick") end })
+AdminTab:Toggle({ Title = "❄️ freeze", Callback = function(state) sendAPICommand(state and "freeze" or "unfreeze", {enabled = state}) end })
+AdminTab:Toggle({ Title = "🙈 blind", Callback = function(state) sendAPICommand("blind", {enabled = state}) end })
+AdminTab:Button({ Title = "🌀 fling", Callback = function() sendAPICommand("fling") end })
+AdminTab:Button({ Title = "📍 bring", Callback = function() sendAPICommand("bring") end })
+
+-- 3. تبويب الصحة والأدوات
+local ItemsTab = Window:Tab({ Title = "🛡️ الصحة والأدوات", Icon = "heart" })
+
+ItemsTab:Toggle({ Title = "⚡ givesword", Callback = function(state) sendAPICommand("givesword", {enabled = state}) end })
+ItemsTab:Button({ Title = "➕ addhealth (+100)", Callback = function() sendAPICommand("addhealth", {value = 100}) end })
+ItemsTab:Toggle({ Title = "🛡️ godmode", Callback = function(state) sendAPICommand("godmode", {enabled = state}) end })
+ItemsTab:Toggle({ Title = "🩹 givebandage", Callback = function(state) sendAPICommand("givebandage", {enabled = state}) end })
+ItemsTab:Toggle({ Title = "🧹 strip", Callback = function(state) sendAPICommand(state and "strip" or "unstrip") end })
+
+-- 4. تبويب السرعة والحركة
+local MoveTab = Window:Tab({ Title = "🚀 الحركة والفيزياء", Icon = "zap" })
+
+MoveTab:Toggle({ Title = "⚡ speed9999", Callback = function(state) sendAPICommand("speed9999", {value = 9999, enabled = state}) end })
+MoveTab:Toggle({ Title = "🦘 jump9999", Callback = function(state) sendAPICommand("jump9999", {value = 9999, enabled = state}) end })
+MoveTab:Toggle({ Title = "🦘 infjump", Callback = function(state) sendAPICommand("infjump", {enabled = state}) end })
+MoveTab:Toggle({ Title = "🔄 autojump", Callback = function(state) sendAPICommand("autojump", {enabled = state}) end })
+MoveTab:Toggle({ Title = "🌀 spin200", Callback = function(state) sendAPICommand("spin200", {speed = 200, enabled = state}) end })
+MoveTab:Toggle({ Title = "🪑 sit", Callback = function(state) sendAPICommand("sit", {enabled = state}) end })
+MoveTab:Toggle({ Title = "🪑 loopsit", Callback = function(state) sendAPICommand("loopsit", {enabled = state}) end })
+MoveTab:Toggle({ Title = "☁️ sky", Callback = function(state) sendAPICommand("sky", {enabled = state}) end })
+MoveTab:Toggle({ Title = "🕳️ underground", Callback = function(state) sendAPICommand("underground", {enabled = state}) end })
+MoveTab:Button({ Title = "🛑 stopsky", Callback = function() sendAPICommand("stopsky") end })
+MoveTab:Button({ Title = "🏃 walkto", Callback = function() sendAPICommand("walkto") end })
+MoveTab:Button({ Title = "🔄 legback", Callback = function() sendAPICommand("legback") end })
+
+-- 5. تبويب التأثيرات والحرائق
+local EffectsTab = Window:Tab({ Title = "🔥 التأثيرات والحرائق", Icon = "flame" })
+
+EffectsTab:Toggle({ Title = "🔥 fire", Callback = function(state) sendAPICommand(state and "fire" or "unfire", {fire_size = 10, enabled = state}) end })
+
+-- 6. تبويب الباك رومز
+local BackroomsTab = Window:Tab({ Title = "🌀 الباك رومز الأصلي", Icon = "gamepad-2" })
+
+BackroomsTab:Toggle({
+    Title = "🎮 backrooms Mode",
+    Callback = function(state)
+        if state then
+            buildEntireBackroomsMode()
+        else
+            cleanupBackrooms()
+            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                local spawnPoint = workspace:FindFirstChildOfClass("SpawnLocation")
+                LocalPlayer.Character.HumanoidRootPart.CFrame = spawnPoint and (spawnPoint.CFrame + Vector3.new(0, 3, 0)) or CFrame.new(0, 5, 0)
+            end
+        end
+    end
+})
+
+BackroomsTab:Button({
+    Title = "🚪 الانتقال السريع لباب الخروج",
+    Callback = function()
+        if ExitCFrame and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            LocalPlayer.Character.HumanoidRootPart.CFrame = ExitCFrame
+            showEffectNotification("🌀 تم الانتقال إلى باب النهاية!", Color3.fromRGB(0, 200, 255))
+        else
+            WindUI:Notify({ Title = "تنبيه", Content = "عليك بدء مود الباك رومز أولاً لتحديد موقع الباب!", Duration = 3 })
+        end
+    end
+})
+
+WindUI:Notify({
+    Title = "Zenix Master Engine Ready",
+    Content = "تم تحويل الأوامر إلى Toggles وتفعيل نظام التبديل بنجاح! ⚡",
+    Duration = 5
+})
