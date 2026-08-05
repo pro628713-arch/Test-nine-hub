@@ -1,0 +1,509 @@
+local _select = select
+
+local function v766(tbl, idx, ...)
+    local va = { ... }
+    for i = 1, _select("#", ...) do
+        tbl[idx + i - 1] = va[i]
+    end
+end
+
+local function v1(...)
+    local t1 = { ... }
+    t1.n = select("#", ...)
+    return t1
+end
+
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+local LocalPlayer = game.Players.LocalPlayer
+repeat task.wait() until LocalPlayer:FindFirstChild("PlayerGui")
+
+local DisplayName = LocalPlayer.DisplayName
+local s1 = ""
+local u5 = true
+
+local function v6(p1)
+    if p1 then
+        local v283 = p1:gsub("<[^>]*>", ""):gsub("[<>]", ""):gsub("[\204-\205][\128-\191]", ""):gsub("%s+", " ")
+        local v284 = v283:match("^%s*(.-)%s*$")
+        if v284 then v283 = v284 elseif not v283 then v283 = false end
+        return v283
+    end
+    return ""
+end
+
+-- =====================================================================
+-- 1. قائمة المطورين المسموح لهم بدخول الترس (الوايت لست)
+-- =====================================================================
+local t2 = {
+    Go2mohamed = true,
+    Go2yousef = true,
+    joo77xb = true,
+    adam_saadi8737 = true,
+}
+
+-- جدول ربط الألقاب بـ Display Names المخصصة التي أرسلتها
+local tagToAltDisplayMap = {
+    ["OWNER"] = "Zain_1188288alt",
+    ["B0SS"] = "ZAINqpAli2",
+    ["Monster"] = "2a_n10",
+    ["Z0MBI"] = "olivia78810",
+    ["SKELET0N"] = "za_in2345",
+    ["BRO"] = "Spider15cooldude",
+    ["KILLER"] = "zainlives",
+    ["DREAM"] = "za_in345",
+    ["NIGA"] = "ggggggggggghfgxf",
+    ["NINJA"] = "zain6tahan",
+    ["VIRUS"] = "zain11e77",
+    ["FIRE"] = "Zain_bi84",
+    ["FLAYER"] = "Poituy79",
+    ["PLAYER"] = "Zain788667",
+    ["MAMMOTH"] = "ofqug5",
+    ["DRAGON"] = "gdhgukx",
+    ["DOG"] = "zain_0284",
+    ["CAT"] = "zaineforlife",
+    ["KA7ILAN"] = "cijnbyg5rtd43s2q",
+    ["JOKER"] = "Hazim1234or3",
+    ["BLACK_DEATH"] = "MuhammedHN999",
+    ["JOO"] = "la_meilleures07",
+    ["ZENIX"] = "shshdhdh812",
+    ["LOVER"] = "evhsgz",
+    ["MY_LOVE"] = "Zain122zi",
+    ["MY_BROTHER"] = "123wkkei",
+    ["HELPER"] = "e5V9zf",
+    ["THE_HELL"] = "black_heart9936",
+    ["BEACH"] = "Zainop123841",
+    ["Developer"] = "Definitelynotzain207",
+    ["Samurai"] = "Zain_6069",
+    ["WOW!"] = "Zain_Alno2",
+    ["Lion"] = "Zainpan6",
+    ["Panda"] = "zainh1232",
+    -- الألقاب العربية مع الـ Alt Accounts المخصصة
+    ["عبد"] = "zainhamdani10",
+    ["سلقوني"] = "Zains_095",
+    ["زين"] = "zainfawal12",
+    ["زينكس"] = "ZainZezo2212",
+    ["يوسف"] = "Zain_kokla",
+    ["عمران"] = "zainnsaif4",
+    ["خول"] = "Zain2016babur",
+    ["عرص"] = "zainzeezo12",
+    ["عاهر"] = "zainiscoollll",
+    ["جرجيره"] = "zainsaifi004",
+    ["شرمط"] = "Zaino_201300",
+    ["كـ**ڪ"] = "yousefGTA6",
+    ["خياره 🔥🥵"] = "yousef_roblox6767",
+    ["حبيبي"] = "ibo1234198",
+    ["البابا"] = "Ipedgamer363",
+    ["العنتيل"] = "Ninjacoconaut",
+    ["الخديوي"] = "roblo210316",
+    ["المطور"] = "hBhsvsbsgsb",
+    ["المركوب"] = "Yousef_Y103",
+    ["المتاخد"] = "Yousefaltacount1",
+    ["الظلام"] = "yoyo292014",
+    ["النور"] = "zoro_strohutbande",
+    ["المتاخده"] = "Yousef27124",
+    ["رفاعي"] = "yousefww771",
+    ["شد في بتاعي"] = "Huhhb150",
+    ["كحيلان"] = "Sham473737",
+    ["ايه"] = "ZainBambanh",
+    ["خدتك عليه"] = "Zain06278",
+    ["مكرونه"] = "Zainmalouk",
+    ["فيروس"] = "zain96969",
+    ["ساموراي"] = "ZAINSUB45",
+    ["محمد"] = "zainants",
+    ["فرعون"] = "zainabdullah234",
+    ["واو 😉"] = "Zain987442",
+    ["الهرم"] = "Zain_1188288alt",
+}
+
+-- تخزين التاق المختار حالياً لكل مطور محلياً
+local selectedTagCache = "OWNER"
+
+-- دالة تحويل الحروف الصغيرة الأنيقة
+local function convertToSmallCaps(p2)
+    local t3 = {
+        a = "ᴀ", b = "ʙ", c = "ᴄ", d = "ᴅ", e = "ᴇ", f = "ꜰ", g = "ɢ", h = "ʜ", i = "ɪ", j = "ᴊ",
+        k = "ᴋ", l = "ʟ", m = "ᴍ", n = "ɴ", o = "ᴏ", p = "ᴘ", q = "ǫ", r = "ʀ", s = "s", t = "ᴛ",
+        u = "ᴜ", v = "ᴠ", w = "ᴡ", x = "x", y = "ʏ", z = "ᴢ",
+        A = "ᴀ", B = "ʙ", C = "ᴄ", D = "ᴅ", E = "ᴇ", F = "ꜰ", G = "ɢ", H = "ʜ", I = "ɪ", J = "ᴊ",
+        K = "ᴋ", L = "ʟ", M = "ᴍ", N = "ɴ", O = "ᴏ", P = "ᴘ", Q = "ǫ", R = "ʀ", S = "s", T = "ᴛ",
+        U = "ᴜ", V = "ᴠ", W = "ᴡ", X = "x", Y = "ʏ", Z = "ᴢ",
+    }
+    local s2 = ""
+    for i2 = 1, #p2 do
+        local v293 = p2:sub(i2, i2)
+        s2 = s2 .. (t3[v293] or v293)
+    end
+    return s2
+end
+
+local v10 = convertToSmallCaps(DisplayName)
+
+-- إعدادات الـ RolePlay الافتراضية
+local RE = game:GetService("ReplicatedStorage"):FindFirstChild("RE")
+if RE then
+    local v11 = RE:FindFirstChild("1RPNam1eTex1t")
+    if v11 then v11:FireServer("RolePlayName", "_ᴍɪᴄᴋᴇʏ ᴄʜᴀᴛ_") end
+
+    local v12 = RE:FindFirstChild("1RPNam1eColo1r")
+    if v12 then
+        local v13 = v1(Color3.fromRGB(1, 221, 221))
+        v12:FireServer("PickingRPNameColor", unpack(v13, 1, v13.n))
+    end
+
+    local v73 = RE:FindFirstChild("1RPNam1eTex1t")
+    if v73 then v73:FireServer("RolePlayBio", "  _" .. v10 .. "_") end
+
+    local v74 = RE:FindFirstChild("1RPNam1eColo1r")
+    if v74 then
+        local v75 = v1(Color3.fromRGB(255, 0, 193))
+        v74:FireServer("PickingRPBioColor", unpack(v75, 1, v75.n))
+    end
+end
+
+-- إعدادات الاتصال بقاعدة البيانات Firebase
+local jobId = game.JobId ~= "" and game.JobId or "StudioSession"
+local baseUrl = "https://zenix-chat-v1-afced-default-rtdb.firebaseio.com/.json"
+
+local chatUrl = baseUrl .. jobId << .json" .. authKey
+local chatUrl = baseUrl .. jobId .. ".json" .. authKey
+
+local n1 = 0
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+local UserInputService = game:GetService("UserInputService")
+local TextChatService = game:GetService("TextChatService")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
+local httpRequest = syn and syn.request or (http and http.request) or (http_request) or (fluxus and fluxus.request) or request
+local timestamp = os.time()
+local u153, u154, u155, u156, u157, u158, u159, u160, u161, u162
+
+-- إنشاء واجهة المستخدم الرئيسية
+local new = Instance.new
+local v164 = v1(LocalPlayer:WaitForChild("PlayerGui"))
+local v165 = new("ScreenGui", unpack(v164, 1, v164.n))
+v165.Name = "CloudChatMickeyFixed"
+v165.ResetOnSpawn = false
+
+-- زر فتح الشات العادي
+local TextButton = Instance.new("TextButton", v165)
+TextButton.Size = UDim2.new(0, 40, 0, 100)
+TextButton.Position = UDim2.new(0, 5, 0.5, -50)
+TextButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TextButton.BackgroundTransparency = 0.4
+TextButton.TextColor3 = Color3.new(1, 1, 1)
+TextButton.Text = "C\nH\nA\nT"
+TextButton.Font = Enum.Font.BuilderSansBold
+TextButton.TextSize = 14
+Instance.new("UICorner", TextButton)
+Instance.new("UIStroke", TextButton).Color = Color3.new(1, 1, 1)
+
+local Frame = Instance.new("Frame", v165)
+Frame.Size = UDim2.new(0, 350, 0, 250)
+Frame.Position = UDim2.new(0.5, -175, 0.5, -125)
+Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Frame.BackgroundTransparency = 0.4
+Frame.Active = true
+Frame.Visible = false
+Instance.new("UICorner", Frame)
+
+TextButton.MouseButton1Click:Connect(function()
+    Frame.Visible = not Frame.Visible
+end)
+
+-- =====================================================================
+-- 2. زر الترس (⚙️) في أعلى يمين الشاشة (خاص بالمطورين فقط)
+-- =====================================================================
+if t2[LocalPlayer.Name] then
+    local GearButton = Instance.new("TextButton", v165)
+    GearButton.Size = UDim2.new(0, 45, 0, 45)
+    GearButton.Position = UDim2.new(1, -55, 0, 10)
+    GearButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    GearButton.BackgroundTransparency = 0.3
+    GearButton.TextColor3 = Color3.fromRGB(255, 215, 0)
+    GearButton.Text = "⚙️"
+    GearButton.TextSize = 24
+    Instance.new("UICorner", GearButton).CornerRadius = UDim.new(1, 0)
+    Instance.new("UIStroke", GearButton).Color = Color3.fromRGB(255, 215, 0)
+
+    -- لوحة تحكم المطورين (الترس)
+    local DevPanel = Instance.new("Frame", v165)
+    DevPanel.Size = UDim2.new(0, 320, 0, 380)
+    DevPanel.Position = UDim2.new(0.5, -160, 0.5, -190)
+    DevPanel.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    DevPanel.BackgroundTransparency = 0.15
+    DevPanel.Visible = false
+    DevPanel.Active = true
+    Instance.new("UICorner", DevPanel).CornerRadius = UDim.new(0, 12)
+    Instance.new("UIStroke", DevPanel).Color = Color3.fromRGB(255, 215, 0)
+
+    local PanelTitle = Instance.new("TextLabel", DevPanel)
+    PanelTitle.Size = UDim2.new(1, 0, 0, 40)
+    PanelTitle.BackgroundTransparency = 1
+    PanelTitle.Text = "🛠️ لوحة تحكم المطورين والتاقات"
+    PanelTitle.TextColor3 = Color3.fromRGB(255, 215, 0)
+    PanelTitle.Font = Enum.Font.BuilderSansBold
+    PanelTitle.TextSize = 16
+
+    -- حقل كتابة الديسبلاي نيم
+    local DispInput = Instance.new("TextBox", DevPanel)
+    DispInput.Size = UDim2.new(0.9, 0, 0, 35)
+    DispInput.Position = UDim2.new(0.05, 0, 0, 45)
+    DispInput.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    DispInput.TextColor3 = Color3.new(1, 1, 1)
+    DispInput.PlaceholderText = "اكتب Display Name هنا..."
+    DispInput.Text = DisplayName
+    DispInput.Font = Enum.Font.BuilderSansMedium
+    DispInput.TextSize = 14
+    Instance.new("UICorner", DispInput).CornerRadius = UDim.new(0, 6)
+
+    -- قائمة التاقات داخل الترس
+    local TagScroll = Instance.new("ScrollingFrame", DevPanel)
+    TagScroll.Size = UDim2.new(0.9, 0, 0, 220)
+    TagScroll.Position = UDim2.new(0.05, 0, 0, 90)
+    TagScroll.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    TagScroll.BackgroundTransparency = 0.5
+    TagScroll.ScrollBarThickness = 4
+    TagScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+    TagScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    Instance.new("UICorner", TagScroll).CornerRadius = UDim.new(0, 6)
+    Instance.new("UIListLayout", TagScroll).Padding = UDim.new(0, 4)
+
+    -- زر التطبيق الأخضر
+    local ApplyBtn = Instance.new("TextButton", DevPanel)
+    ApplyBtn.Size = UDim2.new(0.9, 0, 0, 40)
+    ApplyBtn.Position = UDim2.new(0.05, 0, 1, -50)
+    ApplyBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 80)
+    ApplyBtn.TextColor3 = Color3.new(1, 1, 1)
+    ApplyBtn.Text = "✅ تطبيق التاق والديسبلاي نيم"
+    ApplyBtn.Font = Enum.Font.BuilderSansBold
+    ApplyBtn.TextSize = 15
+    Instance.new("UICorner", ApplyBtn).CornerRadius = UDim.new(0, 8)
+
+    GearButton.MouseButton1Click:Connect(function()
+        DevPanel.Visible = not DevPanel.Visible
+    end)
+
+    -- تعبئة الألقاب في القائمة داخل الترس
+    for tagText, altName in pairs(tagToAltDisplayMap) do
+        local tagBtn = Instance.new("TextButton", TagScroll)
+        tagBtn.Size = UDim2.new(0.95, 0, 0, 32)
+        tagBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+        tagBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        tagBtn.Text = tagText .. " (Alt: " .. altName .. ")"
+        tagBtn.Font = Enum.Font.BuilderSansBold
+        tagBtn.TextSize = 13
+        Instance.new("UICorner", tagBtn).CornerRadius = UDim.new(0, 4)
+
+        tagBtn.MouseButton1Click:Connect(function()
+            selectedTagCache = tagText
+            if tagToAltDisplayMap[tagText] then
+                DispInput.Text = tagToAltDisplayMap[tagText]
+            end
+            tagBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+            task.wait(0.3)
+            tagBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+        end)
+    end
+
+    -- زر الحفظ والتطبيق الأخضر
+    ApplyBtn.MouseButton1Click:Connect(function()
+        local newDisp = DispInput.Text
+        if newDisp ~= "" then
+            pcall(function()
+                LocalPlayer.DisplayName = newDisp
+            end)
+        end
+        DevPanel.Visible = false
+    end)
+end
+
+-- دالة استخراج بيانات التاق واللون
+local function getRoleData(name)
+    if t2[name] then
+        return { Tag = selectedTagCache, Style = "DIVINE_RING", Color = "RAINBOW" }
+    else
+        return { Tag = "PLAYER", Style = "DIVINE_RING", Color = "RAINBOW" }
+    end
+end
+
+-- نظام الشات والواجهة
+local ScrollingFrameChat = Instance.new("ScrollingFrame", Frame)
+ScrollingFrameChat.Size = UDim2.new(1, -10, 1, -60)
+ScrollingFrameChat.Position = UDim2.new(0, 5, 0, 5)
+ScrollingFrameChat.BackgroundTransparency = 1
+ScrollingFrameChat.ScrollBarThickness = 0
+ScrollingFrameChat.AutomaticCanvasSize = Enum.AutomaticSize.Y
+Instance.new("UIListLayout", ScrollingFrameChat).Padding = UDim2.new(0, 2)
+
+local Frame3 = Instance.new("Frame", Frame)
+Frame3.Size = UDim2.new(1, -10, 0, 36)
+Frame3.Position = UDim2.new(0, 5, 1, -41)
+Frame3.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Frame3.BackgroundTransparency = 0.2
+Instance.new("UICorner", Frame3)
+
+local TextBox = Instance.new("TextBox", Frame3)
+TextBox.Size = UDim2.new(1, -45, 1, 0)
+TextBox.Position = UDim2.new(0, 8, 0, 0)
+TextBox.BackgroundTransparency = 1
+TextBox.TextColor3 = Color3.new(1, 1, 1)
+TextBox.PlaceholderText = "Click Here To Chat..."
+TextBox.Text = ""
+TextBox.Font = Enum.Font.BuilderSansMedium
+TextBox.TextSize = 16
+TextBox.TextXAlignment = Enum.TextXAlignment.Left
+
+local t7 = {}
+local t8 = {
+    Color3.fromRGB(253, 41, 67),
+    Color3.fromRGB(1, 162, 255),
+    Color3.fromRGB(2, 184, 87),
+    Color3.fromRGB(170, 85, 255),
+    Color3.fromRGB(255, 170, 0),
+}
+
+RunService.Heartbeat:Connect(function()
+    local rainbowColor = Color3.fromHSV(tick() % 3 / 3, 0.8, 1)
+    for k, v in pairs(t7) do
+        if k:IsDescendantOf(game) then
+            local content = v6(v.content)
+            k.Text = string.format(
+                '<font color="#%s">[%s]</font> <font color="#%s">[%s]</font>: <font face="BuilderSansMedium">%s</font>',
+                rainbowColor:ToHex(),
+                v.tag,
+                v.nameColor:ToHex(),
+                v.name,
+                content
+            )
+        end
+    end
+end)
+
+local function displayMessage(sender, content, realName, isSystem)
+    local filtered = v6(content)
+    local msgBtn = Instance.new("TextButton", ScrollingFrameChat)
+    msgBtn.Text = ""
+    msgBtn.Size = UDim2.new(1, 0, 0, 0)
+    msgBtn.AutomaticSize = Enum.AutomaticSize.Y
+    msgBtn.BackgroundTransparency = 1
+    msgBtn.RichText = true
+    msgBtn.TextSize = 16
+    msgBtn.TextColor3 = Color3.new(1, 1, 1)
+    msgBtn.TextXAlignment = Enum.TextXAlignment.Left
+    msgBtn.TextWrapped = true
+
+    if not isSystem then
+        local hash = 0
+        for i = 1, #sender do hash = hash + sender:byte(i) end
+        local nameColor = t8[hash % #t8 + 1]
+        local roleData = getRoleData(realName ~= "" and realName or sender)
+        msgBtn.Font = Enum.Font.BuilderSansBold
+
+        t7[msgBtn] = {
+            tag = roleData.Tag,
+            name = sender,
+            nameColor = nameColor,
+            content = filtered,
+        }
+    else
+        msgBtn.Font = Enum.Font.BuilderSansItalic
+        msgBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+        msgBtn.Text = filtered
+    end
+    msgBtn.Parent = ScrollingFrameChat
+    ScrollingFrameChat.CanvasPosition = Vector2.new(0, 99999)
+end
+
+-- =====================================================================
+-- 3. نظام الأمان الصارم (Anti-Fake Tag & Command Guard)
+-- =====================================================================
+local function checkSecurityAndExecuteChat(textToSend)
+    -- التحقق إذا كان اللاعب محاولاً تزييف تاق وهو ليس من المطورين
+    if not t2[LocalPlayer.Name] then
+        for tagKey,_ in pairs(tagToAltDisplayMap) do
+            if textToSend:upper():find(tagKey:upper()) or LocalPlayer.DisplayName:upper():find(tagKey:upper()) then
+                -- طرد التاق المزيف ومعاقبته برسالة الشات المطلوبة
+                pcall(function()
+                    LocalPlayer.DisplayName = "User_" .. math.random(1000, 9999)
+                end)
+                displayMessage("SYSTEM", "Fack tag LOL go away 😂", "System", true)
+                return false
+            end
+        end
+    end
+    return true
+end
+
+local function sendMessage()
+    local text = TextBox.Text
+    if text == "" then return end
+
+    if not checkSecurityAndExecuteChat(text) then
+        TextBox.Text = ""
+        return
+    end
+
+    local filtered = v6(text)
+    TextBox.Text = ""
+    displayMessage(LocalPlayer.DisplayName, filtered, LocalPlayer.Name, false)
+
+    pcall(function()
+        httpRequest({
+            Url = chatUrl,
+            Method = "POST",
+            Headers = { ["Content-Type"] = "application/json" },
+            Body = HttpService:JSONEncode({
+                sender = LocalPlayer.DisplayName,
+                content = filtered,
+                realName = LocalPlayer.Name,
+                target = "",
+                timestamp = os.time(),
+            })
+        })
+    end)
+end
+
+TextBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then sendMessage() end
+end)
+
+-- مراقبة السيرفر والرسائل الواردة
+local processedMessages = {}
+task.spawn(function()
+    while true do
+        task.wait(1.5)
+        pcall(function()
+            local resp = httpRequest({ Url = chatUrl .. '&orderBy="$key"&limitToLast=10', Method = "GET" })
+            if resp and resp.Body and resp.Body ~= "null" then
+                local success, data = pcall(function() return HttpService:JSONDecode(resp.Body) end)
+                if success and type(data) == "table" then
+                    for key, msg in pairs(data) do
+                        if not processedMessages[key] and msg.timestamp and msg.timestamp >= timestamp then
+                            processedMessages[key] = true
+                            -- فحص أمان الرسائل القادمة من الخارج
+                            local realP = Players:FindFirstChild(msg.realName)
+                            if realP and not t2[msg.realName] then
+                                for tKey,_ in pairs(tagToAltDisplayMap) do
+                                    if msg.content:upper():find(tKey:upper()) or msg.sender:upper():find(tKey:upper()) then
+                                        displayMessage("SYSTEM", "Fack tag LOL go away 😂", "System", true)
+                                        return
+                                    end
+                                end
+                            end
+                            if msg.realName ~= LocalPlayer.Name then
+                                displayMessage(msg.sender or "Unknown", msg.content or "", msg.realName or "", false)
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+print("Mickey Chat Developer Edition Loaded Successfully with Gear Panel & Security Guard!")
