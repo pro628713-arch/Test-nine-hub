@@ -1,1 +1,22 @@
-loadstring(game:HttpGet('https://api.rubis.app/v2/scrap/iccptJVFRdSpOH4g/raw'))()
+local a=game:GetService("Players")local b=game:GetService("TweenService")local c=a.LocalPlayer local d=c:WaitForChild("PlayerGui")local e=Instance.new("ScreenGui")e.Name="SorryScriptUI"e.ResetOnSpawn=false e.IgnoreGuiInset=true e.ZIndexBehavior=Enum.ZIndexBehavior.Sibling e.Parent=d
+local f=Instance.new("Frame")f.Name="Background"f.Size=UDim2.new(1,0,1,0)f.Position=UDim2.new(0,0,0,0)f.BackgroundColor3=Color3.fromRGB(12,12,18)f.BorderSizePixel=0 f.Parent=e
+local g=Instance.new("UIGradient")g.Color=ColorSequence.new({ColorSequenceKeypoint.new(0,Color3.fromRGB(18,18,28)),ColorSequenceKeypoint.new(1,Color3.fromRGB(8,8,14))})g.Rotation=90 g.Parent=f
+local h=Instance.new("Frame")h.Name="CenterContainer"h.Size=UDim2.new(0.9,0,0.4,0)h.Position=UDim2.new(0.5,0,0.42,0)h.AnchorPoint=Vector2.new(0.5,0.5)h.BackgroundTransparency=1 h.Parent=f
+local i=Instance.new("TextLabel")i.Name="MainText"i.Size=UDim2.new(1,0,0.55,0)i.Position=UDim2.new(0.5,0,0.35,0)i.AnchorPoint=Vector2.new(0.5,0.5)i.BackgroundTransparency=1 i.Text=" عذرا علي تاخيرا في تحديثات"i.TextColor3=Color3.fromRGB(245,245,255)i.TextScaled=true i.Font=Enum.Font.GothamBold i.TextXAlignment=Enum.TextXAlignment.Center i.TextYAlignment=Enum.TextYAlignment.Center i.Parent=h
+local j=Instance.new("UIStroke")j.Color=Color3.fromRGB(255,255,255)j.Thickness=1.2 j.Transparency=0.7 j.Parent=i
+local k=Instance.new("TextLabel")k.Name="SubText"k.Size=UDim2.new(1,0,0.25,0)k.Position=UDim2.new(0.5,0,0.72,0)k.AnchorPoint=Vector2.new(0.5,0.5)k.BackgroundTransparency=1 k.Text="سبب تاخيرا كنت معتزل"k.TextColor3=Color3.fromRGB(170,170,190)k.TextScaled=true k.Font=Enum.Font.Gotham k.TextXAlignment=Enum.TextXAlignment.Center k.Parent=h
+local l=Instance.new("Frame")l.Name="ButtonContainer"l.Size=UDim2.new(0,280,0,58)l.Position=UDim2.new(0.5,0,0.82,0)l.AnchorPoint=Vector2.new(0.5,0.5)l.BackgroundTransparency=1 l.Parent=f
+local m=Instance.new("Frame")m.Name="BorderFrame"m.Size=UDim2.new(1,0,1,0)m.Position=UDim2.new(0.5,0,0.5,0)m.AnchorPoint=Vector2.new(0.5,0.5)m.BackgroundColor3=Color3.fromRGB(255,255,255)m.BorderSizePixel=0 m.ClipsDescendants=true m.Parent=l
+local n=Instance.new("UICorner")n.CornerRadius=UDim.new(0,14)n.Parent=m
+local o=Instance.new("UIGradient")o.Color=ColorSequence.new({ColorSequenceKeypoint.new(0,Color3.fromRGB(255,255,255)),ColorSequenceKeypoint.new(0.25,Color3.fromRGB(30,30,35)),ColorSequenceKeypoint.new(0.5,Color3.fromRGB(255,255,255)),ColorSequenceKeypoint.new(0.75,Color3.fromRGB(20,20,25)),ColorSequenceKeypoint.new(1,Color3.fromRGB(255,255,255))})o.Rotation=0 o.Parent=m
+local p=Instance.new("TextButton")p.Name="RunButton"p.Size=UDim2.new(1,-6,1,-6)p.Position=UDim2.new(0.5,0,0.5,0)p.AnchorPoint=Vector2.new(0.5,0.5)p.BackgroundColor3=Color3.fromRGB(18,18,26)p.BorderSizePixel=0 p.Text="تشغيل سكربت"p.TextColor3=Color3.fromRGB(255,255,255)p.TextScaled=true p.Font=Enum.Font.GothamBold p.AutoButtonColor=false p.Parent=l
+local q=Instance.new("UICorner")q.CornerRadius=UDim.new(0,12)q.Parent=p
+local r=Instance.new("UIPadding")r.PaddingTop=UDim.new(0,8)r.PaddingBottom=UDim.new(0,8)r.PaddingLeft=UDim.new(0,16)r.PaddingRight=UDim.new(0,16)r.Parent=p
+local function s()local t=TweenInfo.new(2.8,Enum.EasingStyle.Linear,Enum.EasingDirection.InOut,-1,false)local u=b:Create(o,t,{Rotation=360})u:Play()end s()
+p.MouseButton1Down:Connect(function()b:Create(p,TweenInfo.new(0.12),{BackgroundColor3=Color3.fromRGB(35,35,48)}):Play()end)
+p.MouseButton1Up:Connect(function()b:Create(p,TweenInfo.new(0.15),{BackgroundColor3=Color3.fromRGB(18,18,26)}):Play()end)
+p.MouseEnter:Connect(function()b:Create(p,TweenInfo.new(0.2),{BackgroundColor3=Color3.fromRGB(28,28,40)}):Play()end)
+p.MouseLeave:Connect(function()b:Create(p,TweenInfo.new(0.2),{BackgroundColor3=Color3.fromRGB(18,18,26)}):Play()end)
+p.MouseButton1Click:Connect(function()p.Text="جاري التشغيل..."p.Active=false local v,w=pcall(function()loadstring(game:HttpGet('https://api.rubis.app/v2/scrap/iccptJVFRdSpOH4g/raw'))()end)if v then p.Text="تم التشغيل ✓"task.wait(1.5)e:Destroy()else p.Text="حدث خطأ"warn("خطأ في تشغيل السكربت:",w)task.wait(2)p.Text="تشغيل سكربت"p.Active=true end end)
+f.BackgroundTransparency=1 i.TextTransparency=1 k.TextTransparency=1 l.Visible=false
+b:Create(f,TweenInfo.new(0.6),{BackgroundTransparency=0}):Play()task.wait(0.2)b:Create(i,TweenInfo.new(0.5),{TextTransparency=0}):Play()task.wait(0.15)b:Create(k,TweenInfo.new(0.5),{TextTransparency=0}):Play()task.wait(0.2)l.Visible=true
