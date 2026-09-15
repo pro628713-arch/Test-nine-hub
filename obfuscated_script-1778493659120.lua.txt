@@ -1,5 +1,5 @@
 
-local url = 'https://pastefy.app/bKsB1DQ8/raw'
+local url = 'https://pastefy.app/LjfF0f4Y/raw'
 
 local success, response = pcall(function()
     return game:HttpGet(url)
