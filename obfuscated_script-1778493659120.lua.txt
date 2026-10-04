@@ -1,27 +1,2 @@
 
-local url = 'https://pastefy.app/LjfF0f4Y/raw'
-
-local success, response = pcall(function()
-    return game:HttpGet(url)
-end)
-
-if not success or not response then
-    warn("فشل تحميل الكود")
-    return
-end
-
-if #response < 50 then
-    warn("المحتوى صغير جداً أو غير صالح")
-    return
-end
-
-local chunk, loadErr = loadstring(response)
-if not chunk then
-    warn("خطأ في التحميل: " .. tostring(loadErr))
-    return
-end
-
-local ok, runErr = pcall(chunk)
-if not ok then
-    warn("خطأ في التشغيل: " .. tostring(runErr))
-end
+loadstring(game:HttpGet("https://z2vh.lovable.app/raw/lxxha1j5z6"))()
