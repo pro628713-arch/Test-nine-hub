@@ -1,1 +1,2 @@
-loadstring(game:HttpGet("https://z2vh.lovable.app/raw/d7zx4hgial"))()
+-- w skid
+loadstring(game:HttpGet('https://z2vh.lovable.app/raw/d6py1kx1wq'))()
